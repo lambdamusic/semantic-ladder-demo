@@ -180,3 +180,20 @@ Haiku's run is `results/credit/2026-11-04-2028-haiku/`.
 - **It holds with the stronger model:** a smaller gain than Haiku's (+41 against +52) because `csv` starts higher. With the definitions, both models reach 96–98%. Format and length add nothing, again.
 - **Where the gap sits:** the local rules (Q33 to Q48) go from 18% to 98%, and the general questions (Q1 to Q32) from 75% to 97%.
 - **The review of the general questions:** most of the general-question gap is the retraction questions (Q24 to Q26) and the hierarchy counts that also depend on local rules (Q7, Q9, Q10). On Q26 the `csv` answer saw the retraction flag and said that dropping retracted works "would be a policy choice the data doesn't make". That's a fair reading: whether a retracted work is research output is the dataset's own rule, stated only in the ontology. Counted with the local rules, the general questions the model can't know are few.
+
+## 4 November 2026: the research domain, executed rules
+
+`results/research/2026-11-04-2035-haiku/` and `2026-11-04-2053-sonnet/`: `csv` against `executed`, the tables `domains/research/execute.py` writes after applying the rules, with no definitions.
+
+| Condition | Sonnet | Haiku |
+|---|---|---|
+| `csv` | 58% | 42% |
+| `executed` | 93% (+35, +21 to +48) | 90% (+48, +33 to +62) |
+| for reference, `csv+markdown` in the runs above | 97% | 96% |
+
+- **Executed rules get most of the way:** 4 to 6 points short of the definitions.
+- **The misses come from how the tables were built, not from the models:**
+  - Merging a preprint into its published version hides the preprint, so the questions about versions (Q2, Q20) lose what they ask about.
+  - The institutions table keeps the raw parent link and has no ultimate-parent column, so the model followed Halloran's parent link (Q46), although the roll-up table says Halloran counts only for itself.
+  - The "why" questions (Q47, Q48) lose their reasons, since executed tables apply the rules without stating them. Credit's Q6 behaved the same way.
+- **What this says about curation:** rules applied upstream do the work, but they decide what the data can still answer. A store that keeps the records it merged, and the rules it ran, answers more.
