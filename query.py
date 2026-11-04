@@ -103,7 +103,7 @@ class SPARQLStore:
         for c, p, n in rows:
             by_class.setdefault(self.facts.qname(c), []).append(self.facts.qname(p))
         prefixes = "\n".join(f"PREFIX {k}: <{v}>" for k, v in self.facts.namespaces()
-                             if k in ("lad", "rdfs", "xsd", "skos", "rdf"))
+                             if k in ("lad", "res", "rdfs", "xsd", "skos", "rdf"))
         lines = [f"- `{c}`: " + ", ".join(f"`{p}`" for p in ps) for c, ps in by_class.items()]
         return f"Prefixes:\n```\n{prefixes}\n```\n\nClasses and the properties their resources use:\n\n" + "\n".join(lines)
 

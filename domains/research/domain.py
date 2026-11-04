@@ -7,7 +7,19 @@ DATA = HERE / "data"
 ONTOLOGY = HERE / "ontology.ttl"
 QUESTIONS = HERE / "questions.json"
 CSV_FILES = ["institutions.csv", "authors.csv", "sources.csv", "works.csv", "authorships.csv", "citations.csv"]
-CONDITIONS = ["csv", "rdf", "rdf+ontology", "csv+ontology", "csv+markdown", "csv+padding"]
+CONDITIONS = ["csv", "rdf", "rdf+ontology", "csv+ontology", "csv+markdown", "csv+padding", "executed"]
+
+# The executed condition: the tables execute.py writes, the rules applied and no definitions.
+EXECUTED_TABLES = ["works.csv", "people.csv", "credits.csv", "institutions.csv", "institution_units.csv",
+                   "sources.csv", "citations.csv"]
+EXECUTED_NOTE = (
+    "These tables are the data after its rules have been applied. Test records are gone. A preprint is merged "
+    "into its published version (record_ids lists the records each work merges). research_output says whether a "
+    "work counts as research output. Author records are merged into people (author_ids lists them). credits gives "
+    "the one institution credited for each person on each work. institution_units lists every institution each "
+    "institution's works count towards, itself included, with how many levels up. citations links merged works, "
+    "and only from citing works that count. tier_rank ranks journal tiers, 1 the highest; a delisted source's works "
+    "are not research output.")
 
 SYSTEM = (
     "You answer questions about a research-analytics dataset of works, authors, institutions, "
@@ -26,8 +38,11 @@ def read(path):
 
 
 def context(condition):
-    if condition not in CONDITIONS:  # the credit domain's executed and csv+neutral conditions don't exist here
+    if condition not in CONDITIONS:  # the credit domain's csv+neutral and axioms conditions don't exist here
         raise ValueError(f"the research domain has no condition {condition!r}; it has {', '.join(CONDITIONS)}")
+    if condition == "executed":
+        return EXECUTED_NOTE + "\n\n" + "\n\n".join(
+            f"### {name}\n```csv\n{read(DATA / 'executed' / name)}\n```" for name in EXECUTED_TABLES)
     parts = []
     if condition.startswith("csv"):
         for name in CSV_FILES:
