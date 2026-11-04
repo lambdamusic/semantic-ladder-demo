@@ -41,8 +41,9 @@ of Valdoria are made up, and the ontology isn't any rating agency's definitions.
 
 ## Running it
 
-Needs Python 3 with `rdflib` (`pip install -r requirements.txt`) and, for Claude, the
-`claude` command line.
+Needs Python 3.13 with the packages in `requirements.txt`, in a virtualenvwrapper env named
+`semantics-ladder` (`mkvirtualenv -p python3.13 -r requirements.txt semantics-ladder`), and, for
+Claude, the `claude` command line.
 
 ```bash
 python run.py                          # credit, Sonnet, all four conditions, 5 repeats
