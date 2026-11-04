@@ -35,7 +35,7 @@ of Valdoria are made up, and the ontology isn't any rating agency's definitions.
 | `grade.py` | grading by code, and by an LLM with a checklist |
 | `report.py` | accuracy with intervals, paired differences, grader agreement |
 | `providers.py` | `ask(text, system, model)` for each provider |
-| `domains/credit/` | `data/` (three CSV files and `facts.ttl`), `ontology.ttl`, `questions.json` (with typed keys), `domain.py`, `csv_to_rdf.py`, and `concepts.md`, the credit terms explained for people |
+| `domains/credit/` | `data/` (three CSV files and `facts.ttl`), `ontology.ttl`, `questions.json` (40 questions with typed keys, written by `build_questions.py`, which stops if a key disagrees with the data), `domain.py`, `csv_to_rdf.py`, and `concepts.md`, the credit terms explained for people |
 | `results/<domain>/<timestamp>-<model>/` | per run: `meta.json`, the prompts, the answers, `grades.json`, `report.md` |
 
 ## Running it
@@ -50,6 +50,7 @@ python run.py --llm-grade-all          # also grade every answer with the first 
 python run.py --resume results/credit/<run>   # finish a stopped run
 python report.py results/credit/<run>         # rebuild a report
 python domains/credit/csv_to_rdf.py           # after editing a CSV
+python domains/credit/build_questions.py      # after editing a CSV or a question: checks every key against the data
 ```
 
 The model runs from an empty directory with no tools, settings or MCP servers, so it sees

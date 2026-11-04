@@ -15,6 +15,7 @@ import argparse
 import importlib
 import json
 import re
+import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -59,6 +60,13 @@ def split_answers(text, questions):
     return {q["id"]: found.get(q["id"], "(no answer found)") for q in questions}
 
 
+def commit():
+    """The repo's commit, so a result can be traced to the data and questions it ran on."""
+    out = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=HERE)
+    dirty = subprocess.run(["git", "status", "--porcelain", "domains"], capture_output=True, text=True, cwd=HERE).stdout
+    return out.stdout.strip() + ("-dirty" if dirty.strip() else "")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--domain", default="credit")
@@ -80,7 +88,8 @@ def main():
     out = args.resume or HERE / "results" / args.domain / f"{datetime.now():%Y-%m-%d-%H%M}-{providers.split(args.model)[1]}"
     (out / "prompts").mkdir(parents=True, exist_ok=True)
     meta = {"domain": args.domain, "model": args.model, "grader": args.grader, "runs": args.runs,
-            "conditions": conditions, "started": f"{datetime.now():%Y-%m-%d %H:%M}"}
+            "conditions": conditions, "started": f"{datetime.now():%Y-%m-%d %H:%M}",
+            "questions": len(questions), "commit": commit()}
     if not (out / "meta.json").exists():
         (out / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
     for c in conditions:
