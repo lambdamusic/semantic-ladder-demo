@@ -7,11 +7,17 @@ from . import files
 
 def nav(request):
     """The sidebar on every page: the documents, each domain, and the runs."""
-    return {"APP_NAME": settings.APP_NAME, "NAV_DOMAINS": files.domains(), "path": request.path}
+    return {"APP_NAME": settings.APP_NAME, "NAV": files.nav(), "path": request.path}
+
+
+def home(request):
+    return render(request, "lab/home.html", {"title": "The semantics ladder: how much does an LLM gain from being told what data means?",
+                                             "body": files.page("intro"),
+                                             "domains": [dict(d, runs=files.headline(d["name"])) for d in files.nav()]})
 
 
 def doc(request, name):
-    titles = {"README": "The experiment", "PLAN": "The plan", "RESULTS": "Results log"}
+    titles = {"README": "The repository", "PLAN": "The plan", "RESULTS": "Results log"}
     return render(request, "lab/doc.html", {"title": titles[name], "body": files.doc(name), "name": name})
 
 
@@ -27,25 +33,43 @@ def _domain(name):
     return info
 
 
+def _title(domain, section):
+    return f"{files.title(domain)}: {section}" if section else files.title(domain)
+
+
 def domain(request, domain):
     info = _domain(domain)
-    rows = [files.summary(d, f) for d, f in files.run_folders(domain)]
-    return render(request, "lab/domain.html", {"title": f"Domain: {domain}", "d": info, "runs": rows, "tab": "overview"})
+    return render(request, "lab/domain.html", {"title": _title(domain, ""), "d": info, "body": files.page(f"{domain}/intro"),
+                                               "headline": files.headline(domain)})
 
 
 def questions(request, domain):
-    return render(request, "lab/questions.html", {"title": f"{domain}: questions", "d": _domain(domain), "tab": "questions"})
+    info = _domain(domain)
+    cards = [dict(q, trap=files.trap(q)[0], why=files.trap(q)[1]) for q in info["questions"]]
+    return render(request, "lab/questions.html", {"title": _title(domain, "questions and traps"), "d": info, "cards": cards,
+                                                  "body": files.page(f"{domain}/questions")})
 
 
 def data(request, domain):
-    return render(request, "lab/data.html", {"title": f"{domain}: data", "d": _domain(domain), "tab": "data"})
+    return render(request, "lab/data.html", {"title": _title(domain, "the data"), "d": _domain(domain),
+                                             "body": files.page(f"{domain}/data")})
+
+
+def results(request, domain):
+    info = _domain(domain)
+    rows = [files.summary(d, f) for d, f in files.run_folders(domain)]
+    latest = next((r for r in rows if r["finished"] and r["mode"] == "read"), None)
+    return render(request, "lab/results.html", {
+        "title": _title(domain, "results"), "d": info, "body": files.page(f"{domain}/results"),
+        "reading": [r for r in rows if r["mode"] == "read"], "querying": [r for r in rows if r["mode"] == "query"],
+        "latest": latest and files.run_detail(domain, latest["id"])})
 
 
 def ontology(request, domain):
     info = _domain(domain)
     folder = info["folder"]
     return render(request, "lab/ontology.html", {
-        "title": f"{domain}: ontology", "d": info, "tab": "ontology",
+        "title": _title(domain, "the ontology"), "d": info, "body": files.page(f"{domain}/ontology"),
         "md": files.md(files.text(folder / "ontology.md")), "ttl": files.text(folder / "ontology.ttl"),
         "axioms": files.text(folder / "axioms.ttl"), "padding": files.md(files.text(folder / "padding.md")),
         "diagram": files.diagram(domain)})

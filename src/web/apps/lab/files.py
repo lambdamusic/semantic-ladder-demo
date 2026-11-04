@@ -19,13 +19,56 @@ MARK = {"correct": "✅", "partial": "🟡", "wrong": "❌"}
 def md(text):
     """Markdown to HTML, with links to the repo's own Markdown files pointed at their pages."""
     html = markdown.markdown(text, extensions=["tables", "fenced_code", "toc"])
-    for name, url in (("README.md", "/"), ("PLAN.md", "/plan/"), ("RESULTS.md", "/log/")):
+    for name, url in (("README.md", "/readme/"), ("PLAN.md", "/plan/"), ("RESULTS.md", "/log/")):
         html = html.replace(f'href="{name}"', f'href="{url}"')
     return mark_safe(html)
 
 
 def doc(name):
     return md((ROOT / f"{name}.md").read_text())
+
+
+# --- site structure: a section of pages per domain, as in the first round's pages -------------
+
+CONTENT = settings.WEB_DIR / "content"
+SECTIONS = [("", "Introduction"), ("data", "Data"), ("questions", "Questions and traps"),
+            ("ontology", "Ontology"), ("results", "Results")]
+FAMILIES = [("credit", "Credit ratings"), ("credit_300", "Credit at 300 issuers"),
+            ("credit_paths", "Credit: ownership paths"), ("research", "Research analytics")]
+
+
+def page(name):
+    """A page's own text: content/<name>.md, rendered, or "" if there is none."""
+    f = CONTENT / f"{name}.md"
+    return md(f.read_text()) if f.exists() else ""
+
+
+def nav():
+    """The sidebar's domain groups: each domain with a page per section."""
+    return [{"name": d, "title": title, "sections": [{"slug": s, "label": label,
+             "url": f"/domains/{d}/" + (f"{s}/" if s else "")} for s, label in SECTIONS]}
+            for d, title in FAMILIES if (DOMAINS / d / "questions.json").exists()]
+
+
+def title(domain):
+    return dict(FAMILIES).get(domain, domain)
+
+
+def trap(q):
+    """The trap a question sets, from its `tests` line: ("Time", "a rating holds from ...")."""
+    name, _, why = q["tests"].partition(":")
+    return name.strip(), why.strip()
+
+
+def headline(domain):
+    """The latest finished run of each mode, for a domain's introduction."""
+    found = {}
+    for d, f in run_folders(domain):
+        s = summary(d, f)
+        key = (s["mode"], s["meta"]["model"])
+        if s["finished"] and key not in found:
+            found[key] = s
+    return sorted(found.values(), key=lambda s: (s["mode"], s["meta"]["model"]))
 
 
 def domains():

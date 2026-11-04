@@ -1,0 +1,1 @@
+Runs are under way: reading (`csv`, `csv+markdown`, `executed`, `csv+axioms`) and querying (all six query conditions, three repeats). The tables below fill in as they're graded, and this text will summarise them once they finish.
