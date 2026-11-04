@@ -2,7 +2,34 @@
 
 *Written 4 November 2026. The aim is a result solid enough to publish as a blog post and as this repo. The first round's numbers below come from the original experiment, before this repo.*
 
-## Where things stand
+## Progress (4 November, evening)
+
+`RESULTS.md` has the findings; this is what's left of the plan.
+
+- **Done:**
+  - Phase 0.
+  - Phase 1 at the base size and at 300 issuers.
+  - Phase 2's loop, with all four stores. The rules now run in the store as well: `sql+executed` and `sparql+axioms`.
+  - Phase 4's research domain, run with Haiku.
+  - The web app and `tools/site-dump`.
+- **Credit domain v2:**
+  - The system-of-record rule could be guessed: `csv` got Q42 right in every run. Domicile now comes from RESEARCH, and names and parents from RATINGS.
+  - Parent chains run entity by entity, across records.
+  - The axioms no longer make `TestRecord` a subclass of `Entity`.
+  - Base reruns are under way with Sonnet and Haiku.
+- **Path questions:**
+  - `domains/credit_paths` is the 300-issuer data plus six groups four to six levels deep.
+  - Q49 to Q61 follow parent and guarantee links: ultimate parents, depth, group size, nearest common ancestor, exposure to a stressed country, and guarantees that cross groups.
+  - Reading and query runs are under way.
+- **Partial credit for lists:** a mean-F1 table in each report, beside the strict grade.
+- **Left:**
+  - Query mode at more sizes.
+  - A wrong-reason check.
+  - The research domain's executed condition and query mode.
+  - Opus and Gemini, set aside for now.
+  - The blog post.
+
+## Where things stood at the start
 
 - **The ontology helps, but only a little:** `rdf+ontology` minus `csv` is +0.67 out of 10 on the base arm and between 0 and +1.0 across the variants, with Sonnet at three repeats. That's about 7 percentage points, not 1%. Either way it's too small to stand on.
 - **The questions are too easy:** six of the ten were right in every condition and every run. All the signal sits in Q5 and Q6, so the gain rests on two questions.

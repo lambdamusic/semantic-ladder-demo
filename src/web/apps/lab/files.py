@@ -118,7 +118,8 @@ def run_detail(domain, run_id):
         grid.append({"q": q, "cells": cells})
     stats = json.loads((folder / "stats.json").read_text()) if (folder / "stats.json").exists() else {}
     query_stats = [{"condition": c, "queries": sum(x["queries"] for x in v), "failed": sum(x["failed"] for x in v),
-                    "rounds": round(sum(x["rounds"] for x in v) / len(v), 1), "repeats": len(v)} for c, v in stats.items()]
+                    "rounds": round(sum(x["rounds"] for x in v) / len(v), 1), "repeats": len(v),
+                    "timeouts": sum(x.get("timeouts", 0) for x in v)} for c, v in stats.items()]
     return {**s, "conditions": conditions, "grid": grid, "report": md(text(folder / "report.md")),
             "query_stats": query_stats, "folder": folder}
 
