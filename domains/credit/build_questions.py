@@ -22,10 +22,23 @@ def rows(name):
         return list(csv.DictReader(f))
 
 
-ENTITIES = {e["entity_id"]: e for e in rows("entities.csv")}
+# The local rules the ontology states, applied here as the data's owner would:
+# QA records are test data, so they and their actions are dropped; expected ratings (EX)
+# are not ratings yet; credit opinions (CO) never count as ratings, since only the types
+# asked for are read; RATINGS wins where records of one entity disagree.
+QA = {e["entity_id"] for e in rows("entities.csv") if e["source_system"] == "QA"}
+ENTITIES = {e["entity_id"]: e for e in rows("entities.csv") if e["entity_id"] not in QA}
 INSTRUMENTS = {i["instrument_id"]: i for i in rows("instruments.csv")}
-ACTIONS = sorted(rows("rating_actions.csv"), key=lambda a: a["date"])
+ACTIONS = sorted((a for a in rows("rating_actions.csv") if a["rated_id"] not in QA and a["action"] != "EX"),
+                 key=lambda a: a["date"])
 CANON = {i: e["lei"] or i for i, e in ENTITIES.items()}
+LOCAL = {"XVD": "VD", "CVK": "CV"}  # the local currency codes, and whose domestic currency each is
+
+
+def country(entity):
+    """Where the entity is domiciled, by its RATINGS record where its records disagree."""
+    records = sorted(same(entity), key=lambda i: ENTITIES[i]["source_system"] != "RATINGS")
+    return ENTITIES[records[0]]["country"]
 
 
 def same(a):
@@ -85,7 +98,7 @@ def ceiling(country, as_of=NOW):
 def at_or_above_ceiling(above):
     out = []
     for i in issuers_rated():
-        r, c = rating(i), ceiling(ENTITIES[i]["country"])
+        r, c = rating(i), ceiling(country(i))
         if r in SCALE and c in SCALE and ENTITIES[i]["entity_type"] != "SOV":
             if (SCALE.index(r) < SCALE.index(c)) if above else (r == c):
                 out.append(i)
@@ -183,7 +196,7 @@ Q = [
      {"investment_grade": "yes"}, lambda: {"investment_grade": "yes" if investment_grade(rating("E01")) else "no"},
      "Issuer versus instrument: BBB, at the issuer, even though one note is below investment grade."),
     ("Q25", "How many instruments held an investment-grade rating on 1 October 2026?", {"count": "count"},
-     {"count": 4}, lambda: {"count": sum(investment_grade(rating(i, "INST")) for i in INSTRUMENTS)},
+     {"count": 5}, lambda: {"count": sum(investment_grade(rating(i, "INST")) for i in INSTRUMENTS)},
      "Instrument ratings: counted on the instrument's own rating, not its issuer's."),
     ("Q26", "What is Corvenia Power's local-currency rating?", {"rating": "rating"},
      {"rating": "A+"}, lambda: {"rating": rating("E15", basis="LC")},
@@ -235,8 +248,37 @@ Q = [
      {"rating": "A"}, lambda: {"rating": rating("E02")},
      "Identity: the latest action sits on the other record."),
     ("Q40", "How many distinct issuers domiciled in GB held an issuer rating on 1 October 2026?", {"count": "count"},
-     {"count": 5}, lambda: {"count": sum(ENTITIES[i]["country"] == "GB" for i in issuers_rated())},
-     "Identity and withdrawal: Northwind counted once, Pellam not at all."),
+     {"count": 5}, lambda: {"count": sum(country(i) == "GB" for i in issuers_rated())},
+     "Identity and withdrawal: Northwind counted once, Pellam not at all, the QA record ignored."),
+
+    # Local meanings: rules this dataset sets for itself, stated only in the ontology
+    ("Q41", "What is Brindle Capital's current rating?", {"rating": "rating"},
+     {"rating": "none"}, lambda: {"rating": rating("E16")},
+     "Local rule: QA records are test data and describe no real entity."),
+    ("Q42", "In which country is Halden Bank domiciled?", {"country": "country"},
+     {"country": "DE"}, lambda: {"country": country("E10")},
+     "Local rule: where records disagree, the RATINGS record holds."),
+    ("Q43", "How many distinct entities are domiciled in Luxembourg (LU)?", {"count": "count"},
+     {"count": 0}, lambda: {"count": len({CANON[i] for i in ENTITIES if country(i) == "LU"})},
+     "Local rule: the RESEARCH record's country is overruled by the RATINGS record's."),
+    ("Q44", "Is Valdoria Telecom's 2027 note a local-currency obligation?", {"local_currency": "yesno"},
+     {"local_currency": "yes"},
+     lambda: {"local_currency": "yes" if LOCAL.get(INSTRUMENTS["I07"]["currency"]) == country("E05") else "no"},
+     "Local codes: XVD is the Valdorian dollar."),
+    ("Q45", "Is Valdoria Telecom's 2027 note rated above what Valdoria's Country Ceiling allows?",
+     {"above_ceiling": "yesno"}, {"above_ceiling": "no"},
+     lambda: {"above_ceiling": "yes" if LOCAL.get(INSTRUMENTS["I07"]["currency"]) != country("E05")
+              and SCALE.index(rating("I07", "INST")) < SCALE.index(ceiling("VD")) else "no"},
+     "Local codes and ceilings: local-currency debt is not capped, so BBB- above a BB ceiling is allowed."),
+    ("Q46", "Does Halden Leasing have an issuer rating?", {"issuer_rating": "yesno"},
+     {"issuer_rating": "no"}, lambda: {"issuer_rating": "yes" if rating("E11") != "none" else "no"},
+     "Local type: a credit opinion (CO) is not a rating."),
+    ("Q47", "How is Corvenia Power's 2034 note rated?", {"rating": "rating"},
+     {"rating": "none"}, lambda: {"rating": rating("I08", "INST")},
+     "Local action: an expected rating (EX) is not a rating until assigned."),
+    ("Q48", "How many instruments held a rating on 1 October 2026?", {"count": "count"},
+     {"count": 7}, lambda: {"count": sum(rating(i, "INST") != "none" for i in INSTRUMENTS)},
+     "Local action: the expected rating doesn't count."),
 ]
 
 # Answered in prose and graded by an LLM against a checklist.

@@ -42,6 +42,8 @@ def normalise(kind, value, canon):
     if kind == "entities":
         items = value if isinstance(value, list) else [value]
         return sorted({canon.get(str(v).strip(), str(v).strip()) for v in items})
+    if kind == "country":
+        return str(value).strip().upper()
     if kind == "count":
         try:
             return int(value)

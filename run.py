@@ -37,7 +37,7 @@ here, with exactly these fields, shaped like {{"Q1": {{"field": value}}, ...}}. 
 {fields}"""
 
 KINDS = {"rating": 'a rating, or "none"', "yesno": '"yes", "no" or "depends"', "outlook": "an outlook",
-         "entity": "a record ID", "entities": "a list of record IDs", "count": "a number"}
+         "country": "a country code", "entity": "a record ID", "entities": "a list of record IDs", "count": "a number"}
 
 
 def prompt(domain, condition, questions):
@@ -104,8 +104,14 @@ def main():
             "questions": len(questions), "commit": commit()}
     if not (out / "meta.json").exists():
         (out / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
+    # Every prompt is built once, at the start, and kept: editing the data mid-run can't
+    # mix two datasets in one run, and a resumed run asks exactly what it asked before.
+    prompts = {}
     for c in conditions:
-        (out / "prompts" / f"{c}.md").write_text(f"<!-- system: {domain.SYSTEM} -->\n\n{prompt(domain, c, questions)}")
+        f = out / "prompts" / f"{c}.md"
+        if not f.exists():
+            f.write_text(f"<!-- system: {domain.SYSTEM} -->\n\n{prompt(domain, c, questions)}")
+        prompts[c] = f.read_text().split(" -->\n\n", 1)[1]
     if args.dry_run:
         print(f"prompts written to {out}/prompts/")
         return
@@ -120,7 +126,7 @@ def main():
             f = out / f"answers-{c}-run{r + 1}.md"
             if not f.exists():
                 print(f"asking: {c}, run {r + 1} ...", flush=True)
-                f.write_text(providers.ask(prompt(domain, c, questions), domain.SYSTEM, args.model))
+                f.write_text(providers.ask(prompts[c], domain.SYSTEM, args.model))
             text = f.read_text()
             prose = split_answers(text, questions)
             print(f"grading: {c}, run {r + 1} ...", flush=True)

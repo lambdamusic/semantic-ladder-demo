@@ -40,7 +40,7 @@ The entity that owns and controls this one.
 
 ### source system (CSV column `source_system`)
 
-The internal system the record comes from (RATINGS, RESEARCH). Each system keeps its own records of the same entities; see Entity.
+The internal system the record comes from (RATINGS, RESEARCH, QA). Each system keeps its own records of the same entities; see Entity. RATINGS is the system of record: where records of the same entity disagree on name, country or parent, the RATINGS record holds. QA records are test data, created to check the systems: they describe no real entity, so a QA record, and every action recorded against it, must be ignored.
 
 ### description (CSV column `description`)
 
@@ -60,7 +60,7 @@ Where the instrument ranks in repayment if the issuer fails: a concept of the sc
 
 ### currency (CSV column `currency`)
 
-The currency the instrument pays in. Debt in a currency other than the domestic one of the issuer's country is exposed to that country's transfer and convertibility risk: see Country Ceiling (CC).
+The currency the instrument pays in, as an ISO 4217 code, or one of two local codes: XVD, the Valdorian dollar, the domestic currency of VD; and CVK, the Corvenian krone, the domestic currency of CV. Debt in a currency other than the domestic one of the issuer's country is exposed to that country's transfer and convertibility risk: see Country Ceiling (CC). Debt in the domestic currency is local-currency debt and is not capped by the ceiling.
 
 ### maturity (CSV column `maturity`)
 
@@ -112,6 +112,7 @@ The codes as they appear in the data, grouped by list.
 - **STIDR**, Short-term Issuer Default Rating: The issuer's ability to meet obligations falling due within about a year, on the short-term scale (F1+ to D). Not comparable with long-term ratings.
 - **INST**, Instrument rating: The rating of one specific instrument. It starts from the issuer's long-term rating and is notched for the instrument's seniority and expected recovery: subordinated debt is usually rated below the issuer, and guaranteed debt is rated on the guarantor. An instrument rating is never the rating of the issuer.
 - **CC**, Country Ceiling: Not a rating of anyone. A cap, set for a country, on the foreign-currency ratings of entities domiciled there and of their foreign-currency debt. It reflects transfer and convertibility risk: the risk that the government stops money being converted or sent abroad, so even a sound company could not pay foreign-currency debt. Foreign-currency ratings of entities in the country are generally no higher than the ceiling; local-currency ratings are not capped. A Country Ceiling is not the sovereign's own issuer rating.
+- **CO**, Credit opinion: A private, point-in-time view of an entity's credit, given to one client. It is not a published rating and not an issuer rating: never count it as a rating, and never report its value as the entity's rating.
 
 ### Currency bases
 
@@ -126,6 +127,7 @@ The codes as they appear in the data, grouped by list.
 - **DG**, Downgraded: The rating is lowered. The only action that counts as a downgrade.
 - **RW**, Placed on Rating Watch: The rating is flagged as likely to change soon, usually within about six months, in the direction rating watch gives. The rating itself is unchanged: not a downgrade.
 - **WD**, Withdrawn: The agency stops maintaining the rating, often for commercial reasons (the issuer no longer pays for it, or the debt is repaid). After a withdrawal the entity has no rating of that type. A withdrawal is not a credit event: it says nothing about default, and is not a downgrade.
+- **EX**, Expected rating: A rating signalled before an instrument's final documents are signed. It is not yet a rating: the instrument stays unrated until an Assigned (AS) action confirms it.
 
 ### Outlooks
 

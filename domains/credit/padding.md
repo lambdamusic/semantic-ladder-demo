@@ -229,3 +229,33 @@ Interchangeable: bonds of the same line are fungible, so any one can be delivere
 ### Settlement fail
 
 When one side does not deliver the bond or the cash on the settlement date. The trade stays open, and the late party may owe a penalty.
+
+## Funds and portfolios
+
+### Portfolio turnover
+
+The share of a portfolio bought and sold over a year. High turnover raises trading costs, which come out of the fund's return.
+
+### Tracking error
+
+How far a fund's return differs from its benchmark's, measured as the spread of the differences over time.
+
+### Weighted average maturity
+
+The average time to maturity of a portfolio's bonds, each weighted by its share of the portfolio's value.
+
+### Laddering
+
+Buying bonds that mature at regular intervals, so that money comes back steadily and can be reinvested at the rates then available.
+
+### Barbell
+
+A portfolio concentrated in short and long maturities, with little in between.
+
+### Immunisation
+
+Matching the duration of a portfolio to the timing of a future payment, so that changes in yields affect the portfolio and the payment by about the same amount.
+
+### Mark to market
+
+Valuing holdings at current market prices rather than at their purchase price, so that the portfolio's reported value moves with the market.
