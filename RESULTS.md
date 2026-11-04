@@ -160,3 +160,20 @@ holds what they mean, and what changed because of them.
 - **Without the definitions, more right answers rest on shaky reasoning:** 9% against 3% unsound. Examples are Marlow's rating taken from file order rather than dates (Q11), and the note's rating read without the notching it tests (Q3).
 - **Most "unclear" verdicts are terse answers:** the system prompt asks for concision, so many answers give the value and an action ID only.
 - **Treat it as indicative:** this grader is an LLM, and some of its verdicts contradict themselves (it marks Q35 "unsound" while saying the reasoning holds). It's a second look, not a score.
+
+## 4 November 2026: the research domain, Sonnet
+
+`results/research/2026-11-04-2010-sonnet/`: the same six conditions as Haiku's run.
+
+| Condition | Sonnet | Haiku |
+|---|---|---|
+| `csv` | 56% | 44% |
+| `rdf` | 50% (−6, −14 to +2) | 44% |
+| `csv+padding` | 55% (−1) | 45% |
+| `csv+markdown` | 97% (+41, +29 to +55) | 96% |
+| `csv+ontology` | 97% (+41) | 97% |
+| `rdf+ontology` | 98% (+42) | 97% |
+
+- **It holds with the stronger model:** a smaller gain than Haiku's (+41 against +52) because `csv` starts higher. With the definitions, both models reach 96–98%. Format and length add nothing, again.
+- **Where the gap sits:** the local rules (Q33 to Q48) go from 18% to 98%, and the general questions (Q1 to Q32) from 75% to 97%.
+- **The review of the general questions:** most of the general-question gap is the retraction questions (Q24 to Q26) and the hierarchy counts that also depend on local rules (Q7, Q9, Q10). On Q26 the `csv` answer saw the retraction flag and said that dropping retracted works "would be a policy choice the data doesn't make". That's a fair reading: whether a retracted work is research output is the dataset's own rule, stated only in the ontology. Counted with the local rules, the general questions the model can't know are few.
