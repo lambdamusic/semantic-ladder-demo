@@ -136,6 +136,14 @@ def timed(run, q):
         signal.alarm(0)
 
 
+def queries_in(reply, lang):
+    """The queries in a reply: fenced blocks, or the tool-call markup models sometimes write instead."""
+    found = re.findall(rf"```{lang}\s*(.*?)```", reply, re.S | re.I)
+    found += re.findall(rf'<(?:invoke|parameter) name="{lang}">\s*(.*?)\s*</(?:invoke|parameter)>', reply, re.S | re.I)
+    clean = [re.sub(r"</?(?:invoke|parameter)[^>]*>|```", "", q).strip() for q in found]
+    return list(dict.fromkeys(q for q in clean if q))
+
+
 def table(cols, rows):
     shown = rows[:MAX_ROWS]
     lines = ["| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
@@ -190,7 +198,13 @@ def converse(domain, condition, questions, model):
         text = "\n\n".join(f"### {who}\n\n{msg}" for who, msg in transcript) if rnd else first
         reply = providers.ask(text if rnd else first, domain.SYSTEM, model)
         transcript.append(("assistant", reply))
-        blocks = re.findall(rf"```{store.lang}\s*(.*?)```", reply, re.S | re.I)
+        blocks = queries_in(reply, store.lang)
+        if not blocks and "```json" not in reply and not stats.get("nudged") and rnd < ROUNDS:
+            # neither queries the runner can see nor a final answer: ask once, rather than grade it as empty
+            stats["nudged"] = 1
+            transcript.append(("user", f"The runner found no ```{store.lang} block and no ```json block in your reply. "
+                                       f"Put each query in its own ```{store.lang} fenced block, or give the final answers."))
+            continue
         if not blocks:
             return reply, transcript, stats
         stats["rounds"] += 1
