@@ -76,3 +76,45 @@ holds what they mean, and what changed because of them.
 
 - **One sentence decides the answer:** Q10 is right in one of five repeats with the original wording and in five of five with the neutral one. The wrong answers quote the sentence back.
 - **An ontology carries its authors' emphasis as well as its meaning.** A definition that ranks one reading above another is followed, even where the question needs both.
+
+## 4 November 2026: reading at 300 issuers, Sonnet
+
+`results/credit_300/2026-11-04-1738-sonnet/`: the 48 questions over the base data plus 300 invented issuers that repeat its traps.
+
+- **Scale widens the gap:** `csv` falls to 80%; `csv+markdown` and `executed` reach 95%, both +15 points (+7 to +24 or +25).
+- **Curated data catches up with the definitions at scale,** and fixes the entity count that it missed on the base data.
+- **Long lists fail everywhere:** the Watch list (about 30 issuers, Q18) is wrong in every repeat of every condition, and the negative outlooks (Q19) in all but two. One wrong ID fails the list.
+
+## 4 November 2026: the meaning as logic, Sonnet and Haiku
+
+`results/credit/2026-11-04-1825-sonnet/` and `2026-11-04-1824-haiku/`. `csv+axioms` gets the ontology with every definition and comment removed (names and codes kept) plus `axioms.ttl`: OWL axioms and SHACL rules, which run in pySHACL and agree with the keys.
+
+| Condition | Sonnet | Haiku |
+|---|---|---|
+| `csv` | 89% | 78% |
+| `csv+ontology` (prose) | 100% (+11) | 100% (+22) |
+| `csv+axioms` (logic, no prose) | 97% (+8) | 98% (+20) |
+| `csv+axioms+markdown` | 100% (+11) | 98% (+20) |
+
+- **Models use logic they have to read:** with only the axioms, both apply the test-record rule in every repeat, from `TestRecord ≡ sourceSystem "QA"` and its disjointness from `Issuer`.
+- **An axiom is followed to the letter, errors included:** the entity count (Q37) is wrong in all ten repeats with the axioms alone, because the axioms declare `TestRecord rdfs:subClassOf lad:Entity`, where the prose says a test record describes no real entity. The mistake is the author's, and the model reproduces it faithfully.
+- **Logic says what, not why:** Sonnet hedged on Q6's cause in three of five repeats with the axioms alone. Haiku didn't.
+- **Without prose there's no slant:** Q10 is right in every axioms-only repeat. With the Markdown added back, Haiku answers it "No" in four of five, quoting the "headline rating" sentence.
+- **Form matters little again:** for both models, logic alone comes within 2 to 3 points of prose, and the two together add nothing over prose.
+
+## 4 November 2026: the research domain, Haiku
+
+`results/research/2026-11-04-1752-haiku/`: an invented domain shaped like OpenAlex, 48 questions, built by a subagent and reviewed.
+
+| Condition | Accuracy | Against `csv` (95% interval) |
+|---|---|---|
+| `csv` | 44% | |
+| `rdf` | 44% | +0 (−4 to +6) |
+| `csv+padding` | 45% | +2 (−1 to +5) |
+| `csv+markdown` | 96% | +52 (+39 to +65) |
+| `csv+ontology` | 97% | +54 (+40 to +67) |
+| `rdf+ontology` | 97% | +54 (+40 to +67) |
+
+- **The same pattern in a second domain:** RDF alone and the length control add nothing; Markdown matches Turtle.
+- **Much larger:** local rules go from 14–20% to 99–100%, and the general questions from 56–58% to 96–98%.
+- **To check before quoting it:** many general questions rest on the dataset's own terms ("research work", which affiliation is "credited"), which only the ontology defines, so some answers marked wrong without it may be defensible readings. A Sonnet run and a review of those questions come first.
