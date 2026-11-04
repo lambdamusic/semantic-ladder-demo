@@ -4,7 +4,7 @@
 
 What a curated graph would hold after its rules had run, with no definitions alongside:
 - QA records and their actions dropped;
-- records with the same LEI merged into one entity, with RATINGS winning where they disagree;
+- records with the same LEI merged into one entity: RESEARCH holds for country, RATINGS for the rest;
 - each rating with the dates it held (valid_from to valid_to; blank valid_to means in force
   on 1 October 2026), with expected ratings and credit opinions left out, since neither is a rating;
 - each instrument with whose credit risk it carries, and whether it pays in local currency;
@@ -20,8 +20,7 @@ import build_questions as b
 OUT = b.DATA / "executed"
 
 
-def canonical_id(record):
-    return min(b.same(record))
+canonical_id = b.canonical_id
 
 
 def write(name, header, rows):
@@ -36,13 +35,10 @@ def main():
     entities = []
     for e in sorted({canonical_id(i) for i in b.ENTITIES}, key=lambda i: (len(i), i)):
         records = sorted(b.same(e))
-        ratings_record = next((r for r in records if b.ENTITIES[r]["source_system"] == "RATINGS"), records[0])
-        row = b.ENTITIES[ratings_record]
-        parent = row["parent_id"]
+        row = b.ENTITIES[b.record_of(e, "RATINGS")]
         top = b.ultimate_parent(e)
         entities.append([e, row["name"], row["lei"], b.country(e), row["entity_type"],
-                         canonical_id(parent) if parent else "", canonical_id(top) if top != e else "",
-                         " ".join(records)])
+                         b.parent(e), top if top != e else "", " ".join(records)])
     write("entities.csv", ["entity_id", "name", "lei", "country", "entity_type", "parent_id",
                            "ultimate_parent_id", "record_ids"], entities)
 

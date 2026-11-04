@@ -29,7 +29,8 @@ def rows(name):
 # The local rules the ontology states, applied here as the data's owner would:
 # QA records are test data, so they and their actions are dropped; expected ratings (EX)
 # are not ratings yet; credit opinions (CO) never count as ratings, since only the types
-# asked for are read; RATINGS wins where records of one entity disagree.
+# asked for are read; where records of one entity disagree, RESEARCH holds for country and
+# RATINGS for everything else.
 QA = {e["entity_id"] for e in rows("entities.csv") if e["source_system"] == "QA"}
 ENTITIES = {e["entity_id"]: e for e in rows("entities.csv") if e["entity_id"] not in QA}
 INSTRUMENTS = {i["instrument_id"]: i for i in rows("instruments.csv")}
@@ -39,10 +40,18 @@ CANON = {i: e["lei"] or i for i, e in ENTITIES.items()}
 LOCAL = {"XVD": "VD", "CVK": "CV"}  # the local currency codes, and whose domestic currency each is
 
 
+def record_of(entity, system):
+    """The entity's record from this system if it has one, else its lowest record ID."""
+    return sorted(same(entity), key=lambda i: (ENTITIES[i]["source_system"] != system, i))[0]
+
+
 def country(entity):
-    """Where the entity is domiciled, by its RATINGS record where its records disagree."""
-    records = sorted(same(entity), key=lambda i: ENTITIES[i]["source_system"] != "RATINGS")
-    return ENTITIES[records[0]]["country"]
+    """Where the entity is domiciled, by its RESEARCH record where its records disagree."""
+    return ENTITIES[record_of(entity, "RESEARCH")]["country"]
+
+
+def canonical_id(record):
+    return min(same(record))
 
 
 def same(a):
@@ -83,10 +92,24 @@ def downgrades(entity, start="0000", end="9999"):
             and a["rating_type"] == "LTIDR" and start <= a["date"] <= end]
 
 
+def parent(e):
+    """The entity's parent, by its RATINGS record, as a canonical record ID ("" for none)."""
+    p = ENTITIES[record_of(e, "RATINGS")]["parent_id"]
+    return canonical_id(p) if p else ""
+
+
+def chain(e):
+    """The entity's ancestors, nearest first, as canonical record IDs."""
+    out, e = [], canonical_id(e)
+    while parent(e):
+        e = parent(e)
+        out.append(e)
+    return out
+
+
 def ultimate_parent(e):
-    while ENTITIES[e]["parent_id"]:
-        e = ENTITIES[e]["parent_id"]
-    return e
+    up = chain(e)
+    return up[-1] if up else canonical_id(e)
 
 
 def group(top):
@@ -260,11 +283,11 @@ Q = [
      {"rating": "none"}, lambda: {"rating": rating("E16")},
      "Local rule: QA records are test data and describe no real entity."),
     ("Q42", "In which country is Halden Bank domiciled?", {"country": "country"},
-     {"country": "DE"}, lambda: {"country": country("E10")},
-     "Local rule: where records disagree, the RATINGS record holds."),
+     {"country": "LU"}, lambda: {"country": country("E10")},
+     "Local rule: where records disagree on country, the RESEARCH record holds."),
     ("Q43", "How many distinct entities are domiciled in Luxembourg (LU)?", {"count": "count"},
-     {"count": 0}, lambda: {"count": len({CANON[i] for i in ENTITIES if country(i) == "LU"})},
-     "Local rule: the RESEARCH record's country is overruled by the RATINGS record's."),
+     {"count": 1}, lambda: {"count": len({CANON[i] for i in ENTITIES if country(i) == "LU"})},
+     "Local rule: the RESEARCH record's country holds over the RATINGS record's, so Halden Bank is in LU."),
     ("Q44", "Is Valdoria Telecom's 2027 note a local-currency obligation?", {"local_currency": "yesno"},
      {"local_currency": "yes"},
      lambda: {"local_currency": "yes" if LOCAL.get(INSTRUMENTS["I07"]["currency"]) == country("E05") else "no"},
@@ -303,7 +326,7 @@ def main():
         if scaled:
             key = got
         assert got == key, (qid, "by hand", key, "from the data", got)
-        expected = (first[qid]["expected"] if qid in first and qid not in ("Q7", "Q9") and not scaled
+        expected = (first[qid]["expected"] if qid in first and qid not in ("Q7", "Q9", "Q42", "Q43") and not scaled
                     else json.dumps(key))
         out.append({"id": qid, "question": text, "expected": expected, "tests": tests, "fields": fields, "key": key})
     for qid, (text, checklist, tests) in CHECKLIST.items():

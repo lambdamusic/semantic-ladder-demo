@@ -18,6 +18,10 @@ print("Marlow periods:", sorted((str(a).rsplit('/',1)[1], str(t)) for a, t in q(
 issuers = {str(e).rsplit('/',1)[1] for (e,) in q("SELECT DISTINCT ?e { ?a a lad:RatingInForce ; lad:ratingType lad:type-LTIDR ; lad:ratedThing ?e }")}
 print("issuers with a rating in force:", len(issuers), sorted(issuers))
 print("I05 risk, I07 local:", q("SELECT ?w { lad:I05 lad:creditRiskOf ?w }"), q("SELECT ?l { lad:I07 lad:localCurrency ?l }"))
+print("domicile E10:", q("SELECT ?c { lad:E10 lad:domicile ?c }"))
+print("ultimate parent of E11:", q("SELECT ?u { lad:E11 lad:ultimateParent ?u }"), "| ancestors:", q("SELECT ?a { lad:E11 lad:ancestor ?a }"))
+legal = {str(l) for (l,) in q("SELECT ?l { ?e a lad:Entity ; lad:lei ?l FILTER NOT EXISTS { ?e lad:sourceSystem 'QA' } }")}
+print("distinct legal entities with an LEI (sovereigns have none):", len(legal))
 print("in force on I08 (EX):", q("ASK { ?a lad:ratedThing lad:I08 ; a lad:RatingInForce }"))
 # the ceiling constraint must catch a breach: lift Valdoria Telecom's FC rating above BB and validate again
 bad = Graph().parse(f"{folder}/data/facts.ttl").parse(f"{folder}/ontology.ttl").parse(f"{folder}/axioms.ttl")

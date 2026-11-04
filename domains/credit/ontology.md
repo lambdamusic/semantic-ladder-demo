@@ -28,7 +28,7 @@ Legal Entity Identifier: the identifier that says which legal entity a record de
 
 ### country (CSV column `country`)
 
-ISO-style code of the country where the entity is domiciled. It decides which Country Ceiling, if any, applies to the entity's foreign-currency ratings. VD is the Republic of Valdoria and CV the Republic of Corvenia (both invented).
+ISO-style code of the country where the entity is domiciled. Where an entity's records disagree, see source system for which holds. It decides which Country Ceiling, if any, applies to the entity's foreign-currency ratings. VD is the Republic of Valdoria and CV the Republic of Corvenia (both invented).
 
 ### entity type (CSV column `entity_type`)
 
@@ -36,11 +36,11 @@ What kind of entity it is: a concept of the scheme Entity types.
 
 ### parent (CSV column `parent_id`)
 
-The entity that owns and controls this one.
+The entity that owns and controls this one. A parent link names a record, but points at the entity that record describes, so the chain continues from any of that entity's records. Following parents up to an entity with no parent gives the ultimate parent; a group is an ultimate parent and every entity whose chain of parents ends at it.
 
 ### source system (CSV column `source_system`)
 
-The internal system the record comes from (RATINGS, RESEARCH, QA). Each system keeps its own records of the same entities; see Entity. RATINGS is the system of record: where records of the same entity disagree on name, country or parent, the RATINGS record holds. QA records are test data, created to check the systems: they describe no real entity, so a QA record, and every action recorded against it, must be ignored.
+The internal system the record comes from (RATINGS, RESEARCH, QA). Each system keeps its own records of the same entities; see Entity. Where records of the same entity disagree, which one holds depends on the field. RATINGS is the system of record for names and parent links. Domicile is the exception: the RESEARCH team checks each entity's registered office against its filings, so where records disagree on country, the RESEARCH record holds. QA records are test data, created to check the systems: they describe no real entity, so a QA record, and every action recorded against it, must be ignored.
 
 ### description (CSV column `description`)
 
