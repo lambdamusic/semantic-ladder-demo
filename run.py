@@ -36,7 +36,7 @@ here, with exactly these fields, shaped like {{"Q1": {{"field": value}}, ...}}. 
 
 {fields}"""
 
-KINDS = {"rating": "a rating", "yesno": '"yes", "no" or "depends"', "outlook": "an outlook",
+KINDS = {"rating": 'a rating, or "none"', "yesno": '"yes", "no" or "depends"', "outlook": "an outlook",
          "entity": "a record ID", "entities": "a list of record IDs", "count": "a number"}
 
 
@@ -78,12 +78,24 @@ def main():
                     help="also grade every answer with the old LLM grader, into grades-llm.json")
     ap.add_argument("--resume", type=Path, help="a run folder to finish: answers already there are kept")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--regrade", type=Path, help="a run folder: redo its code grading, with no model calls")
     args = ap.parse_args()
 
     domain = importlib.import_module(f"domains.{args.domain}.domain")
     questions = json.loads(domain.QUESTIONS.read_text())
     conditions = args.only or CONDITIONS
     canon = domain.canonical()
+
+    if args.regrade:
+        grades = json.loads((args.regrade / "grades.json").read_text())
+        for c, sheets in grades.items():
+            for r, sheet in enumerate(sheets):
+                text = (args.regrade / f"answers-{c}-run{r + 1}.md").read_text()
+                sheets[r] = grade.regrade(questions, sheet, grade.structured(text), canon)
+        (args.regrade / "grades.json").write_text(json.dumps(grades, indent=2) + "\n")
+        report.write(args.regrade, questions)
+        print(f"regraded: {args.regrade / 'report.md'}")
+        return
 
     out = args.resume or HERE / "results" / args.domain / f"{datetime.now():%Y-%m-%d-%H%M}-{providers.split(args.model)[1]}"
     (out / "prompts").mkdir(parents=True, exist_ok=True)

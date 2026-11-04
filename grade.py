@@ -26,10 +26,11 @@ def structured(text):
 
 
 def normalise(kind, value, canon):
+    if kind == "rating":  # no rating can come as null, "none", "NR" or "not rated"
+        r = "" if value is None else str(value).strip().upper().replace(" ", "").replace("−", "-")
+        return "NONE" if r in ("", "NONE", "NULL", "NR", "NOTRATED", "N/A") else r
     if value is None:
         return None
-    if kind == "rating":
-        return str(value).strip().upper().replace(" ", "").replace("−", "-")
     if kind == "yesno":
         if isinstance(value, bool):
             return "yes" if value else "no"
@@ -93,6 +94,15 @@ def by_llm(questions, answers, ask, template=GRADER):
         except json.JSONDecodeError:
             pass
     return {q["id"]: {"grade": "?", "why": "grader reply was not JSON", "by": "llm"} for q in questions}
+
+
+def regrade(questions, sheet, parsed, canon):
+    """Redo the code grading of one sheet, keeping its LLM grades: after a grader fix, with no calls."""
+    new = dict(sheet)
+    for q in questions:
+        if "key" in q:
+            new[q["id"]] = by_code(q, parsed.get(q["id"]), canon)
+    return new
 
 
 def grade(questions, prose, parsed, canon, ask, llm_repeats=2):
