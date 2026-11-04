@@ -197,3 +197,25 @@ Haiku's run is `results/credit/2026-11-04-2028-haiku/`.
   - The institutions table keeps the raw parent link and has no ultimate-parent column, so the model followed Halloran's parent link (Q46), although the roll-up table says Halloran counts only for itself.
   - The "why" questions (Q47, Q48) lose their reasons, since executed tables apply the rules without stating them. Credit's Q6 behaved the same way.
 - **What this says about curation:** rules applied upstream do the work, but they decide what the data can still answer. A store that keeps the records it merged, and the rules it ran, answers more.
+
+## 4 November 2026: ownership paths, reading against querying, Sonnet
+
+`results/credit_paths/2026-11-04-2022-sonnet/` (reading, 5 repeats) and `2026-11-04-2024-sonnet-query/` (querying, 3 repeats): the 300-issuer data on the version 2 rules, plus six groups four to six levels deep and 13 path questions (Q49 to Q61). Three query sessions first failed on format: Sonnet wrote its queries as tool-call markup, which the runner didn't see. The runner now reads that markup and asks once for the right format. The three sessions were rerun, and the failed ones are kept in `failed/`.
+
+| | All 61 questions | Path questions | Path score in each session |
+|---|---|---|---|
+| `csv` | 81% | 77% | 69, 85, 62, 85, 85 |
+| `csv+markdown` | 95% | 100% | 100 in all five |
+| `executed` | 94% | 97% | 92, 100, 92, 100, 100 |
+| `csv+axioms` | 93% | 97% | 92, 100, 100, 92, 100 |
+| `sql` | 73% | 44% | 69, 31, 31 |
+| `sql+markdown` | 85% | 71% | 12, 100, 100 |
+| `sparql` | 65% | 33% | 31, 54, 15 |
+| `sparql+ontology` | 94% | 92% | 100, 85, 92 |
+| `sql+executed` (with an `ancestors` table) | 93% | 100% | 100 in all three |
+| `sparql+axioms` (after the SHACL rules) | 81% | 82% | 100, 46, 100 |
+
+- **Without definitions, a graph doesn't help with paths:** `sparql` scores 33% on them and `sql` 44%. The chain runs through a RESEARCH record, and a test record sits inside a group. Neither store says what those records mean, so neither model can walk the chain correctly.
+- **With definitions, both stores mostly get there.** `sparql+ontology` is the steadiest querying condition (85 to 100). `sql+markdown` scored 100 twice, but one session stopped after two rounds and guessed (12). `sparql+axioms` also scored 100 twice, with one session that got empty results (46). With three repeats, one bad session moves a path score by about 30 points, so the SQL and SPARQL averages don't separate them.
+- **Precomputing the closure wins:** with an `ancestors` table, SQL gets every path question right in every session. The graph's advantage is that it can follow links of any depth at query time. Once the rules have computed the chains, a table does as well.
+- **Reading beats querying at this size:** with the definitions, reading the 100 KB of CSV gets all 13 path questions right in all five sessions. Querying pays off when the data is too big to read, not because it's a graph.
