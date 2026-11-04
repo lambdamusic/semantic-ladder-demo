@@ -8,7 +8,8 @@ What a curated graph would hold after its rules had run, with no definitions alo
 - each rating with the dates it held (valid_from to valid_to; blank valid_to means in force
   on 1 October 2026), with expected ratings and credit opinions left out, since neither is a rating;
 - each instrument with whose credit risk it carries, and whether it pays in local currency;
-- each country's ceiling.
+- each country's ceiling;
+- every entity's ancestors, with how many levels up each is.
 
 The rules are the ones build_questions.py uses for the keys, written once and imported here.
 In Phase 2 they become SQL views and SPARQL rules; this is the same logic as tables.
@@ -41,6 +42,8 @@ def main():
                          b.parent(e), top if top != e else "", " ".join(records)])
     write("entities.csv", ["entity_id", "name", "lei", "country", "entity_type", "parent_id",
                            "ultimate_parent_id", "record_ids"], entities)
+    write("ancestors.csv", ["entity_id", "ancestor_id", "levels_up"],
+          [[e[0], a, n] for e in entities for n, a in enumerate(b.chain(e[0]), 1)])
 
     instruments = []
     for i, r in b.INSTRUMENTS.items():

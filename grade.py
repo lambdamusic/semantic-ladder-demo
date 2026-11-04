@@ -55,12 +55,23 @@ def normalise(kind, value, canon):
 def by_code(q, answer, canon):
     if not answer:
         return {"grade": "wrong", "why": "no structured answer", "by": "code"}
-    right, wrong = [], []
+    right, wrong, f1 = [], [], None
     for field, kind in q["fields"].items():
         got, want = normalise(kind, answer.get(field), canon), normalise(kind, q["key"][field], canon)
         (right if got == want else wrong).append(f"{field}: expected {q['key'][field]}, got {answer.get(field)}")
+        if kind == "entities":  # partial credit for lists, reported beside the strict grade
+            f1 = list_f1(got or [], want)
     grade = "correct" if not wrong else "partial" if right else "wrong"
-    return {"grade": grade, "why": "; ".join(wrong) or "all fields match", "by": "code"}
+    out = {"grade": grade, "why": "; ".join(wrong) or "all fields match", "by": "code"}
+    return out if f1 is None else dict(out, f1=round(f1, 3))
+
+
+def list_f1(got, want):
+    """F1 of a list answer against the key: 1 when both are empty."""
+    if not got and not want:
+        return 1.0
+    hits = len(set(got) & set(want))
+    return 0.0 if not hits else 2 * hits / (len(got) + len(want))
 
 
 GRADER_SYSTEM = "You grade answers against an answer key. You are strict and brief."

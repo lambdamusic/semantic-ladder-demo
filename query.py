@@ -8,6 +8,8 @@ Conditions:
   sql+markdown     the same, plus the ontology's definitions as Markdown
   sparql           the RDF in rdflib: the classes and properties used, no definitions
   sparql+ontology  the RDF with the ontology loaded beside it, plus the same Markdown definitions
+  sql+executed     the rules run in the store: DuckDB holds the executed tables (run.py's executed condition)
+  sparql+axioms    the rules run in the store: the RDF after axioms.ttl's SHACL rules, with what they derived
 
 The runner owns the loop, so any provider can play: each reply may hold several ```sql or
 ```sparql blocks, which are run and their results sent back, for up to eight rounds. A reply
@@ -24,7 +26,7 @@ from datetime import datetime
 from pathlib import Path
 
 import duckdb
-from rdflib import Graph
+from rdflib import BNode, Graph
 
 import grade
 import providers
@@ -32,7 +34,7 @@ import report
 from run import INSTRUCTIONS, KINDS, commit, split_answers
 
 HERE = Path(__file__).parent
-CONDITIONS = ["sql", "sql+markdown", "sparql", "sparql+ontology"]
+CONDITIONS = ["sql", "sql+markdown", "sparql", "sparql+ontology", "sql+executed", "sparql+axioms"]
 ROUNDS = 8
 MAX_ROWS = 60
 
@@ -51,13 +53,14 @@ HOW = {
 class SQLStore:
     lang = "sql"
 
-    def __init__(self, domain):
+    def __init__(self, domain, executed=False):
         self.db = duckdb.connect()
-        for name in domain.CSV_FILES:
+        folder, files = (domain.DATA / "executed", domain.EXECUTED_TABLES) if executed else (domain.DATA, domain.CSV_FILES)
+        for name in files:
             table = name.removesuffix(".csv")
-            self.db.execute(f"CREATE TABLE {table} AS SELECT * FROM read_csv('{domain.DATA / name}', all_varchar=true)")
+            self.db.execute(f"CREATE TABLE {table} AS SELECT * FROM read_csv('{folder / name}', all_varchar=true)")
         self.db.execute("SET enable_external_access = false")  # no reading files from here on
-        self.tables = [n.removesuffix(".csv") for n in domain.CSV_FILES]
+        self.tables = [n.removesuffix(".csv") for n in files]
 
     def schema(self):
         out = []
@@ -76,9 +79,18 @@ class SQLStore:
 class SPARQLStore:
     lang = "sparql"
 
-    def __init__(self, domain, with_ontology):
+    def __init__(self, domain, extra=""):
+        if extra == "axioms":  # the facts with what the rules derived; the schema lists the derived terms too
+            self.g = inferred(domain)
+            terms = set(Graph().parse(domain.ONTOLOGY).subjects()) | set(Graph().parse(domain.HERE / "axioms.ttl").subjects())
+            self.facts = Graph()
+            self.facts.bind("lad", "https://example.org/ladder/")
+            for s, p, o in self.g:
+                if s not in terms and not isinstance(s, BNode):
+                    self.facts.add((s, p, o))
+            return
         self.g = Graph().parse(domain.DATA / "facts.ttl")
-        if with_ontology:
+        if extra == "ontology":
             self.g.parse(domain.ONTOLOGY)
         self.facts = Graph().parse(domain.DATA / "facts.ttl")
 
@@ -119,10 +131,22 @@ def table(cols, rows):
     return "\n".join(lines) if rows else "(no rows)"
 
 
+def inferred(domain):
+    """The facts, ontology and axioms after the SHACL rules have run, cached in data/inferred.ttl."""
+    cache = domain.DATA / "inferred.ttl"
+    if not cache.exists():
+        from pyshacl import validate
+        axioms = domain.HERE / "axioms.ttl"
+        g = Graph().parse(domain.DATA / "facts.ttl").parse(domain.ONTOLOGY).parse(axioms)
+        validate(g, shacl_graph=Graph().parse(axioms), advanced=True, inplace=True, allow_infos=True)
+        g.serialize(cache, format="turtle")
+    return Graph().parse(cache)
+
+
 def store_for(domain, condition):
     if condition.startswith("sql"):
-        return SQLStore(domain)
-    return SPARQLStore(domain, with_ontology=condition.endswith("+ontology"))
+        return SQLStore(domain, executed=condition.endswith("+executed"))
+    return SPARQLStore(domain, condition.partition("+")[2])
 
 
 def opening(domain, condition, store, questions):
@@ -130,7 +154,12 @@ def opening(domain, condition, store, questions):
                        for q in questions if "fields" in q)
     parts = ["## The data", "", PROTOCOL.format(how=HOW[store.lang], lang=store.lang, rounds=ROUNDS), "",
              store.schema()]
-    if "+" in condition:
+    extra = condition.partition("+")[2]
+    if extra == "executed":
+        parts += ["", domain.EXECUTED_NOTE]
+    elif extra == "axioms":
+        parts += ["", domain.AXIOMS_NOTE]
+    elif extra:
         parts += ["", "### ontology.md (the vocabulary the data uses)", "", (domain.HERE / "ontology.md").read_text()]
     qs = "\n".join(f"{q['id']}. {q['question']}" for q in questions)
     parts += ["", "## Questions", "", INSTRUCTIONS.format(entity_hint=domain.ENTITY_HINT, fields=fields), "", qs]

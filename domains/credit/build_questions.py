@@ -317,11 +317,88 @@ CHECKLIST = {
 }
 
 
+def name(e):
+    return ENTITIES[record_of(e, "RATINGS")]["name"]
+
+
+def nearest_common(a, b):
+    up = [canonical_id(a)] + chain(a)
+    return next((x for x in [canonical_id(b)] + chain(b) if x in up), "none")
+
+
+def path_questions(anchors):
+    """Questions that follow parent and guarantee links: written from the designed groups in anchors.json."""
+    G = anchors["groups"]
+    top = [g["top"] for g in G]
+    deep = G[0]["deepest"]
+    stale = anchors["stale_parent"]["entity"]
+    # two members of the same level with different parents but a common ancestor below the top
+    pair = next((a, b) for g in G for lv in g["levels"][3:] for a in lv for b in lv
+                if a < b and parent(a) != parent(b) and nearest_common(a, b) != g["top"])
+    note = anchors["cross_note"]
+    for e in [deep, stale, *top, *pair]:  # each entity a question names must be the only one with that name
+        assert sum(ENTITIES[i]["name"].lower() == name(e).lower() for i in ENTITIES if CANON[i] != CANON[e]) == 0, name(e)
+    members = lambda t: sorted({canonical_id(i) for i in ENTITIES if ultimate_parent(i) == canonical_id(t)})
+    below = lambda e: {x for x in members(ultimate_parent(e)) if e in chain(x)}
+    exposed = sorted(i for i in issuers_rated() if any(country(a) == "VD" for a in chain(i)))
+    cross = sorted({canonical_id(INSTRUMENTS[i]["guarantor_id"]) for i in INSTRUMENTS if INSTRUMENTS[i]["guarantor_id"]
+                    and ultimate_parent(INSTRUMENTS[i]["guarantor_id"]) != ultimate_parent(INSTRUMENTS[i]["issuer_id"])})
+    fc = lambda e: rating(e)
+    lowest = max((fc(e) for e in members(top[4]) if fc(e) in SCALE), key=SCALE.index, default="none")
+    return [
+        ("Q49", f"Who is {name(deep)}'s ultimate parent?", {"parent": "entity"}, None,
+         lambda: {"parent": ultimate_parent(deep)},
+         "Paths and identity: a chain of parents several levels long, with one link naming a RESEARCH record of the parent."),
+        ("Q50", f"How many levels of ownership separate {name(deep)} from its ultimate parent?", {"count": "count"}, None,
+         lambda: {"count": len(chain(deep))},
+         "Paths: the length of the chain, counted across the RESEARCH record."),
+        ("Q51", f"How many entities are in the {name(top[0])} group, the parent included?", {"count": "count"}, None,
+         lambda: {"count": len(members(top[0]))},
+         "Paths: every level of the tree, the QA record under the top left out, the RESEARCH record not counted twice."),
+        ("Q52", f"How many entities are in the {name(top[2])} group, the parent included?", {"count": "count"}, None,
+         lambda: {"count": len(members(top[2]))},
+         "Paths and sources: a RESEARCH record names this top as a parent, but RATINGS holds for parent links."),
+        ("Q53", f"Are {name(stale)} and {name(top[2])} in the same group?", {"same_group": "yesno"}, None,
+         lambda: {"same_group": "yes" if ultimate_parent(stale) == canonical_id(top[2]) else "no"},
+         "Sources: the stale parent from RESEARCH is overruled by the RATINGS record."),
+        ("Q54", f"Which members of the {name(top[3])} group are domiciled in Valdoria (VD)?", {"entities": "entities"}, None,
+         lambda: {"entities": [e for e in members(top[3]) if country(e) == "VD"]},
+         "Paths and the domicile rule: one member is in VD by its RESEARCH record, which holds for country."),
+        ("Q55", "If Valdoria (VD) came under stress, how many entities with an issuer rating in force have an entity domiciled in VD somewhere above them in their chain of parents?",
+         {"count": "count"}, None, lambda: {"count": len(exposed)},
+         "Exposure through ownership: walk up every chain, with domicile by the RESEARCH rule."),
+        ("Q56", f"What is the lowest current foreign-currency issuer rating held by any member of the {name(top[4])} group?",
+         {"rating": "rating"}, None, lambda: {"rating": lowest},
+         "Paths and time: the whole tree, each member's latest action."),
+        ("Q57", f"Which is the nearest entity that {name(pair[0])} and {name(pair[1])} both have in their chains of parents?",
+         {"entity": "entity"}, None, lambda: {"entity": nearest_common(*pair)},
+         "Paths: the nearest common ancestor, below the top of the group."),
+        ("Q58", "Which entities guarantee a note issued by an entity outside their own group?", {"entities": "entities"}, None,
+         lambda: {"entities": cross},
+         "Paths and roles: guarantee links compared with ownership chains."),
+        ("Q59", f"How many entities in the {name(top[0])} group sit exactly three levels below the top?", {"count": "count"}, None,
+         lambda: {"count": sum(len(chain(e)) == 3 for e in members(top[0]))},
+         "Paths: depth in the tree, across the RESEARCH record."),
+        ("Q60", f"Whose credit risk does a holder of the {INSTRUMENTS[note]['description']} take, and is that entity in the same group as the issuer?",
+         {"risk_of": "entity", "same_group": "yesno"}, None,
+         lambda: {"risk_of": canonical_id(risk_of(note)),
+                  "same_group": "yes" if ultimate_parent(risk_of(note)) == ultimate_parent(INSTRUMENTS[note]["issuer_id"]) else "no"},
+         "Roles across groups: the guarantor belongs to another group."),
+        ("Q61", f"How many members of the {name(top[0])} group, the top included, hold a foreign-currency issuer rating below investment grade?",
+         {"count": "count"}, None,
+         lambda: {"count": sum(fc(e) in SCALE and not investment_grade(fc(e)) for e in members(top[0]))},
+         "Paths and test data: the QA record under the top has a B- rating, and is ignored."),
+    ]
+
+
 def main():
     scaled = FOLDER != HERE
     first = {q["id"]: q for q in json.loads((HERE / "questions.json").read_text())}
     out = []
-    for qid, text, fields, key, compute, tests in Q:
+    questions = list(Q)
+    if (FOLDER / "anchors.json").exists():
+        questions += path_questions(json.loads((FOLDER / "anchors.json").read_text()))
+    for qid, text, fields, key, compute, tests in questions:
         got = compute()
         if scaled:
             key = got

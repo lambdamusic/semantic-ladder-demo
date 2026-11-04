@@ -71,6 +71,17 @@ def write(out, questions):
         cells = [" ".join(MARK.get(s.get(q["id"], {}).get("grade"), "?") for s in grades[c]) for c in conditions]
         lines.append(f"| {q['id']} | {by} | " + " | ".join(cells) + " |")
 
+    lists = [q for q in questions if "entities" in q.get("fields", {}).values()]
+    if lists and any("f1" in s.get(q["id"], {}) for c in conditions for s in grades[c] for q in lists):
+        lines += ["", "## Lists, with partial credit", "",
+                  f"The {len(lists)} questions answered with a list of entities: strict accuracy (the whole list right) "
+                  "against the mean F1 of the lists given, which credits a list that is nearly right.", "",
+                  "| Condition | Strict | Mean F1 |", "|---|---|---|"]
+        for c in conditions:
+            strict = per_question(grades[c], lists)
+            f1s = [s.get(q["id"], {}).get("f1", 0.0) for s in grades[c] for q in lists]
+            lines.append(f"| `{c}` | {pct(sum(strict.values()) / len(lists))} | {pct(sum(f1s) / len(f1s))} |")
+
     twice = [(s[q["id"]]["grade"], g) for c in conditions for s in grades[c] for q in questions
              if s.get(q["id"], {}).get("also") for g in s[q["id"]]["also"]]
     if twice:
