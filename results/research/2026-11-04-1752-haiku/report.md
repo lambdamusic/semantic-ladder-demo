@@ -76,6 +76,19 @@
 | Q47 | llm | 🟡 🟡 🟡 🟡 🟡 | 🟡 🟡 🟡 🟡 🟡 | 🟡 🟡 🟡 🟡 🟡 | 🟡 ✅ 🟡 🟡 🟡 | ✅ 🟡 🟡 ✅ 🟡 | 🟡 🟡 ✅ 🟡 ✅ |
 | Q48 | llm | ❌ ❌ ❌ ❌ ❌ | ❌ ❌ ❌ ❌ ❌ | ✅ 🟡 ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ | ❌ ❌ ❌ ❌ ❌ |
 
+## Lists, with partial credit
+
+The 6 questions answered with a list of entities: strict accuracy (the whole list right) against the mean F1 of the lists given, which credits a list that is nearly right.
+
+| Condition | Strict | Mean F1 |
+|---|---|---|
+| `csv` | 33% | 89% |
+| `rdf` | 33% | 89% |
+| `rdf+ontology` | 100% | 100% |
+| `csv+ontology` | 100% | 100% |
+| `csv+markdown` | 100% | 100% |
+| `csv+padding` | 33% | 89% |
+
 **The checklist grader agreed with itself** on 52 of 60 answers graded twice.
 
 ## Why each miss was marked

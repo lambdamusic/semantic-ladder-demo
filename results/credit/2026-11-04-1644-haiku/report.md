@@ -76,6 +76,19 @@
 | Q47 | code | ❌ ❌ ❌ ❌ ❌ | ❌ ❌ ❌ ❌ ❌ | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ | ❌ ❌ ❌ ❌ ❌ |
 | Q48 | code | ❌ ❌ ❌ ❌ ❌ | ❌ ✅ ❌ ❌ ❌ | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ | ❌ ❌ ❌ ❌ ❌ |
 
+## Lists, with partial credit
+
+The 7 questions answered with a list of entities: strict accuracy (the whole list right) against the mean F1 of the lists given, which credits a list that is nearly right.
+
+| Condition | Strict | Mean F1 |
+|---|---|---|
+| `csv` | 83% | 96% |
+| `rdf` | 86% | 97% |
+| `rdf+ontology` | 97% | 99% |
+| `csv+ontology` | 100% | 100% |
+| `csv+markdown` | 100% | 100% |
+| `csv+padding` | 86% | 97% |
+
 **The checklist grader agreed with itself** on 30 of 30 answers graded twice.
 
 ## Why each miss was marked

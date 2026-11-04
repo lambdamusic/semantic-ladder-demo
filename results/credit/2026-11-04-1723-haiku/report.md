@@ -68,6 +68,15 @@
 | Q47 | code | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ |
 | Q48 | code | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ |
 
+## Lists, with partial credit
+
+The 7 questions answered with a list of entities: strict accuracy (the whole list right) against the mean F1 of the lists given, which credits a list that is nearly right.
+
+| Condition | Strict | Mean F1 |
+|---|---|---|
+| `csv+ontology` | 100% | 100% |
+| `csv+neutral` | 100% | 100% |
+
 **The checklist grader agreed with itself** on 10 of 10 answers graded twice.
 
 ## Why each miss was marked

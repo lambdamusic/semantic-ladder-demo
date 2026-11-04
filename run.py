@@ -86,7 +86,9 @@ def main():
     conditions = args.only or getattr(domain, "CONDITIONS", CONDITIONS)  # a domain may offer fewer
     canon = domain.canonical()
 
-    if args.regrade:
+    if args.regrade:  # against the questions as the run asked them: keys can change after a run
+        own = args.regrade / "questions.json"
+        questions = json.loads(own.read_text()) if own.exists() else questions
         grades = json.loads((args.regrade / "grades.json").read_text())
         for c, sheets in grades.items():
             for r, sheet in enumerate(sheets):
