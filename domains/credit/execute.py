@@ -72,7 +72,7 @@ def main():
     write("ratings.csv", ["rated_id", "rating_type", "ccy_basis", "rating", "outlook", "watch", "action",
                           "valid_from", "valid_to", "action_id"], history)
     write("ceilings.csv", ["country", "ceiling", "valid_from"], ceilings)
-    print(f"{OUT.relative_to(b.HERE)}: {len(entities)} entities, {len(instruments)} instruments, "
+    print(f"{OUT}: {len(entities)} entities, {len(instruments)} instruments, "
           f"{len(history)} rating periods, {len(ceilings)} ceilings")
 
 

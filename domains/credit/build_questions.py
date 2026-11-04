@@ -8,10 +8,14 @@ disagree with the data after an edit.
 """
 import csv
 import json
+import os
 from pathlib import Path
 
 HERE = Path(__file__).parent
-DATA = HERE / "data"
+# A scaled copy of the domain (scale.py) sets CREDIT_FOLDER: its data is read and its
+# questions written there, with keys computed from the data only, since none were written by hand.
+FOLDER = Path(os.environ.get("CREDIT_FOLDER", HERE))
+DATA = FOLDER / "data"
 SCALE = ["AAA", "AA+", "AA", "AA-", "A+", "A", "A-", "BBB+", "BBB", "BBB-",
          "BB+", "BB", "BB-", "B+", "B", "B-", "CCC", "CC", "C", "RD", "D"]
 NOW = "2026-10-01"
@@ -291,19 +295,23 @@ CHECKLIST = {
 
 
 def main():
+    scaled = FOLDER != HERE
     first = {q["id"]: q for q in json.loads((HERE / "questions.json").read_text())}
     out = []
     for qid, text, fields, key, compute, tests in Q:
         got = compute()
+        if scaled:
+            key = got
         assert got == key, (qid, "by hand", key, "from the data", got)
-        expected = first[qid]["expected"] if qid in first and qid not in ("Q7", "Q9") else json.dumps(key)
+        expected = (first[qid]["expected"] if qid in first and qid not in ("Q7", "Q9") and not scaled
+                    else json.dumps(key))
         out.append({"id": qid, "question": text, "expected": expected, "tests": tests, "fields": fields, "key": key})
     for qid, (text, checklist, tests) in CHECKLIST.items():
         out.append({"id": qid, "question": text, "expected": first[qid]["expected"], "tests": tests,
                     "checklist": checklist})
     out.sort(key=lambda q: int(q["id"][1:]))
-    (HERE / "questions.json").write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
-    print(f"{len(out)} questions, every typed key matches the data")
+    (FOLDER / "questions.json").write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
+    print(f"{len(out)} questions" + (", keys computed from the data" if scaled else ", every typed key matches the data"))
 
 
 if __name__ == "__main__":
