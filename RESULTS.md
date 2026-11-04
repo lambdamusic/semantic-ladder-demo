@@ -147,3 +147,16 @@ holds what they mean, and what changed because of them.
 
 - **The new rule can't be guessed:** `csv` gets Q42 and Q43 wrong in all five runs; every condition with the meaning written down gets them right.
 - **The fixed axiom works:** Q37 is right in all five `csv+axioms` runs (0 of 5 before).
+
+## 4 November 2026: right for the right reason? Credit v2, Sonnet
+
+`results/credit/2026-11-04-2013-sonnet/reasons.md`: `reasons.py` had Sonnet read the reasoning behind every answer graded correct in `csv` and `csv+markdown`, against what each question tests.
+
+| Condition | Correct answers | Sound | Unsound | Unclear |
+|---|---|---|---|---|
+| `csv` | 200 | 156 (78%) | 18 (9%) | 26 (13%) |
+| `csv+markdown` | 235 | 210 (89%) | 6 (3%) | 19 (8%) |
+
+- **Without the definitions, more right answers rest on shaky reasoning:** 9% against 3% unsound. Examples are Marlow's rating taken from file order rather than dates (Q11), and the note's rating read without the notching it tests (Q3).
+- **Most "unclear" verdicts are terse answers:** the system prompt asks for concision, so many answers give the value and an action ID only.
+- **Treat it as indicative:** this grader is an LLM, and some of its verdicts contradict themselves (it marks Q35 "unsound" while saying the reasoning holds). It's a second look, not a score.
