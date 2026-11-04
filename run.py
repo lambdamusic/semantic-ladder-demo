@@ -102,6 +102,8 @@ def main():
     meta = {"domain": args.domain, "model": args.model, "grader": args.grader, "runs": args.runs,
             "conditions": conditions, "started": f"{datetime.now():%Y-%m-%d %H:%M}",
             "questions": len(questions), "commit": commit()}
+    if not (out / "questions.json").exists():  # the questions as asked, keys included, kept with the run
+        (out / "questions.json").write_text(json.dumps(questions, indent=2, ensure_ascii=False) + "\n")
     if not (out / "meta.json").exists():
         (out / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
     # Every prompt is built once, at the start, and kept: editing the data mid-run can't

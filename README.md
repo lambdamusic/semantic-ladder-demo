@@ -57,3 +57,16 @@ python domains/credit/execute.py              # then: the tables for the execute
 
 The model runs from an empty directory with no tools, settings or MCP servers, so it sees
 only the prompt. The keys in `questions.json` are never sent to it.
+
+## The web pages
+
+```bash
+tools/run-web        # http://127.0.0.1:8030
+```
+
+A Django app in `src/web/` that shows the experiment from its own files, read when each
+page opens: this README, the plan and the results log; each domain's data, questions and
+ontology; and every run, with accuracy and intervals, a grid of marks by question, every
+answer to a question, the prompts, and for query runs each session's queries and results.
+No database. It will be mirrored into `docs/` as a static site for GitHub Pages.
+

@@ -181,6 +181,8 @@ def main():
     canon = domain.canonical()
     out = args.resume or HERE / "results" / args.domain / f"{datetime.now():%Y-%m-%d-%H%M}-{providers.split(args.model)[1]}-query"
     out.mkdir(parents=True, exist_ok=True)
+    if not (out / "questions.json").exists():  # the questions as asked, keys included, kept with the run
+        (out / "questions.json").write_text(json.dumps(questions, indent=2, ensure_ascii=False) + "\n")
     if not (out / "meta.json").exists():
         (out / "meta.json").write_text(json.dumps({
             "domain": args.domain, "model": args.model, "grader": args.grader, "runs": args.runs, "mode": "query",
