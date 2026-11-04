@@ -118,3 +118,32 @@ holds what they mean, and what changed because of them.
 - **The same pattern in a second domain:** RDF alone and the length control add nothing; Markdown matches Turtle.
 - **Much larger:** local rules go from 14–20% to 99–100%, and the general questions from 56–58% to 96–98%.
 - **To check before quoting it:** many general questions rest on the dataset's own terms ("research work", which affiliation is "credited"), which only the ontology defines, so some answers marked wrong without it may be defensible readings. A Sonnet run and a review of those questions come first.
+
+## 4 November 2026: querying at 300 issuers, Sonnet
+
+`results/credit_300/2026-11-04-1738-sonnet-query/`: the model never sees the rows. It writes SQL (DuckDB) or SPARQL (rdflib), up to eight rounds, and answers from the results. The same 48 questions as reading at 300 issuers.
+
+| | No definitions | With the definitions (Markdown) |
+|---|---|---|
+| Reading (`csv`, `csv+markdown`) | 80% | 95% |
+| SQL (`sql`, `sql+markdown`) | 86% | 96% |
+| SPARQL (`sparql`, `sparql+ontology`) | 79% | 95% |
+
+- **Querying beats reading only a little:** +6 points without definitions and +1 with them. The definitions are worth about the same in both modes (+10 for SQL, +16 for SPARQL, +15 for reading).
+- **A graph store doesn't help here:** SPARQL without definitions is 7 points below SQL (−11 to −3), and with them the two tie. These questions need joins, not paths, which is why the path questions came next (`domains/credit_paths`).
+- **Lists are where querying pays:** strict list accuracy is 60% for `sql` and 86% for `sql+markdown`, against 51% and 71% reading. Mean F1 is 92–100% everywhere, so the misses are an item or two.
+- **Writing queries was rarely the problem:** 9 of 413 queries failed, 2 of them on the 60-second limit added after one rdflib query ran for two hours. Sessions used six to seven rounds.
+
+## 4 November 2026: credit domain v2, Sonnet
+
+`results/credit/2026-11-04-2013-sonnet/`: the domain changed (commit 18a2f42), so these scores aren't comparable with the runs above. In v1 `csv` got Q42 and Q43 right in every run, so the system-of-record rule was guessable: RATINGS sounds authoritative. In v2 domicile comes from RESEARCH, and names and parents from RATINGS. The axioms' test-record mistake is fixed.
+
+| Condition | Accuracy | Against `csv` |
+|---|---|---|
+| `csv` | 85% | |
+| `csv+ontology` | 99% | +14 (+5 to +25) |
+| `csv+markdown` | 100% | +15 (+6 to +25) |
+| `csv+axioms` | 99% | +14 (+5 to +25) |
+
+- **The new rule can't be guessed:** `csv` gets Q42 and Q43 wrong in all five runs; every condition with the meaning written down gets them right.
+- **The fixed axiom works:** Q37 is right in all five `csv+axioms` runs (0 of 5 before).
