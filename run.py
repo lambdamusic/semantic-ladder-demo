@@ -83,7 +83,7 @@ def main():
 
     domain = importlib.import_module(f"domains.{args.domain}.domain")
     questions = json.loads(domain.QUESTIONS.read_text())
-    conditions = args.only or CONDITIONS
+    conditions = args.only or getattr(domain, "CONDITIONS", CONDITIONS)  # a domain may offer fewer
     canon = domain.canonical()
 
     if args.regrade:
