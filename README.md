@@ -54,6 +54,9 @@ python report.py results/credit/<run>         # rebuild a report
 python domains/credit/csv_to_rdf.py           # after editing a CSV
 python domains/credit/build_questions.py      # after editing a CSV or a question: checks every key against the data
 python domains/credit/execute.py              # then: the tables for the executed condition
+python domains/credit/scale.py 300            # a scaled copy: domains/credit_300
+python domains/credit/paths.py                # 300 issuers plus deep groups and path questions: domains/credit_paths
+python query.py --domain credit_300           # the model writes SQL or SPARQL instead of reading the data
 ```
 
 The model runs from an empty directory with no tools, settings or MCP servers, so it sees
@@ -69,5 +72,12 @@ A Django app in `src/web/` that shows the experiment from its own files, read wh
 page opens: this README, the plan and the results log; each domain's data, questions and
 ontology; and every run, with accuracy and intervals, a grid of marks by question, every
 answer to a question, the prompts, and for query runs each session's queries and results.
-No database. It will be mirrored into `docs/` as a static site for GitHub Pages.
+No database.
+
+```bash
+tools/site-dump      # the same pages as a static site in docs/, for GitHub Pages (needs wget)
+```
+
+It runs its own server on port 8031, mirrors every page with wget, and syncs the result into
+`docs/`. It doesn't commit: check `docs/` and commit it, then point GitHub Pages at `/docs`.
 

@@ -47,7 +47,8 @@ def ontology(request, domain):
     return render(request, "lab/ontology.html", {
         "title": f"{domain}: ontology", "d": info, "tab": "ontology",
         "md": files.md(files.text(folder / "ontology.md")), "ttl": files.text(folder / "ontology.ttl"),
-        "axioms": files.text(folder / "axioms.ttl"), "padding": files.md(files.text(folder / "padding.md"))})
+        "axioms": files.text(folder / "axioms.ttl"), "padding": files.md(files.text(folder / "padding.md")),
+        "diagram": files.diagram(domain)})
 
 
 def run(request, domain, run):

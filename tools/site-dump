@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# The web pages as a static site in docs/, for GitHub Pages (Settings > Pages > /docs on main).
+# Starts its own server on port 8031 (so one on 8030 can keep running), mirrors every page
+# reachable from the home page with wget into build/site, then syncs that into docs/.
+# Nothing is committed or pushed: check docs/ and commit it yourself.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+PORT=8031
+PY=~/Envs/semantics-ladder/bin/python
+[ -x "$PY" ] || PY=~/Envs/credit-graph-lab-2026/bin/python
+command -v wget >/dev/null || { echo "wget is needed: brew install wget"; exit 1; }
+if lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null; then echo "port $PORT is in use"; exit 1; fi
+
+"$PY" src/web/manage.py runserver 127.0.0.1:$PORT --noreload >build-server.log 2>&1 &
+SERVER=$!
+trap 'kill $SERVER 2>/dev/null; rm -f build-server.log' EXIT
+for _ in $(seq 30); do curl -s -o /dev/null http://127.0.0.1:$PORT/ && break; sleep 0.5; done
+
+rm -rf build/site && mkdir -p build/site
+# -m mirror, -k convert links to relative, -E add .html, -p page requisites, -np no parent, -nH no host folder
+wget -q -P build/site -mkEpnp -nH http://127.0.0.1:$PORT/ || true   # wget exits 8 on any 404; checked below
+grep -rl "127.0.0.1:$PORT" build/site --include=*.html | head -5 | sed 's/^/absolute link left in: /' || true
+
+rsync -a --delete --exclude CNAME --exclude .nojekyll build/site/ docs/
+touch docs/.nojekyll   # serve files as they are, without Jekyll
+echo "docs/: $(find docs -name '*.html' | wc -l | tr -d ' ') pages, $(du -sh docs | cut -f1)"

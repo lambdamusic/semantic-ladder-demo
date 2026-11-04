@@ -54,6 +54,12 @@ def domain_info(name):
             "has": {f: (folder / f).exists() for f in ("ontology.ttl", "ontology.md", "axioms.ttl", "padding.md")}}
 
 
+def diagram(domain):
+    """The static path of the domain's ontology diagram, shared by its scaled copies (credit_300 uses credit's), or ""."""
+    name = f"img/{domain.split('_')[0]}-ontology.svg"
+    return name if (settings.WEB_DIR / "static" / name).exists() else ""
+
+
 def text(path):
     return path.read_text() if path.exists() else ""
 
