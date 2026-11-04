@@ -2,30 +2,22 @@
 
 *Written 4 November 2026. The aim is a result solid enough to publish as a blog post and as this repo. The first round's numbers below come from the original experiment, before this repo.*
 
-## Progress (4 November, evening)
+## Progress (4 November, night)
 
 `RESULTS.md` has the findings; this is what's left of the plan.
 
 - **Done:**
-  - Phase 0.
-  - Phase 1 at the base size and at 300 issuers.
-  - Phase 2's loop, with all four stores. The rules now run in the store as well: `sql+executed` and `sparql+axioms`.
-  - Phase 4's research domain, run with Haiku.
-  - The web app and `tools/site-dump`.
-- **Credit domain v2:**
-  - The system-of-record rule could be guessed: `csv` got Q42 right in every run. Domicile now comes from RESEARCH, and names and parents from RATINGS.
-  - Parent chains run entity by entity, across records.
-  - The axioms no longer make `TestRecord` a subclass of `Entity`.
-  - Base reruns are under way with Sonnet and Haiku.
-- **Path questions:**
-  - `domains/credit_paths` is the 300-issuer data plus six groups four to six levels deep.
-  - Q49 to Q61 follow parent and guarantee links: ultimate parents, depth, group size, nearest common ancestor, exposure to a stressed country, and guarantees that cross groups.
-  - Reading and query runs are under way.
-- **Partial credit for lists:** a mean-F1 table in each report, beside the strict grade.
+  - Phases 0 and 1, at the base size and at 300 issuers.
+  - Phase 2 at 300 issuers and on the path domain, with the rules run in the store as well (`sql+executed`, `sparql+axioms`).
+  - Phase 4's research domain, with Sonnet and Haiku, plus its `executed` condition.
+  - Credit domain v2: a system-of-record rule that can't be guessed, and the axioms fixed.
+  - Partial credit for lists, and a reasoning check (`reasons.py`).
+  - The web app, in the first round's structure, and `tools/site-dump`.
 - **Left:**
-  - Query mode at more sizes.
-  - A wrong-reason check.
-  - The research domain's executed condition and query mode.
+  - Query mode at more sizes, with five repeats: three is too few, since one bad session moves a path score by about 30 points.
+  - Data too large to read, where querying should finally pay off.
+  - Research query mode, and research axioms.
+  - Executed tables that keep the merged records and an ultimate-parent column (the research misses).
   - Opus and Gemini, set aside for now.
   - The blog post.
 
