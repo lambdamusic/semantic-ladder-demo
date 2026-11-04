@@ -31,7 +31,8 @@ of Valdoria are made up, and the ontology isn't any rating agency's definitions.
 
 | | |
 |---|---|
-| `run.py` | asks, grades and writes the report |
+| `run.py` | asks, grades and writes the report. Conditions: `csv`, `rdf`, `rdf+ontology`, `csv+ontology`, `csv+markdown` (the same definitions as Markdown) and `csv+padding` (finance text of the same length, about none of this: the length control) |
+| `ontology_to_md.py` | writes `ontology.md` from `ontology.ttl`, so the two can't drift |
 | `grade.py` | grading by code, and by an LLM with a checklist |
 | `report.py` | accuracy with intervals, paired differences, grader agreement |
 | `providers.py` | `ask(text, system, model)` for each provider |
