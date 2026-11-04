@@ -31,7 +31,7 @@ of Valdoria are made up, and the ontology isn't any rating agency's definitions.
 
 | | |
 |---|---|
-| `run.py` | asks, grades and writes the report. Conditions: `csv`, `rdf`, `rdf+ontology`, `csv+ontology`, `csv+markdown` (the same definitions as Markdown) and `csv+padding` (finance text of the same length, about none of this: the length control) |
+| `run.py` | asks, grades and writes the report. Conditions: `csv`, `rdf`, `rdf+ontology`, `csv+ontology`, `csv+markdown` (the same definitions as Markdown) and `csv+padding` (finance text of the same length, about none of this: the length control), and `executed` (the data after its rules have run, from `execute.py`, with no definitions) |
 | `ontology_to_md.py` | writes `ontology.md` from `ontology.ttl`, so the two can't drift |
 | `grade.py` | grading by code, and by an LLM with a checklist |
 | `report.py` | accuracy with intervals, paired differences, grader agreement |
@@ -52,6 +52,7 @@ python run.py --resume results/credit/<run>   # finish a stopped run
 python report.py results/credit/<run>         # rebuild a report
 python domains/credit/csv_to_rdf.py           # after editing a CSV
 python domains/credit/build_questions.py      # after editing a CSV or a question: checks every key against the data
+python domains/credit/execute.py              # then: the tables for the executed condition
 ```
 
 The model runs from an empty directory with no tools, settings or MCP servers, so it sees

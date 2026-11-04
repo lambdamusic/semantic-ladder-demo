@@ -23,7 +23,16 @@ def read(path):
     return path.read_text().strip()
 
 
+EXECUTED_NOTE = ("These tables are the data after its rules have been applied: duplicate records merged into "
+                 "one entity (record_ids lists the records each entity merges), and each rating with the "
+                 "period it held. An empty valid_to means the rating was still in force on 1 October 2026.")
+
+
 def context(condition):
+    if condition == "executed":  # written by execute.py: the rules applied, no definitions
+        tables = ["entities.csv", "instruments.csv", "ratings.csv", "ceilings.csv"]
+        return EXECUTED_NOTE + "\n\n" + "\n\n".join(
+            f"### {name}\n```csv\n{read(DATA / 'executed' / name)}\n```" for name in tables)
     parts = []
     if condition.startswith("csv"):
         for name in CSV_FILES:

@@ -25,7 +25,7 @@ import providers
 import report
 
 HERE = Path(__file__).parent
-CONDITIONS = ["csv", "rdf", "rdf+ontology", "csv+ontology", "csv+markdown", "csv+padding"]
+CONDITIONS = ["csv", "rdf", "rdf+ontology", "csv+ontology", "csv+markdown", "csv+padding", "executed"]
 
 INSTRUCTIONS = """Answer each question below from the data above. Start each answer on a new line with its
 number in bold, like **Q1.**, give the direct answer first, then at most two sentences of
