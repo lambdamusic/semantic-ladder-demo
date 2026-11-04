@@ -134,19 +134,22 @@ holds what they mean, and what changed because of them.
 - **Lists are where querying pays:** strict list accuracy is 60% for `sql` and 86% for `sql+markdown`, against 51% and 71% reading. Mean F1 is 92–100% everywhere, so the misses are an item or two.
 - **Writing queries was rarely the problem:** 9 of 413 queries failed, 2 of them on the 60-second limit added after one rdflib query ran for two hours. Sessions used six to seven rounds.
 
-## 4 November 2026: credit domain v2, Sonnet
+## 4 November 2026: credit domain v2, Sonnet and Haiku
 
 `results/credit/2026-11-04-2013-sonnet/`: the domain changed (commit 18a2f42), so these scores aren't comparable with the runs above. In v1 `csv` got Q42 and Q43 right in every run, so the system-of-record rule was guessable: RATINGS sounds authoritative. In v2 domicile comes from RESEARCH, and names and parents from RATINGS. The axioms' test-record mistake is fixed.
 
-| Condition | Accuracy | Against `csv` |
+Haiku's run is `results/credit/2026-11-04-2028-haiku/`.
+
+| Condition | Sonnet | Haiku |
 |---|---|---|
-| `csv` | 85% | |
-| `csv+ontology` | 99% | +14 (+5 to +25) |
-| `csv+markdown` | 100% | +15 (+6 to +25) |
-| `csv+axioms` | 99% | +14 (+5 to +25) |
+| `csv` | 85% | 78% |
+| `csv+ontology` | 99% (+14, +5 to +25) | 99% (+21, +10 to +32) |
+| `csv+markdown` | 100% (+15, +6 to +25) | 99% (+20, +10 to +32) |
+| `csv+axioms` | 99% (+14, +5 to +25) | 100% (+22, +11 to +33) |
 
 - **The new rule can't be guessed:** `csv` gets Q42 and Q43 wrong in all five runs; every condition with the meaning written down gets them right.
-- **The fixed axiom works:** Q37 is right in all five `csv+axioms` runs (0 of 5 before).
+- **The fixed axiom works:** Q37 is right in all five `csv+axioms` runs for both models (0 of 5 before).
+- **Logic alone is enough for Haiku:** 100% with the axioms and no prose. Q10's slant comes back with the prose: Haiku answers it wrong in 3 of 5 runs with `csv+ontology` and 2 of 5 with `csv+markdown`, and in none with the axioms.
 
 ## 4 November 2026: right for the right reason? Credit v2, Sonnet
 
