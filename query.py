@@ -21,6 +21,7 @@ import csv
 import importlib
 import json
 import re
+import signal
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -37,6 +38,7 @@ HERE = Path(__file__).parent
 CONDITIONS = ["sql", "sql+markdown", "sparql", "sparql+ontology", "sql+executed", "sparql+axioms"]
 ROUNDS = 8
 MAX_ROWS = 60
+TIMEOUT = 60  # seconds per query: a query that runs longer is reported to the model as failed
 
 PROTOCOL = """You can't see the data, but you can query it. {how}
 
@@ -122,6 +124,18 @@ class SPARQLStore:
             return str(x)
 
 
+def timed(run, q):
+    """run(q), stopped after TIMEOUT seconds. rdflib can loop for hours on a bad join."""
+    def stop(*_):
+        raise TimeoutError(f"stopped after {TIMEOUT} seconds")
+    signal.signal(signal.SIGALRM, stop)
+    signal.alarm(TIMEOUT)
+    try:
+        return run(q)
+    finally:
+        signal.alarm(0)
+
+
 def table(cols, rows):
     shown = rows[:MAX_ROWS]
     lines = ["| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
@@ -171,7 +185,7 @@ def converse(domain, condition, questions, model):
     store = store_for(domain, condition)
     first = opening(domain, condition, store, questions)
     transcript = [("user", first)]
-    stats = {"queries": 0, "failed": 0, "rounds": 0}
+    stats = {"queries": 0, "failed": 0, "rounds": 0, "timeouts": 0}
     for rnd in range(ROUNDS + 1):
         text = "\n\n".join(f"### {who}\n\n{msg}" for who, msg in transcript) if rnd else first
         reply = providers.ask(text if rnd else first, domain.SYSTEM, model)
@@ -184,9 +198,10 @@ def converse(domain, condition, questions, model):
         for i, q in enumerate(blocks, 1):
             stats["queries"] += 1
             try:
-                results.append(f"Query {i}:\n\n" + table(*store.run(q)))
+                results.append(f"Query {i}:\n\n" + table(*timed(store.run, q)))
             except Exception as e:
                 stats["failed"] += 1
+                stats["timeouts"] += isinstance(e, TimeoutError)
                 results.append(f"Query {i} failed: {str(e).splitlines()[0][:300]}")
         note = ("This was the last round: give the final answers now, with no more queries."
                 if rnd + 1 >= ROUNDS else "Run more queries, or give the final answers.")
