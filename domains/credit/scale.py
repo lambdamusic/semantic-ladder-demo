@@ -145,7 +145,7 @@ def build(n):
     target = HERE.parent / f"credit_{n}"
     shutil.rmtree(target, ignore_errors=True)
     (target / "data").mkdir(parents=True)
-    for name in ["ontology.ttl", "ontology.md", "padding.md", "domain.py"]:
+    for name in ["ontology.ttl", "ontology.md", "padding.md", "domain.py", "axioms.ttl"]:
         shutil.copy(HERE / name, target / name)
     entities, instruments, actions = generate(n, seed=int(hashlib.sha256(str(n).encode()).hexdigest()[:8], 16))
     for name, extra in [("entities.csv", entities), ("instruments.csv", instruments), ("rating_actions.csv", actions)]:

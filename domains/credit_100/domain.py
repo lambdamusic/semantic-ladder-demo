@@ -38,6 +38,16 @@ def neutral_ontology():
     return text.replace(SLANTED, NEUTRAL)
 
 
+def bare_ontology():
+    """ontology.ttl with every definition and comment taken out: names, codes and structure only."""
+    from rdflib import RDFS, Graph, Namespace
+    skos = Namespace("http://www.w3.org/2004/02/skos/core#")
+    g = Graph().parse(ONTOLOGY)
+    for p in (skos.definition, skos.scopeNote, RDFS.comment):
+        g.remove((None, p, None))
+    return g.serialize(format="turtle").strip()
+
+
 def context(condition):
     if condition == "executed":  # written by execute.py: the rules applied, no definitions
         tables = ["entities.csv", "instruments.csv", "ratings.csv", "ceilings.csv"]
@@ -59,6 +69,15 @@ def context(condition):
         parts.append(f"### ontology.ttl (the vocabulary the data uses)\n"
                      "The codes in the CSV files are the skos:notation values of the concepts below.\n"
                      f"```turtle\n{neutral_ontology()}\n```")
+    elif extra.startswith("axioms"):  # the meaning as logic: no prose, the ontology's names and codes plus OWL and SHACL
+        parts.append("### ontology.ttl, without its definitions (the vocabulary the data uses)\n"
+                     "The codes in the CSV files are the skos:notation values of the concepts below.\n"
+                     f"```turtle\n{bare_ontology()}\n```")
+        parts.append(f"### axioms.ttl (OWL axioms and SHACL rules over the vocabulary)\n```turtle\n{read(HERE / 'axioms.ttl')}\n```")
+        if extra == "axioms+markdown":
+            parts.append(f"### ontology.md (the vocabulary the data uses)\n\n{read(HERE / 'ontology.md')}")
+        elif extra != "axioms":
+            raise ValueError(condition)
     elif extra == "markdown":  # the same definitions, generated from ontology.ttl by ontology_to_md.py
         parts.append(f"### ontology.md (the vocabulary the data uses)\n\n{read(HERE / 'ontology.md')}")
     elif extra == "padding":  # the length control: finance text of the same length, about none of this
