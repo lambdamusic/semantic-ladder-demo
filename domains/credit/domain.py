@@ -28,6 +28,16 @@ EXECUTED_NOTE = ("These tables are the data after its rules have been applied: d
                  "period it held. An empty valid_to means the rating was still in force on 1 October 2026.")
 
 
+SLANTED = "The foreign-currency (FC) one is the headline rating; there may also be a local-currency (LC) one."
+NEUTRAL = "An entity may have a foreign-currency (FC) one, a local-currency (LC) one, or both."
+
+
+def neutral_ontology():
+    text = read(ONTOLOGY)
+    assert text.count(SLANTED) == 1
+    return text.replace(SLANTED, NEUTRAL)
+
+
 def context(condition):
     if condition == "executed":  # written by execute.py: the rules applied, no definitions
         tables = ["entities.csv", "instruments.csv", "ratings.csv", "ceilings.csv"]
@@ -45,6 +55,10 @@ def context(condition):
                 if condition.startswith("csv") else "")
         parts.append(f"### ontology.ttl (the vocabulary the data uses){chr(10) + note if note else ''}\n"
                      f"```turtle\n{read(ONTOLOGY)}\n```")
+    elif extra == "neutral":  # the ontology with its one slanted sentence made neutral: a test of wording
+        parts.append(f"### ontology.ttl (the vocabulary the data uses)\n"
+                     "The codes in the CSV files are the skos:notation values of the concepts below.\n"
+                     f"```turtle\n{neutral_ontology()}\n```")
     elif extra == "markdown":  # the same definitions, generated from ontology.ttl by ontology_to_md.py
         parts.append(f"### ontology.md (the vocabulary the data uses)\n\n{read(HERE / 'ontology.md')}")
     elif extra == "padding":  # the length control: finance text of the same length, about none of this
