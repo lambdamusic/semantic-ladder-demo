@@ -262,3 +262,18 @@ Haiku's run is `results/credit/2026-11-04-2028-haiku/`.
 - **Precomputed chains still win:** `sql+executed` gets every path right in every session.
 - **So the graph's advantage doesn't show here, at any level of meaning.** With rdflib as the store, SPARQL is slower and less steady than SQL. A faster triple store could change that, and is worth trying before concluding against graphs.
 
+## 5 November 2026: ownership paths, SPARQL on GraphDB, Sonnet
+
+`results/credit_paths/2026-11-05-1819-sonnet-query-graphdb/`: the three SPARQL conditions again, on a local GraphDB (free edition, 11.5) instead of rdflib, five repeats. Each session loads exactly the triples rdflib holds, into a repository with no inference, so only the engine changes. Paused once by the Claude usage limit and resumed.
+
+| | rdflib: all / paths | GraphDB: all / paths | GraphDB path score in each session | GraphDB against rdflib |
+|---|---|---|---|---|
+| `sparql` | 59% / 32% | 68% / 40% | 23, 38, 38, 38, 62 | +9 (+6 to +13) |
+| `sparql+ontology` | 77% / 42% | 82% / 60% | 85, 85, 0, 100, 31 | +5 (+1 to +10) |
+| `sparql+axioms` | 84% / 77% | 79% / 68% | 92, 0, 85, 92, 69 | −5 (−8 to −1) |
+
+- **No query timed out on GraphDB.** The seven queries rdflib stopped at 60 seconds in `sparql+ontology` finish there in under 3.
+- **A fast engine helps a little, not much.** +9 and +5 points, and −5 over the graph after the rules. `sql+markdown`, at 98% overall and 100% on paths, stays well ahead.
+- **The poor SPARQL sessions come from the model, not the store.** In `sparql+ontology` run 3 it stopped after three of eight rounds, saying later results were malformed when no query had failed, and left every path answer empty. In run 5 it reran the same entity query in several rounds and ran out before the paths. In `sparql+axioms` run 2 it spent all eight rounds fetching whole classes 60 rows at a time and saw only part of the 540 entities.
+- **So the gap between SQL and SPARQL here is how the model works in the query loop.** With SQL it asks for what each question needs. With SPARQL it more often pages through the graph first. More rounds, or a larger row limit, might close the gap, if SQL gets the same.
+
