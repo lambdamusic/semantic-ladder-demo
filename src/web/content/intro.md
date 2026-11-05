@@ -10,7 +10,7 @@ The experiment sets out to answer five questions:
 2. **Does the form of the meaning matter?** The same definitions as Markdown prose, as RDF, as logical axioms, or as rules already run over the data.
 3. **Should the model read the data or query it?** Have it write SQL or SPARQL instead of reading the rows, and see whether the store needs to be a graph, or whether any database will do.
 4. **Does it hold across models?** Claude Haiku and Sonnet so far; Opus and Gemini later.
-5. **Does it hold in another domain?** Credit ratings first, then research analytics.
+5. **Does the domain matter?** Run the same ladder over domains with different data and different rules, credit ratings and research analytics so far, and see whether the findings change with the domain.
 
 Behind all five is a practical aim: to find out what an ontology is worth to an LLM, separating the meaning it writes down and the rules it runs from its file format.
 

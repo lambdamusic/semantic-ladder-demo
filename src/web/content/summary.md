@@ -59,10 +59,22 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 
 *Still open:* Opus and Gemini, set aside for now.
 
-## 5. Does it hold in another domain?
+## 5. Does the domain matter?
 
-**Answered for two domains: yes, and the gain is larger in the second.**
+**Answered for the two domains so far: the pattern is the same, and the size of the gain depends on the domain.**
 
-The research domain (works, authors, institutions and citations, shaped like OpenAlex but invented) shows the same pattern as credit: RDF alone and the length control add nothing, Markdown matches Turtle, and the definitions lift both models to 96–98%. The gain is larger (+41 and +52 points) because more of its questions rest on the dataset's own rules.
+| | Credit ratings | Research analytics |
+|---|---|---|
+| Data only (`csv`), Sonnet and Haiku | 85% and 78% | 56% and 44% |
+| With the definitions | 99–100% | 96–98% |
+| RDF alone, or the length control | no gain | no gain |
+| Markdown against Turtle | level | level |
+| Executed rules, no definitions | +9 to +15 | +35 to +48 |
 
-*A caveat:* some of the research questions use the dataset's own terms, such as "research work", which only the ontology defines. Some answers marked wrong without the ontology are defensible readings of the question. A review found they're mostly the questions that depend on the local rules anyway.
+- **The findings hold in both:** RDF alone and the length control add nothing, Markdown matches Turtle, and the definitions lift both models to 96–100%.
+- **What changes is how much the data says for itself.** Without the definitions, the models start much lower on research, because more of its questions rest on the dataset's own rules and terms (what counts as a "research work", which affiliation is credited, what an affiliated institute's parent link means). So the definitions are worth +41 to +52 points there, against +14 to +21 on credit. A domain whose meaning is mostly general knowledge gains less, and one with many local conventions gains more.
+- **Executed rules depend more on the domain:** on research they also depend on how the tables were designed, since merging records and rolling up institutions decide what the data can still answer.
+
+*A caveat:* some of the research questions use the dataset's own terms, which only the ontology defines, so some answers marked wrong without it are defensible readings of the question. A review found they're mostly the questions that depend on the local rules anyway.
+
+*Still open:* two domains can show that the domain matters, but not what it is about a domain that matters. A third domain, with a different balance of general and local meaning, would test the explanation above.
