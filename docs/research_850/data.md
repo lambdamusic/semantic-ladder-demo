@@ -12,4 +12,4 @@ The base records stay as they are, so every question keeps its point. 515 of the
 
 Of the 46 keys graded by code, 31 change from the base data's. The 15 that don't are comparisons whose answers hold by design, or questions about one record.
 
-The `rdf` prompts are about 770 KB, against 136 KB for `csv`.
+The `rdf` and `rdf+ontology` prompts are about 770 KB, against 136 KB for `csv`, which is too large for the model's context, so the runs on this dataset leave them out.

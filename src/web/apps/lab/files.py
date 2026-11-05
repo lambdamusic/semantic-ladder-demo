@@ -53,6 +53,9 @@ CONTENT = ROOT / "docs"  # the pages' text
 SECTIONS = [("", "Introduction"), ("data", "Data"), ("questions", "Questions and traps"),
             ("ontology", "Ontology")]
 # A domain is one ontology and one question bank, asked of one or more datasets, each a folder in domains/.
+# Conditions a dataset's runs leave out on purpose, with the reason the score tables give in their row.
+LEFT_OUT = {"research_850": {c: "left out: the prompt, about 770 KB, is too large for the model's context"
+                             for c in ("rdf", "rdf+ontology")}}
 GROUPS = [("credit", "Credit ratings", [("credit", "The base data"), ("credit_300", "At 300 issuers"),
                                          ("credit_paths", "Ownership paths")]),
           ("research", "Research analytics", [("research", "The base data"), ("research_850", "At 850 works")])]
@@ -118,11 +121,14 @@ def headline(domain):
     return sorted(found.values(), key=lambda s: (s["mode"] != "read", s["meta"]["model"], s["id"]))
 
 
-def score_table(runs):
-    """Runs side by side: a column per run, a row per condition in ladder order, blank where a run didn't ask it."""
-    conditions = sorted({c["condition"] for r in runs for c in r["rows"] if c["repeats"]}, key=by_label)
+def score_table(runs, dataset=""):
+    """Runs side by side: a column per run, a row per condition in ladder order, blank where a run didn't ask it,
+    and a row for each condition the dataset leaves out on purpose, saying why."""
+    left_out = LEFT_OUT.get(dataset, {})
+    conditions = sorted({c["condition"] for r in runs for c in r["rows"] if c["repeats"]} | set(left_out), key=by_label)
     cells = [{c["condition"]: c for c in r["rows"] if c["repeats"]} for r in runs]
-    return {"runs": runs, "rows": [{"condition": c, "cells": [x.get(c) for x in cells]} for c in conditions]}
+    return {"runs": runs, "rows": [{"condition": c, "cells": [x.get(c) for x in cells], "left_out": left_out.get(c)}
+                                   for c in conditions]}
 
 
 def domains():

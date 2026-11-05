@@ -38,7 +38,7 @@ def scores(request):
         for d in g["datasets"]:
             rows = [files.summary(n, f) for n, f in files.run_folders(d["name"])]
             latest = next((r for r in rows if r["finished"] and r["mode"] == "read"), None)
-            parts.append(dict(d, table=files.score_table(files.headline(d["name"])), body=files.page(f"{d['name']}/scores"),
+            parts.append(dict(d, table=files.score_table(files.headline(d["name"]), d["name"]), body=files.page(f"{d['name']}/scores"),
                               reading=[r for r in rows if r["mode"] == "read"], querying=[r for r in rows if r["mode"] == "query"],
                               latest=latest and files.run_detail(d["name"], latest["id"])))
         groups.append(dict(g, parts=parts))
