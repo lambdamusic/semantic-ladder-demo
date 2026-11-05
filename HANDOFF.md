@@ -4,7 +4,8 @@ The previous session ran in `~/dev2/credit-graph-lab_2026` and built this repo f
 
 ## State
 
-- **Every run is finished and committed** (last commit `419a9ce`). Nothing is running in the background.
+- **Every run is finished and committed**, and `main` is pushed to https://github.com/lambdamusic/semantic-ladder-demo. Nothing is running in the background.
+- **Open work is in `backlog/TODO.md`**, which is gitignored and local. Start there: `/backlog next`.
 - **`site/` is generated and uncommitted:** 974 pages, 20 MB, made by `tools/site-dump` after the last run. Michele will check it, commit it, push the repo, and set Settings > Pages > Source to "GitHub Actions". `.github/workflows/pages.yml` then publishes `site/` on each push to `main`. Rerun `tools/site-dump` after any new run or page edit. `docs/` is kept for Markdown documentation.
 - **The web app** has the first round's structure. In the sidebar, "The experiment" holds the introduction, results log, plan, all runs and the README. Each domain then gets its own group: Credit ratings, Credit at 300 issuers, Credit: ownership paths, Research analytics. Each group has Introduction, Data, Questions and traps, Ontology and Results pages. The text comes from `src/web/content/`. The theme is teal and amber, so it looks different from the credit lab's navy.
 
