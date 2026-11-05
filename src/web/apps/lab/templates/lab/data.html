@@ -1,14 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <p class="flag">Synthetic: every record here is invented.</p>
-<div class="prose">{{ body }}</div>
-{% for t in d.tables %}
-<section class="query">
-  <div class="qhead"><strong><code>{{ t.name }}</code></strong><span class="meta">{{ t.n }} rows</span></div>
-  <div class="tablewrap"><table>
-    <thead><tr>{% for h in t.header %}<th>{{ h }}</th>{% endfor %}</tr></thead>
-    <tbody>{% for row in t.rows %}<tr>{% for v in row %}<td>{{ v }}</td>{% endfor %}</tr>{% endfor %}</tbody>
-  </table></div>
-</section>
+{% for p in parts %}
+{% if parts|length > 1 %}<h2 id="{{ p.name }}">{{ p.label }}</h2>{% endif %}
+<div class="status">{% for t in p.tables %}<span class="pill ok">{{ t.name }}: {{ t.n }} rows</span>{% endfor %}<span class="pill ok">{{ p.questions|length }} questions</span></div>
+<div class="prose">{{ p.body }}</div>
+{% if forloop.first %}{% for t in p.tables %}{% include "lab/_csv.html" %}{% endfor %}
+{% else %}<details class="source"><summary>The files in full</summary>{% for t in p.tables %}{% include "lab/_csv.html" %}{% endfor %}</details>{% endif %}
 {% endfor %}
 {% endblock %}

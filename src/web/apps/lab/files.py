@@ -55,8 +55,10 @@ def doc(name):
 CONTENT = settings.WEB_DIR / "content"
 SECTIONS = [("", "Introduction"), ("data", "Data"), ("questions", "Questions and traps"),
             ("ontology", "Ontology"), ("results", "Results")]
-FAMILIES = [("credit", "Credit ratings"), ("credit_300", "Credit at 300 issuers"),
-            ("credit_paths", "Credit: ownership paths"), ("research", "Research analytics")]
+# A domain is one ontology and one question bank, asked of one or more datasets, each a folder in domains/.
+GROUPS = [("credit", "Credit ratings", [("credit", "The base data"), ("credit_300", "At 300 issuers"),
+                                         ("credit_paths", "Ownership paths")]),
+          ("research", "Research analytics", [("research", "The data")])]
 
 
 def page(name):
@@ -66,14 +68,33 @@ def page(name):
 
 
 def nav():
-    """The sidebar's domain groups: each domain with a page per section."""
-    return [{"name": d, "title": title, "sections": [{"slug": s, "label": label,
-             "url": f"/domains/{d}/" + (f"{s}/" if s else "")} for s, label in SECTIONS]}
-            for d, title in FAMILIES if (DOMAINS / d / "questions.json").exists()]
+    """The sidebar's domains, each with a page per section, and its datasets."""
+    return [{"name": g, "title": title, "datasets": [{"name": d, "label": label} for d, label in sets
+                                                     if (DOMAINS / d / "questions.json").exists()],
+             "sections": [{"slug": s, "label": label, "url": f"/domains/{g}/" + (f"{s}/" if s else "")}
+                          for s, label in SECTIONS]}
+            for g, title, sets in GROUPS]
+
+
+def group(name):
+    """The domain a name belongs to, whether it names the domain or one of its datasets, or None."""
+    return next((g for g in nav() if name == g["name"] or name in {d["name"] for d in g["datasets"]}), None)
 
 
 def title(domain):
-    return dict(FAMILIES).get(domain, domain)
+    g = group(domain)
+    return g["title"] if g else domain
+
+
+def where(dataset):
+    """A dataset as the pages name it: "Credit ratings: at 300 issuers", or just the domain if it has one dataset."""
+    g = group(dataset)
+    if not g:
+        return dataset
+    if len(g["datasets"]) == 1:
+        return g["title"]
+    label = next(d["label"] for d in g["datasets"] if d["name"] == dataset)
+    return f"{g['title']}: {label[0].lower()}{label[1:]}"
 
 
 def trap(q):
@@ -174,7 +195,7 @@ def summary(domain, folder):
         m, lo, hi = report.bootstrap(list(report.per_question(sheets, questions).values()))
         rows.append({"condition": c, "repeats": len(sheets), "acc": round(100 * m), "lo": round(100 * lo), "hi": round(100 * hi)})
     done = sum(r["repeats"] for r in rows)
-    return {"domain": domain, "id": folder.name, "meta": meta, "rows": rows, "questions": len(questions),
+    return {"domain": domain, "where": where(domain), "id": folder.name, "meta": meta, "rows": rows, "questions": len(questions),
             "mode": meta.get("mode", "read"), "done": done, "planned": meta["runs"] * len(meta["conditions"]),
             "finished": (folder / "report.md").exists() and done >= meta["runs"] * len(meta["conditions"])}
 

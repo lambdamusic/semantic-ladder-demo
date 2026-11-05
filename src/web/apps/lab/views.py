@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from . import files
 
@@ -13,8 +13,9 @@ def nav(request):
 def home(request):
     return render(request, "lab/home.html", {"title": "The semantics ladder: how much does an LLM gain from being told what data means?",
                                              "body": files.page("intro"),
-                                             "domains": [dict(d, runs=runs, table=files.score_table(runs))
-                                                         for d in files.nav() for runs in [files.headline(d["name"])]]})
+                                             "domains": [dict(g, parts=[dict(d, table=files.score_table(files.headline(d["name"])))
+                                                                           for d in g["datasets"]])
+                                                         for g in files.nav()]})
 
 
 def summary(request):
@@ -31,50 +32,83 @@ def runs(request):
     return render(request, "lab/runs.html", {"title": "All runs", "runs": rows})
 
 
-def _domain(name):
-    info = files.domain_info(name)
-    if not info:
-        raise Http404(name)
-    return info
+def _parts(domain, section):
+    """A domain's datasets for one section: each dataset's files and questions, and its own text for the
+    section. A dataset's old address goes to its part of the domain's page."""
+    g = files.group(domain)
+    if not g:
+        raise Http404(domain)
+    if domain != g["name"]:  # on the introduction, the dataset's heading; elsewhere, its part of the page
+        label = next(d["label"] for d in g["datasets"] if d["name"] == domain)
+        anchor = domain if section else label.lower().replace(" ", "-")
+        raise Moved(f"/domains/{g['name']}/" + (f"{section}/" if section else "") + f"#{anchor}")
+    return g, [dict(files.domain_info(d["name"]), label=d["label"], body=files.page(f"{d['name']}/{section or 'intro'}"))
+               for d in g["datasets"]]
 
 
-def _title(domain, section):
-    return f"{files.title(domain)}: {section}" if section else files.title(domain)
+class Moved(Exception):
+    pass
 
 
+def moved(view):
+    """Send a dataset's old page address on to the domain's page."""
+    def wrapped(request, *args, **kwargs):
+        try:
+            return view(request, *args, **kwargs)
+        except Moved as m:
+            return redirect(str(m), permanent=True)
+    return wrapped
+
+
+@moved
 def domain(request, domain):
-    info = _domain(domain)
-    return render(request, "lab/domain.html", {"title": _title(domain, ""), "d": info, "body": files.page(f"{domain}/intro"),
-                                               "headline": (h := files.headline(domain)), "table": files.score_table(h)})
+    g, parts = _parts(domain, "")
+    for p in parts:
+        p["table"] = files.score_table(files.headline(p["name"]))
+    return render(request, "lab/domain.html", {"title": g["title"], "g": g, "parts": parts,
+                                               "body": files.page(f"{domain}/intro")})
 
 
+@moved
 def questions(request, domain):
-    info = _domain(domain)
-    cards = [dict(q, trap=files.trap(q)[0], why=files.trap(q)[1]) for q in info["questions"]]
-    return render(request, "lab/questions.html", {"title": _title(domain, "questions and traps"), "d": info, "cards": cards,
-                                                  "body": files.page(f"{domain}/questions")})
+    g, parts = _parts(domain, "questions")
+    card = lambda q: dict(q, trap=files.trap(q)[0], why=files.trap(q)[1])
+    seen = {q["id"] for q in parts[0]["questions"]}
+    extra = []
+    for p in parts[1:]:  # questions only some datasets ask, such as the path questions
+        own = [card(q) for q in p["questions"] if q["id"] not in seen]
+        seen |= {q["id"] for q in own}
+        if own:
+            extra.append(dict(p, cards=own))
+    return render(request, "lab/questions.html", {"title": f"{g['title']}: questions and traps", "g": g,
+                                                  "cards": [card(q) for q in parts[0]["questions"]],
+                                                  "extra": extra, "many": len(parts) > 1, "body": parts[0]["body"]})
 
 
+@moved
 def data(request, domain):
-    return render(request, "lab/data.html", {"title": _title(domain, "the data"), "d": _domain(domain),
-                                             "body": files.page(f"{domain}/data")})
+    g, parts = _parts(domain, "data")
+    return render(request, "lab/data.html", {"title": f"{g['title']}: the data", "g": g, "parts": parts})
 
 
+@moved
 def results(request, domain):
-    info = _domain(domain)
-    rows = [files.summary(d, f) for d, f in files.run_folders(domain)]
-    latest = next((r for r in rows if r["finished"] and r["mode"] == "read"), None)
-    return render(request, "lab/results.html", {
-        "title": _title(domain, "results"), "d": info, "body": files.page(f"{domain}/results"),
-        "reading": [r for r in rows if r["mode"] == "read"], "querying": [r for r in rows if r["mode"] == "query"],
-        "latest": latest and files.run_detail(domain, latest["id"])})
+    g, parts = _parts(domain, "results")
+    for p in parts:
+        rows = [files.summary(d, f) for d, f in files.run_folders(p["name"])]
+        latest = next((r for r in rows if r["finished"] and r["mode"] == "read"), None)
+        p.update(reading=[r for r in rows if r["mode"] == "read"], querying=[r for r in rows if r["mode"] == "query"],
+                 latest=latest and files.run_detail(p["name"], latest["id"]))
+    return render(request, "lab/results.html", {"title": f"{g['title']}: results", "g": g, "parts": parts,
+                                                "many": len(parts) > 1})
 
 
+@moved
 def ontology(request, domain):
-    info = _domain(domain)
-    folder = info["folder"]
+    g, parts = _parts(domain, "ontology")
+    folder = parts[0]["folder"]  # one ontology for the domain: the first dataset's
     return render(request, "lab/ontology.html", {
-        "title": _title(domain, "the ontology"), "d": info, "body": files.page(f"{domain}/ontology"),
+        "title": f"{g['title']}: the ontology", "body": parts[0]["body"],
         "md": files.md(files.text(folder / "ontology.md")), "ttl": files.text(folder / "ontology.ttl"),
         "axioms": files.text(folder / "axioms.ttl"), "padding": files.md(files.text(folder / "padding.md")),
         "diagram": files.diagram(domain)})

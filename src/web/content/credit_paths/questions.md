@@ -1,4 +1,4 @@
-The first 48 are the credit domain's questions, keyed on this data. **Q49 to Q61 follow links:**
+The ownership paths dataset asks the 48 questions above, keyed on its own data, and 13 more that follow links. Their keys below are computed from that dataset.
 
 | What they ask | Questions |
 |---|---|

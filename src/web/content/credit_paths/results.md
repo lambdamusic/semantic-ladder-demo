@@ -1,4 +1,4 @@
-## What the runs show (Sonnet)
+Sonnet. The query runs used three repeats.
 
 | | All 61 questions | The 13 path questions |
 |---|---|---|

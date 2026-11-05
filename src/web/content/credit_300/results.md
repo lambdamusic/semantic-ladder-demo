@@ -1,4 +1,4 @@
-## What the runs show (Sonnet)
+Sonnet, on the version 1 rules.
 
 | | No definitions | With the definitions | Rules executed |
 |---|---|---|---|

@@ -1,4 +1,4 @@
-Each question looks like a lookup, and each has an obvious wrong answer. Only the question text is sent to the model, which must give its answer as a typed JSON field. The trap and the key are never sent. Keys are computed from the data, and each base key is checked against one written by hand, so the two can't silently disagree.
+Each question looks like a lookup, and each has an obvious wrong answer. Only the question text is sent to the model, which must give its answer as a typed JSON field. The trap and the key are never sent. Keys are computed from the data, and each base key is checked against one written by hand, so the two can't silently disagree. The keys shown are the base data's; the other datasets compute their own.
 
 ## The implicit meanings
 
