@@ -309,7 +309,7 @@ def main():
     questions = json.loads(domain.QUESTIONS.read_text())
     conditions = args.only or CONDITIONS
     canon = domain.canonical()
-    out = args.resume or ROOT / "results" / args.domain / f"{datetime.now():%Y-%m-%d-%H%M}-{providers.split(args.model)[1]}-query" + ("-graphdb" if STORE == "graphdb" else "")
+    out = args.resume or ROOT / "results" / args.domain / f"{datetime.now():%Y-%m-%d-%H%M}-{providers.split(args.model)[1]}-query{'-graphdb' if STORE == 'graphdb' else ''}"
     out.mkdir(parents=True, exist_ok=True)
     if not (out / "questions.json").exists():  # the questions as asked, keys included, kept with the run
         (out / "questions.json").write_text(json.dumps(questions, indent=2, ensure_ascii=False) + "\n")
