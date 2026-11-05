@@ -19,7 +19,7 @@ MARK = {"correct": "✅", "partial": "🟡", "wrong": "❌"}
 def md(text):
     """Markdown to HTML, with links to the repo's own Markdown files pointed at their pages."""
     html = markdown.markdown(text, extensions=["tables", "fenced_code", "toc"])
-    for name, url in (("README.md", "/readme/"), ("PLAN.md", "/plan/"), ("RESULTS.md", "/log/")):
+    for name, url in (("README.md", "/readme/"), ("RESULTS.md", "/log/")):
         html = html.replace(f'href="{name}"', f'href="{url}"')
     return mark_safe(html)
 

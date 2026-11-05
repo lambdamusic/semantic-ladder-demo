@@ -94,7 +94,7 @@ general conventions.
   `canonical()` merges author records by ORCID only. It doesn't merge a preprint with its
   published version, because Q20 asks which records are preprints, and merging would accept
   the wrong record of the pair.
-- **Field-normalised citations,** the plan's "normalisation" trap, aren't covered: the data has
+- **Field-normalised citations,** the "normalisation" trap planned for this domain, aren't covered: the data has
   no fields, and the trap needs a decimal answer.
 - **The names are invented, but could collide with real ones.** Some person names (Pieter Maas,
   Jonas Brandt) are common enough to belong to real people, and some place-based names

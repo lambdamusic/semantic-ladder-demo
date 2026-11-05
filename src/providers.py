@@ -32,5 +32,5 @@ def ask(text, system, model):
     if provider == "claude":
         return ask_claude(text, system, name)
     if provider == "gemini":
-        raise NotImplementedError("Gemini is a later step: see PLAN.md, Phase 3")
+        raise NotImplementedError("Gemini is a later step: see backlog #7")
     raise ValueError(f"unknown provider {provider!r}")

@@ -17,7 +17,7 @@ def home(request):
 
 
 def doc(request, name):
-    titles = {"README": "The repository", "PLAN": "The plan", "RESULTS": "Results log"}
+    titles = {"README": "The repository", "RESULTS": "Results log"}
     return render(request, "lab/doc.html", {"title": titles[name], "body": files.doc(name), "name": name})
 
 

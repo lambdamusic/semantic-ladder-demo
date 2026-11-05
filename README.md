@@ -8,8 +8,7 @@ them, and every answer is graded by code. After Andrea Splendiani's
 ["Ontologies for AI in practice / part I"](https://www.linkedin.com/pulse/ontologies-ai-practice-part-i-andrea-splendiani-fpihe/)
 (October 2026), which ran a family-tree question up a similar ladder.
 
-`RESULTS.md` records what each run showed, in order. `PLAN.md` sets out the questions the
-experiment should answer and what's left to do.
+`RESULTS.md` records what each run showed, in order.
 
 **All the data is invented.** The credit domain's companies, LEIs, ratings, Valdoria and
 Corvenia are made up, and its ontology isn't any rating agency's definitions. The research
@@ -81,7 +80,7 @@ tools/run-web        # http://127.0.0.1:8030
 ```
 
 A Django app in `src/web/` that shows the experiment from its own files, read when each
-page opens: this README, the plan and the results log; each domain's data, questions and
+page opens: this README and the results log; each domain's data, questions and
 ontology; and every run, with accuracy and intervals, a grid of marks by question, every
 answer to a question, the prompts, and for query runs each session's queries and results.
 No database. The pages' text is in `src/web/content/`.

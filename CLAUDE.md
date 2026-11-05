@@ -2,7 +2,7 @@
 
 An experiment on how much an LLM gains from being told what data means. It asks the same questions over the same invented data in different forms (CSV, RDF, ontology as Turtle or Markdown, OWL and SHACL axioms, rules already executed), reading the rows or writing SQL and SPARQL over them, and grades the answers by code. It's meant to become a public repo and a blog post. Built by Michele Pasin. It started as a clean copy of the semantics-ladder folder in `~/dev2/credit-graph-lab_2026`, which is a separate project.
 
-Read `README.md` for the layout and commands, `PLAN.md` for the phases and what's left, `RESULTS.md` for every run's findings in order, and the newest note in `backlog/log/` for where the last session stopped. Open work is in `backlog/TODO.md`, managed with the `backlog` skill. The backlog is gitignored, so it stays local.
+Read `README.md` for the layout and commands, `RESULTS.md` for every run's findings in order, and the newest note in `backlog/log/` for where the last session stopped. Open work is in `backlog/TODO.md`, managed with the `backlog` skill, and the plan the experiment was built from is archived in `backlog/plans/000-original-plan.md`. The backlog is gitignored, so it stays local.
 
 ## Working here
 
@@ -13,7 +13,7 @@ Read `README.md` for the layout and commands, `PLAN.md` for the phases and what'
 - **Paths:** the macOS username is `michele.pasin`, so check every `/Users/` path.
 - **Runs take time.** A reading run takes 10 to 30 minutes, and a query run with six conditions takes about an hour. Run them in the background and don't edit a domain's files while a run on that domain is going. Prompts are frozen at the start of a run, but query mode reads the store's data at each session.
 - **Web app:** `tools/run-web` serves http://127.0.0.1:8030. Michele usually runs it himself, so don't start or stop his server. `tools/site-dump` uses its own server on port 8031 and writes `site/`. `.github/workflows/pages.yml` publishes `site/` to GitHub Pages on a push to `main`.
-- **Docs are for readers who only know this repo:** the README, plan, results log and web pages describe the experiment as it stands, not what changed from the pilot that came before it.
+- **Docs are for readers who only know this repo:** the README, results log and web pages describe the experiment as it stands, not what changed from the pilot that came before it.
 
 ## Conventions
 

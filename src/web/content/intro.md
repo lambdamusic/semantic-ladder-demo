@@ -23,6 +23,6 @@ A second ladder asks the same questions without showing the rows. The model writ
 
 ## Method
 
-The models run through the `claude` command line from an empty directory, with no tools, so they see only the prompt. Each condition is asked five times. A question's score is its mean over the repeats, a condition's accuracy is the mean over questions, and intervals come from a bootstrap over questions. Differences between conditions are paired, question by question. The [results log](/log/) records every run's findings in order, and the [plan](/plan/) says what comes next.
+The models run through the `claude` command line from an empty directory, with no tools, so they see only the prompt. Each condition is asked five times. A question's score is its mean over the repeats, a condition's accuracy is the mean over questions, and intervals come from a bootstrap over questions. Differences between conditions are paired, question by question. The [results log](/log/) records every run's findings in order.
 
 The idea follows Andrea Splendiani's ["Ontologies for AI in practice / part I"](https://www.linkedin.com/pulse/ontologies-ai-practice-part-i-andrea-splendiani-fpihe/) (October 2026), which ran a family-tree question up a similar ladder.
