@@ -83,14 +83,26 @@ def trap(q):
 
 
 def headline(domain):
-    """The latest finished run of each mode, for a domain's introduction."""
+    """The finished runs on the domain's current questions, the latest for each model, mode and set of
+    conditions: reading before querying, then by model, oldest first."""
+    current = json.loads((DOMAINS / domain / "questions.json").read_text())
     found = {}
-    for d, f in run_folders(domain):
+    for d, f in run_folders(domain):  # newest first
+        own = f / "questions.json"
+        if own.exists() and json.loads(own.read_text()) != current:
+            continue  # asked before the domain last changed: its keys differ
         s = summary(d, f)
-        key = (s["mode"], s["meta"]["model"])
+        key = (s["mode"], s["meta"]["model"], frozenset(s["meta"]["conditions"]))
         if s["finished"] and key not in found:
             found[key] = s
-    return sorted(found.values(), key=lambda s: (s["mode"], s["meta"]["model"]))
+    return sorted(found.values(), key=lambda s: (s["mode"] != "read", s["meta"]["model"], s["id"]))
+
+
+def score_table(runs):
+    """Runs side by side: a column per run, a row per condition in ladder order, blank where a run didn't ask it."""
+    conditions = sorted({c["condition"] for r in runs for c in r["rows"] if c["repeats"]}, key=by_label)
+    cells = [{c["condition"]: c for c in r["rows"] if c["repeats"]} for r in runs]
+    return {"runs": runs, "rows": [{"condition": c, "cells": [x.get(c) for x in cells]} for c in conditions]}
 
 
 def domains():
