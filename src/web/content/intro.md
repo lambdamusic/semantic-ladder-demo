@@ -14,11 +14,11 @@ The experiment sets out to answer five questions:
 
 Behind all five is a practical aim: to find out what an ontology is worth to an LLM, separating the meaning it writes down and the rules it runs from its file format.
 
-The [results summary](/summary/) takes each goal in turn and says how far the runs have answered it.
+The [findings](/findings/) take each goal in turn and say how far the runs have answered it.
 
 ## Method
 
-The models run through the `claude` command line from an empty directory, with no tools, so they see only the prompt. Each condition is asked five times. A question's score is its mean over the repeats, a condition's accuracy is the mean over questions, and intervals come from a bootstrap over questions. Differences between conditions are paired, question by question. The [results log](/log/) records every run's findings in order.
+The models run through the `claude` command line from an empty directory, with no tools, so they see only the prompt. Each condition is asked five times. A question's score is its mean over the repeats, a condition's accuracy is the mean over questions, and intervals come from a bootstrap over questions. Differences between conditions are paired, question by question. The [lab notebook](/log/) records every run's findings in the order they ran.
 
 The idea follows Andrea Splendiani's ["Ontologies for AI in practice / part I"](https://www.linkedin.com/pulse/ontologies-ai-practice-part-i-andrea-splendiani-fpihe/) (October 2026), which ran a family-tree question up a similar ladder.
 
@@ -68,4 +68,4 @@ Read across, D1 against D4, D2 against D5 and D3 against D6 compare SQL with SPA
 
 ## Results
 
-The [results summary](/summary/) takes the goals in turn and says how far the runs have answered each. Every domain's Results page has its runs, and the [results log](/log/) has every run's findings in order.
+The [findings](/findings/) take the goals in turn and say how far the runs have answered each. The [results](/results/) put each dataset's latest runs side by side, and the [lab notebook](/log/) records what each run showed, in the order they ran.

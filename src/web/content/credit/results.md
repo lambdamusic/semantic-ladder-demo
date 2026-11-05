@@ -4,4 +4,4 @@
 - **One sentence can slant an answer.** The ontology called the foreign-currency rating "the headline rating". With it, Q10 ("is Valdoria Telecom investment grade?") was right in 1 run of 5. Made neutral, it was right in 5 of 5. The axioms, which carry no prose, give no slant.
 - **Executed rules help as much as definitions:** +9 points on the base data.
 
-The [results log](/log/) has the detail for each run. The tables below list every run on the base data, version 1 and version 2 together. Each run is graded against the keys it ran with.
+The [lab notebook](/log/) has the detail for each run. The tables below list every run on the base data, version 1 and version 2 together. Each run is graded against the keys it ran with.

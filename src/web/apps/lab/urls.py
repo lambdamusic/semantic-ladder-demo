@@ -1,11 +1,14 @@
 from django.urls import path
+from django.views.generic import RedirectView
 
 from . import views
 
 urlpatterns = [
     path("", views.home, name="home"),
     path("readme/", views.doc, {"name": "README"}, name="readme"),
-    path("summary/", views.summary, name="summary"),
+    path("findings/", views.findings, name="findings"),
+    path("results/", views.all_results, name="results"),
+    path("summary/", RedirectView.as_view(url="/findings/", permanent=True)),
     path("log/", views.doc, {"name": "RESULTS"}, name="log"),
     path("runs/", views.runs, name="runs"),
     path("domains/<str:domain>/", views.domain, name="domain"),

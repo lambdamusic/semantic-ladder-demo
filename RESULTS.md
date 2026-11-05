@@ -1,6 +1,6 @@
-# Results log
+# Lab notebook
 
-What each run showed, newest last. The reports in `results/` hold the numbers; this file
+What each run showed, in the order they ran, newest last. The reports in `results/` hold the numbers; this file
 holds what they mean, and what changed because of them.
 
 ## 4 November 2026: baseline, ten questions

@@ -15,12 +15,19 @@ def home(request):
                                              "body": files.page("intro")})
 
 
-def summary(request):
-    return render(request, "lab/doc.html", {"title": "Results summary", "body": files.page("summary")})
+def findings(request):
+    return render(request, "lab/doc.html", {"title": "Findings", "body": files.page("findings")})
+
+
+def all_results(request):
+    """Every domain and dataset, with its latest runs side by side."""
+    groups = [dict(g, parts=[dict(d, table=files.score_table(files.headline(d["name"]))) for d in g["datasets"]])
+              for g in files.nav()]
+    return render(request, "lab/all_results.html", {"title": "Results", "body": files.page("results"), "groups": groups})
 
 
 def doc(request, name):
-    titles = {"README": "The repository", "RESULTS": "Results log"}
+    titles = {"README": "The repository", "RESULTS": "Lab notebook"}
     return render(request, "lab/doc.html", {"title": titles[name], "body": files.doc(name), "name": name})
 
 
