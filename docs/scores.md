@@ -1,0 +1,3 @@
+Each table puts a dataset's latest finished runs side by side: a column per run, a row per condition, with accuracy and its 95% interval, as the [method](/method/#grading) defines them. Only runs on the dataset's current questions are shown, and a newer run replaces an older one that asked fewer of the same conditions. Click a column's heading for the run. Under each table are notes on what the runs show, every run on the dataset, and the latest reading run question by question.
+
+What the numbers mean for each goal is in the [conclusions](/conclusions/). Every run, on every dataset, is in the [run archive](/runs/).

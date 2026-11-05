@@ -81,8 +81,8 @@ tools/run-web        # http://127.0.0.1:8030
 ```
 
 A Django app in `src/web/` that shows the experiment from its own files, read when each
-page opens: the introduction, the findings and the results; each domain's data, questions and
-ontology; and every run, with accuracy and intervals, a grid of marks by question, every
+page opens, in the order of a paper: the goals and the method; each domain's data, questions and
+ontology; the scores, the conclusions, and an archive of every run, with accuracy and intervals, a grid of marks by question, every
 answer to a question, the prompts, and for query runs each session's queries and results.
 No database. The pages' text is in `docs/`. `RESULTS.md`, the lab notebook, records what each run showed in the order they ran; it isn't part of the pages.
 

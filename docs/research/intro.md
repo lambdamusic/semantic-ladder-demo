@@ -17,4 +17,4 @@ Five local rules are stated only in the ontology:
 - Journal tiers count upwards, and `K0` is a delisting.
 - An affiliated institute (`AFF`) is not a unit of its parent.
 
-**In this section:** the [data](/domains/research/data/), the [questions and their traps](/domains/research/questions/), the [ontology](/domains/research/ontology/), and the [results](/domains/research/results/).
+**In this section:** the [data](/domains/research/data/), the [questions and their traps](/domains/research/questions/), the [ontology](/domains/research/ontology/), and the [scores](/scores/#research).

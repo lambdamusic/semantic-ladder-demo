@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="prose">{{ body }}</div>
+{% for g in groups %}
+<h2 id="{{ g.name }}"><a href="/domains/{{ g.name }}/">{{ g.title }}</a></h2>
+{% for p in g.parts %}
+<section id="{{ p.name }}">
+{% if g.parts|length > 1 %}<h3>{{ p.label }}</h3>{% endif %}
+{% if p.table.runs %}{% include "lab/_score_table.html" with t=p.table %}{% endif %}
+<div class="prose">{{ p.body }}</div>
+{% if p.reading or p.querying %}<details class="source"><summary>Every run on this dataset</summary>
+{% if p.reading %}<h4>Reading the data</h4>{% with runs=p.reading %}{% include "lab/_runs_table.html" %}{% endwith %}{% endif %}
+{% if p.querying %}<h4>Writing queries</h4>{% with runs=p.querying %}{% include "lab/_runs_table.html" %}{% endwith %}{% endif %}
+</details>{% endif %}
+{% if p.latest %}{% with r=p.latest %}
+<details class="source"><summary>Question by question: the latest finished reading run, {{ r.id }}</summary>
+<p class="note">One mark per repeat; hover for the grader's reason, click a question for every answer to it. <a href="/runs/{{ r.domain }}/{{ r.id }}/">The run's page</a>.</p>
+{% include "lab/_grid.html" %}
+</details>
+{% endwith %}{% endif %}
+</section>
+{% endfor %}{% endfor %}
+{% endblock %}

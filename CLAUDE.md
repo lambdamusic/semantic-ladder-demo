@@ -20,4 +20,4 @@ Read `README.md` for the layout and commands, `RESULTS.md` (the lab notebook) fo
 - Every key is computed from the data by the domain's `build_questions.py`, and checked against a key written by hand in the base domains. Never edit `questions.json` by hand.
 - Each run folder keeps its own `questions.json`, prompts and `meta.json` (with the commit). Regrading (`src/run.py --regrade <run>`) uses the run's own questions, because keys change when a domain does.
 - A domain's meaning lives in `ontology.ttl`. `ontology.md` is generated from it by `src/ontology_to_md.py`, and must never be edited by hand.
-- The web pages' text lives in `docs/`: `docs/intro.md`, `findings.md` and `results.md`, and `docs/<dataset>/<section>.md`. The numbers in a page's text don't update themselves, but the tables below the text do.
+- The web pages' text lives in `docs/`: `docs/goals.md`, `method.md`, `scores.md` and `conclusions.md`, and `docs/<dataset>/<section>.md` (a dataset's `scores.md` goes under its table on the scores page). The numbers in a page's text don't update themselves, but the tables below the text do.

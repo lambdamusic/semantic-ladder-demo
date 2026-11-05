@@ -1,31 +1,26 @@
-If the facts stay the same, **how much better does an LLM answer when it's told what they mean?** And does it matter how the meaning is written down: as prose, as RDF, as logical axioms, or as rules already run over the data?
+How the experiment is run, and the conditions it compares. The [domains](/domains/credit/) describe the data and the questions, the [scores](/scores/) give the numbers, and the [conclusions](/conclusions/) say what they mean for each goal.
 
-The experiment asks the same questions over the same invented data, given in different forms, and grades the answers by code against keys computed from the data. Every question hides a meaning that the rows don't state: an implicit meaning that any analyst would know, or a local rule that only this dataset sets for itself.
+## The runs
 
-## Goals
+A run asks one model every question of one dataset under several conditions, each a few times over.
 
-The experiment sets out to answer five questions:
+- **The models:** Claude Haiku and Sonnet, through the `claude` command line in print mode, from an empty directory with no tools, so they see only the prompt.
+- **Repeats:** each condition is asked five times, unless a run says otherwise; the querying runs so far used three.
+- **The prompt:** the data in the condition's form, then the questions, each to be answered in a sentence or two that cites the records used, and a closing JSON block that gives each answer in set fields. A run keeps its own prompts, so each one can be read on the run's page.
 
-1. **Does written-down meaning help?** Compare answers given with the data's definitions against answers given without them, while ruling out that a longer prompt alone explains the difference.
-2. **Does the form of the meaning matter?** The same definitions as Markdown prose, as RDF, as logical axioms, or as rules already run over the data.
-3. **Should the model read the data or query it?** Have it write SQL or SPARQL instead of reading the rows, and see whether the store needs to be a graph, or whether any database will do.
-4. **Does it hold across models?** Claude Haiku and Sonnet so far; Opus and Gemini later.
-5. **Does the domain matter?** Run the same ladder over domains with different data and different rules, credit ratings and research analytics so far, and see whether the findings change with the domain.
+## Grading
 
-Behind all five is a practical aim: to find out what an ontology is worth to an LLM, separating the meaning it writes down and the rules it runs from its file format.
-
-The [findings](/findings/) take each goal in turn and say how far the runs have answered it.
-
-## Method
-
-The models run through the `claude` command line from an empty directory, with no tools, so they see only the prompt. Each condition is asked five times. A question's score is its mean over the repeats, a condition's accuracy is the mean over questions, and intervals come from a bootstrap over questions. Differences between conditions are paired, question by question.
-
-The idea follows Andrea Splendiani's ["Ontologies for AI in practice / part I"](https://www.linkedin.com/pulse/ontologies-ai-practice-part-i-andrea-splendiani-fpihe/) (October 2026), which ran a family-tree question up a similar ladder.
+- **By code, against keys computed from the data.** Each dataset's build script computes the key to every question from the data and its rules, and in the base datasets each key is also checked against one written by hand.
+- **Correct, partial or wrong.** An answer's JSON fields are compared with the key after normalising (ratings, yes and no, entity identifiers, counts). All fields right is correct, some right is partial, none is wrong. List answers are also scored by F1, reported beside the strict grade.
+- **Accuracy** is the mean over questions, with correct = 1 and partial = ½, of each question's mean over the repeats.
+- **Intervals** are 95% bootstrap intervals over questions. Differences between two conditions are paired, question by question, so they compare like with like.
 
 ## The domains
 
 - **[Credit ratings](/domains/credit/):** issuers, instruments and rating actions, with the traps of time, identity, ceilings and groups. It has three datasets: the [base data](/domains/credit/#the-base-data), the same domain at [300 issuers](/domains/credit/#at-300-issuers), and a dataset with [deep ownership chains](/domains/credit/#ownership-paths) to test whether a graph store helps with paths.
 - **[Research analytics](/domains/research/):** works, authors, institutions and citations, shaped like OpenAlex, with the traps of who is who, institution hierarchies, counting methods and versions.
+
+All the data is invented.
 
 ## The ladder
 
@@ -65,11 +60,3 @@ The data sits in DuckDB, queried with SQL, or in an rdflib graph store, queried 
 | `sparql+axioms` | the graph after the SHACL rules have run, holding what they derive (one entity per LEI, ancestors, the ultimate parent), with no definitions (credit only) | rules run in the graph, against `sql+executed` |
 
 Read across, D1 against D4, D2 against D5 and D3 against D6 compare SQL with SPARQL given the same meaning.
-
-## Results
-
-The [findings](/findings/) take the goals in turn and say how far the runs have answered each. The [results](/results/) put each dataset's latest runs side by side.
-
-## The code and data
-
-Everything is in the [GitHub repository](https://github.com/lambdamusic/semantic-ladder-demo): the data and how it's built, the ontologies and axioms, the questions and their keys, the code that runs and grades the ladder, and every run's prompts, answers and grades. Its README says how to run it.

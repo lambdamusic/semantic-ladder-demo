@@ -50,7 +50,7 @@ def md(text):
 
 CONTENT = ROOT / "docs"  # the pages' text
 SECTIONS = [("", "Introduction"), ("data", "Data"), ("questions", "Questions and traps"),
-            ("ontology", "Ontology"), ("results", "Results")]
+            ("ontology", "Ontology")]
 # A domain is one ontology and one question bank, asked of one or more datasets, each a folder in domains/.
 GROUPS = [("credit", "Credit ratings", [("credit", "The base data"), ("credit_300", "At 300 issuers"),
                                          ("credit_paths", "Ownership paths")]),

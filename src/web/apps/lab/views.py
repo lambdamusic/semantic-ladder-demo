@@ -10,25 +10,44 @@ def nav(request):
     return {"APP_NAME": settings.APP_NAME, "NAV": files.nav(), "path": request.path}
 
 
-def home(request):
-    return render(request, "lab/home.html", {"title": "The semantics ladder: how much does an LLM gain from being told what data means?",
-                                             "body": files.page("intro")})
+def scores_of(request, domain):
+    """A domain's or dataset's old results page: its part of the scores."""
+    if not files.group(domain):
+        raise Http404(domain)
+    return redirect(f"/scores/#{domain}", permanent=True)
 
 
-def findings(request):
-    return render(request, "lab/doc.html", {"title": "Findings", "body": files.page("findings")})
+def goals(request):
+    return render(request, "lab/doc.html", {"title": "The semantics ladder: how much does an LLM gain from being told what data means?",
+                                            "body": files.page("goals")})
 
 
-def all_results(request):
-    """Every domain and dataset, with its latest runs side by side."""
-    groups = [dict(g, parts=[dict(d, table=files.score_table(files.headline(d["name"]))) for d in g["datasets"]])
-              for g in files.nav()]
-    return render(request, "lab/all_results.html", {"title": "Results", "body": files.page("results"), "groups": groups})
+def method(request):
+    return render(request, "lab/doc.html", {"title": "Method", "body": files.page("method")})
+
+
+def conclusions(request):
+    return render(request, "lab/doc.html", {"title": "Conclusions", "body": files.page("conclusions")})
+
+
+def scores(request):
+    """Every domain and dataset: its latest runs side by side, what they show, and every run on it."""
+    groups = []
+    for g in files.nav():
+        parts = []
+        for d in g["datasets"]:
+            rows = [files.summary(n, f) for n, f in files.run_folders(d["name"])]
+            latest = next((r for r in rows if r["finished"] and r["mode"] == "read"), None)
+            parts.append(dict(d, table=files.score_table(files.headline(d["name"])), body=files.page(f"{d['name']}/scores"),
+                              reading=[r for r in rows if r["mode"] == "read"], querying=[r for r in rows if r["mode"] == "query"],
+                              latest=latest and files.run_detail(d["name"], latest["id"])))
+        groups.append(dict(g, parts=parts))
+    return render(request, "lab/scores.html", {"title": "Scores", "body": files.page("scores"), "groups": groups})
 
 
 def runs(request):
     rows = [files.summary(d, f) for d, f in files.run_folders()]
-    return render(request, "lab/runs.html", {"title": "All runs", "runs": rows})
+    return render(request, "lab/runs.html", {"title": "Run archive", "runs": rows})
 
 
 def _parts(domain, section):
@@ -62,8 +81,6 @@ def moved(view):
 @moved
 def domain(request, domain):
     g, parts = _parts(domain, "")
-    for p in parts:
-        p["table"] = files.score_table(files.headline(p["name"]))
     return render(request, "lab/domain.html", {"title": g["title"], "g": g, "parts": parts,
                                                "body": files.page(f"{domain}/intro")})
 
@@ -88,18 +105,6 @@ def questions(request, domain):
 def data(request, domain):
     g, parts = _parts(domain, "data")
     return render(request, "lab/data.html", {"title": f"{g['title']}: the data", "g": g, "parts": parts})
-
-
-@moved
-def results(request, domain):
-    g, parts = _parts(domain, "results")
-    for p in parts:
-        rows = [files.summary(d, f) for d, f in files.run_folders(p["name"])]
-        latest = next((r for r in rows if r["finished"] and r["mode"] == "read"), None)
-        p.update(reading=[r for r in rows if r["mode"] == "read"], querying=[r for r in rows if r["mode"] == "query"],
-                 latest=latest and files.run_detail(p["name"], latest["id"]))
-    return render(request, "lab/results.html", {"title": f"{g['title']}: results", "g": g, "parts": parts,
-                                                "many": len(parts) > 1})
 
 
 @moved
