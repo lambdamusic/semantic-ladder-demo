@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# The web pages as a static site in docs/, for GitHub Pages (Settings > Pages > /docs on main).
+# The web pages as a static site in site/, published to GitHub Pages by .github/workflows/pages.yml.
 # Starts its own server on port 8031 (so one on 8030 can keep running), mirrors every page
-# reachable from the home page with wget into build/site, then syncs that into docs/.
-# Nothing is committed or pushed: check docs/ and commit it yourself.
+# reachable from the home page with wget into build/site, then syncs that into site/.
+# Nothing is committed or pushed: check site/ and commit it yourself.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 PORT=8031
@@ -21,6 +21,6 @@ rm -rf build/site && mkdir -p build/site
 wget -q -P build/site -mkEpnp -nH http://127.0.0.1:$PORT/ || true   # wget exits 8 on any 404; checked below
 grep -rl "127.0.0.1:$PORT" build/site --include=*.html | head -5 | sed 's/^/absolute link left in: /' || true
 
-rsync -a --delete --exclude CNAME --exclude .nojekyll build/site/ docs/
-touch docs/.nojekyll   # serve files as they are, without Jekyll
-echo "docs/: $(find docs -name '*.html' | wc -l | tr -d ' ') pages, $(du -sh docs | cut -f1)"
+rsync -a --delete --exclude CNAME --exclude .nojekyll build/site/ site/
+touch site/.nojekyll   # serve files as they are, without Jekyll
+echo "site/: $(find site -name '*.html' | wc -l | tr -d ' ') pages, $(du -sh site | cut -f1)"

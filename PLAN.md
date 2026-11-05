@@ -139,7 +139,7 @@ This is the test of whether the finding is about ontologies or about credit. It'
 1. **This repo, made public.** It started as a clean copy of the first round, so there's nothing to strip. Add one script that rebuilds every table, a licence and a note on what the runs cost.
 2. **A blog post** built on the comparison tables: the claim, Splendiani's experiment as the starting point, the four questions with their answers, and what didn't work. The `write-blog` skill can draft it from the tables.
 3. **The first round** stays where it was built, with its own pages, and can link here.
-4. **A web app and a static site.** A `src/web/` Django app in the same style as the first round's pages: the experiment, each domain's data, questions, traps and ontology (with its chart), and the results, read live from `results/` and `RESULTS.md`. Then mirror it into `docs/` as a static site for GitHub Pages, following the `init-django-static-site` approach (Django as the authoring tool, `wget` to mirror).
+4. **A web app and a static site.** A `src/web/` Django app in the same style as the first round's pages: the experiment, each domain's data, questions, traps and ontology (with its chart), and the results, read live from `results/` and `RESULTS.md`. Then mirror it into `site/` as a static site for GitHub Pages, following the `init-django-static-site` approach (Django as the authoring tool, `wget` to mirror).
 
 ## Decisions to make before starting
 

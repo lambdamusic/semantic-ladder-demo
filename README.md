@@ -75,9 +75,11 @@ answer to a question, the prompts, and for query runs each session's queries and
 No database.
 
 ```bash
-tools/site-dump      # the same pages as a static site in docs/, for GitHub Pages (needs wget)
+tools/site-dump      # the same pages as a static site in site/, for GitHub Pages (needs wget)
 ```
 
 It runs its own server on port 8031, mirrors every page with wget, and syncs the result into
-`docs/`. It doesn't commit: check `docs/` and commit it, then point GitHub Pages at `/docs`.
+`site/`. It doesn't commit: check `site/` and commit it. On a push to `main`, `.github/workflows/pages.yml`
+publishes `site/` to GitHub Pages: in the repo's Settings > Pages, set Source to "GitHub Actions".
+`docs/` is for the project's own Markdown documentation.
 
