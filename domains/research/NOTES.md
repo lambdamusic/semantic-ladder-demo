@@ -13,9 +13,9 @@ the prefix 10.55555 (I haven't checked that the prefix is unassigned).
 ```bash
 python domains/research/generate_data.py      # data/*.csv (seeded, deterministic)
 python domains/research/csv_to_rdf.py         # data/facts.ttl
-python ontology_to_md.py research             # ontology.md
+python src/ontology_to_md.py research         # ontology.md
 python domains/research/build_questions.py    # questions.json, checking every key against the data
-python run.py --domain research --only csv rdf rdf+ontology csv+ontology csv+markdown csv+padding
+python src/run.py --domain research --only csv rdf rdf+ontology csv+ontology csv+markdown csv+padding
 ```
 
 `--only` is needed for now: see "Shared-file changes" below.

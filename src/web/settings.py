@@ -11,7 +11,8 @@ from pathlib import Path
 
 WEB_DIR = Path(__file__).resolve().parent
 REPO_ROOT = WEB_DIR.parent.parent
-sys.path.insert(0, str(REPO_ROOT))          # report.py and the domains, reused as they are
+sys.path.insert(0, str(REPO_ROOT))          # the domains
+sys.path.insert(0, str(REPO_ROOT / "src"))  # report.py, run.py and grade.py, reused as they are
 sys.path.insert(0, str(WEB_DIR / "apps"))
 
 SECRET_KEY = "local-only-not-a-secret"

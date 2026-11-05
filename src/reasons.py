@@ -1,8 +1,8 @@
 """Right for the right reason? A second look at the answers graded correct by code.
 
-    python reasons.py results/credit/<run>                    # every condition, every question
-    python reasons.py results/credit/<run> --only Q41 Q42 Q43 # some questions
-    python reasons.py results/credit/<run> --conditions csv csv+markdown
+    python src/reasons.py results/credit/<run>                    # every condition, every question
+    python src/reasons.py results/credit/<run> --only Q41 Q42 Q43 # some questions
+    python src/reasons.py results/credit/<run> --conditions csv csv+markdown
 
 Code grading checks only the final value, so an answer can be right by luck, by a guess at a
 convention, or by a rule the data doesn't state. Here an LLM grader reads each correct answer's

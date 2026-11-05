@@ -1,7 +1,7 @@
 """Phase 2: the model never sees the rows. It gets a schema, writes queries, and answers from their results.
 
-    python query.py                                # credit, Sonnet, all query conditions, 5 repeats
-    python query.py --only sql sparql --runs 1     # a quick check
+    python src/query.py                                # credit, Sonnet, all query conditions, 5 repeats
+    python src/query.py --only sql sparql --runs 1     # a quick check
 
 Conditions:
   sql              DuckDB tables, one per CSV file: the schema only
@@ -34,7 +34,7 @@ import providers
 import report
 from run import INSTRUCTIONS, KINDS, commit, split_answers
 
-HERE = Path(__file__).parent
+ROOT = Path(__file__).resolve().parent.parent  # the repo: domains/ and results/
 CONDITIONS = ["sql", "sql+markdown", "sparql", "sparql+ontology", "sql+executed", "sparql+axioms"]
 ROUNDS = 8
 MAX_ROWS = 60
@@ -237,7 +237,7 @@ def main():
     questions = json.loads(domain.QUESTIONS.read_text())
     conditions = args.only or CONDITIONS
     canon = domain.canonical()
-    out = args.resume or HERE / "results" / args.domain / f"{datetime.now():%Y-%m-%d-%H%M}-{providers.split(args.model)[1]}-query"
+    out = args.resume or ROOT / "results" / args.domain / f"{datetime.now():%Y-%m-%d-%H%M}-{providers.split(args.model)[1]}-query"
     out.mkdir(parents=True, exist_ok=True)
     if not (out / "questions.json").exists():  # the questions as asked, keys included, kept with the run
         (out / "questions.json").write_text(json.dumps(questions, indent=2, ensure_ascii=False) + "\n")
@@ -270,5 +270,5 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.path.insert(0, str(HERE))
+    sys.path.insert(0, str(ROOT))
     main()

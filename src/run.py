@@ -1,10 +1,10 @@
 """Ask a model the same questions over the same facts, given in different ways, and grade the answers.
 
-    python run.py                                   # credit domain, Sonnet, all conditions, 5 repeats
-    python run.py --runs 1 --only csv               # a quick check
-    python run.py --llm-grade-all                   # also grade every answer the old way, to compare
-    python run.py --resume results/credit/<run>     # finish a stopped run
-    python run.py --dry-run                         # write the prompts only
+    python src/run.py                                   # credit domain, Sonnet, all conditions, 5 repeats
+    python src/run.py --runs 1 --only csv               # a quick check
+    python src/run.py --llm-grade-all                   # also grade every typed answer with the LLM grader, to compare
+    python src/run.py --resume results/credit/<run>     # finish a stopped run
+    python src/run.py --dry-run                         # write the prompts only
 
 Each answer ends with a JSON block holding the structured answer to every question that has
 a typed key; those are graded by code (grade.py). Questions with a checklist instead are
@@ -24,7 +24,7 @@ import grade
 import providers
 import report
 
-HERE = Path(__file__).parent
+ROOT = Path(__file__).resolve().parent.parent  # the repo: domains/ and results/
 CONDITIONS = ["csv", "rdf", "rdf+ontology", "csv+ontology", "csv+markdown", "csv+padding", "executed", "csv+neutral", "csv+axioms", "csv+axioms+markdown"]
 
 INSTRUCTIONS = """Answer each question below from the data above. Start each answer on a new line with its
@@ -62,8 +62,8 @@ def split_answers(text, questions):
 
 def commit():
     """The repo's commit, so a result can be traced to the data and questions it ran on."""
-    out = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=HERE)
-    dirty = subprocess.run(["git", "status", "--porcelain", "domains"], capture_output=True, text=True, cwd=HERE).stdout
+    out = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=ROOT)
+    dirty = subprocess.run(["git", "status", "--porcelain", "domains"], capture_output=True, text=True, cwd=ROOT).stdout
     return out.stdout.strip() + ("-dirty" if dirty.strip() else "")
 
 
@@ -75,7 +75,7 @@ def main():
     ap.add_argument("--runs", type=int, default=5, help="repeats per condition (default 5)")
     ap.add_argument("--only", nargs="+", choices=CONDITIONS)
     ap.add_argument("--llm-grade-all", action="store_true",
-                    help="also grade every answer with the old LLM grader, into grades-llm.json")
+                    help="also grade every answer with the LLM grader, into grades-llm.json")
     ap.add_argument("--resume", type=Path, help="a run folder to finish: answers already there are kept")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--regrade", type=Path, help="a run folder: redo its code grading, with no model calls")
@@ -99,7 +99,7 @@ def main():
         print(f"regraded: {args.regrade / 'report.md'}")
         return
 
-    out = args.resume or HERE / "results" / args.domain / f"{datetime.now():%Y-%m-%d-%H%M}-{providers.split(args.model)[1]}"
+    out = args.resume or ROOT / "results" / args.domain / f"{datetime.now():%Y-%m-%d-%H%M}-{providers.split(args.model)[1]}"
     (out / "prompts").mkdir(parents=True, exist_ok=True)
     meta = {"domain": args.domain, "model": args.model, "grader": args.grader, "runs": args.runs,
             "conditions": conditions, "started": f"{datetime.now():%Y-%m-%d %H:%M}",
@@ -145,5 +145,5 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.path.insert(0, str(HERE))
+    sys.path.insert(0, str(ROOT))
     main()

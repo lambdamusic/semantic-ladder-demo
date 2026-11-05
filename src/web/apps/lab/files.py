@@ -28,7 +28,7 @@ def doc(name):
     return md((ROOT / f"{name}.md").read_text())
 
 
-# --- site structure: a section of pages per domain, as in the first round's pages -------------
+# --- site structure: a section of pages per domain --------------------------------------------
 
 CONTENT = settings.WEB_DIR / "content"
 SECTIONS = [("", "Introduction"), ("data", "Data"), ("questions", "Questions and traps"),

@@ -1,6 +1,6 @@
 """Write a domain's ontology as Markdown: the same labels, codes and definitions, without RDF.
 
-    python ontology_to_md.py credit      # domains/credit/ontology.ttl -> domains/credit/ontology.md
+    python src/ontology_to_md.py credit      # domains/credit/ontology.ttl -> domains/credit/ontology.md
 
 Generated rather than written, so the Markdown and the Turtle can't drift apart: the
 csv+markdown and csv+ontology conditions differ only in form.
@@ -13,11 +13,11 @@ from pathlib import Path
 from rdflib import OWL, RDF, RDFS, Graph, Namespace
 
 SKOS = Namespace("http://www.w3.org/2004/02/skos/core#")
-HERE = Path(__file__).parent
+ROOT = Path(__file__).resolve().parent.parent  # the repo: domains/
 
 
 def build(name):
-    folder = HERE / "domains" / name
+    folder = ROOT / "domains" / name
     text = (folder / "ontology.ttl").read_text()
     g = Graph().parse(data=text, format="turtle")
     local = lambda u: str(u).rsplit("/", 1)[-1]
@@ -56,9 +56,9 @@ def build(name):
         lines.append("")
     out = folder / "ontology.md"
     out.write_text("\n".join(lines))
-    print(f"{out.relative_to(HERE)}: {len(out.read_text()):,} characters (ontology.ttl: {len(text):,})")
+    print(f"{out.relative_to(ROOT)}: {len(out.read_text()):,} characters (ontology.ttl: {len(text):,})")
 
 
 if __name__ == "__main__":
-    sys.path.insert(0, str(HERE))
+    sys.path.insert(0, str(ROOT))
     build(sys.argv[1] if len(sys.argv) > 1 else "credit")

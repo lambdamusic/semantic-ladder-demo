@@ -1,6 +1,6 @@
 """The report for one run folder: scores with confidence intervals, and how far the graders agree.
 
-    python report.py results/credit/<run>
+    python src/report.py results/credit/<run>
 
 Questions are the unit. Each question's score in a condition is its mean over repeats; the
 condition's accuracy is the mean over questions, with a 95% bootstrap interval from
@@ -117,5 +117,5 @@ def write(out, questions):
 if __name__ == "__main__":
     folder = Path(sys.argv[1])
     meta = json.loads((folder / "meta.json").read_text())
-    domain_questions = Path(__file__).parent / "domains" / meta["domain"] / "questions.json"
+    domain_questions = Path(__file__).resolve().parent.parent / "domains" / meta["domain"] / "questions.json"
     write(folder, json.loads(domain_questions.read_text()))

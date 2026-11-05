@@ -1,6 +1,6 @@
-# Semantics ladder: plan for the next round
+# Semantics ladder: plan
 
-*Written 4 November 2026. The aim is a result solid enough to publish as a blog post and as this repo. The first round's numbers below come from the original experiment, before this repo.*
+*Written 4 November 2026. The aim is a result solid enough to publish as a blog post and as this repo. The plan starts from a pilot, described below.*
 
 ## Progress (4 November, night)
 
@@ -12,7 +12,7 @@
   - Phase 4's research domain, with Sonnet and Haiku, plus its `executed` condition.
   - Credit domain v2: a system-of-record rule that can't be guessed, and the axioms fixed.
   - Partial credit for lists, and a reasoning check (`reasons.py`).
-  - The web app, in the first round's structure, and `tools/site-dump`.
+  - The web app, and `tools/site-dump` for the static site.
 - **Left:**
   - Query mode at more sizes, with five repeats: three is too few, since one bad session moves a path score by about 30 points.
   - Data too large to read, where querying should finally pay off.
@@ -21,7 +21,9 @@
   - Opus and Gemini, set aside for now.
   - The blog post.
 
-## Where things stood at the start
+## The starting point: a pilot
+
+Before this repo, a pilot asked ten questions over the base credit data, with Sonnet at three repeats and an LLM as the grader, and a scale test asked questions at four sizes, up to 300 issuers, graded by code. Its numbers, which this plan set out to firm up:
 
 - **The ontology helps, but only a little:** `rdf+ontology` minus `csv` is +0.67 out of 10 on the base arm and between 0 and +1.0 across the variants, with Sonnet at three repeats. That's about 7 percentage points, not 1%. Either way it's too small to stand on.
 - **The questions are too easy:** six of the ten were right in every condition and every run. All the signal sits in Q5 and Q6, so the gain rests on two questions.
@@ -88,7 +90,7 @@ So far the LLM reads the data and works out the answer. Here it never sees the r
 
 **What makes it a fair test of "does it need a graph?":**
 - **The same meaning on both sides.** Every rule that becomes SHACL or SPARQL in the graph becomes a view in DuckDB. Without this, the comparison is about how much each side was given, not about graphs.
-- **Questions a graph should win.** The toy data has one level of parent, so it can't show a graph's strength. Add questions about ownership chains of unknown depth ("who is at the top of this group?") and about facts merged from several sources. OpenAlex's institution hierarchy gives the same in Phase 4. If SQL ties there too, that's worth reporting: it's your Dimensions-on-BigQuery point, where the graph was the wrong answer.
+- **Questions a graph should win.** The toy data has one level of parent, so it can't show a graph's strength. Add questions about ownership chains of unknown depth ("who is at the top of this group?") and about facts merged from several sources. OpenAlex's institution hierarchy gives the same in Phase 4. If SQL ties there too, that's worth reporting: in practice a graph is sometimes the wrong answer.
 - **Fluency is a confound.** Models have seen far more SQL than SPARQL. Record syntax errors and rounds used, separately from wrong answers, so "SPARQL was worse" can be split into "harder to write" and "harder to get right".
 
 **What to measure:** accuracy, graded by code; whether the query was right when the answer was wrong, or the other way round; rounds used; failed queries; tokens. Run at all four scale-test sizes: reading fell from 100% to 83% exact between 0 and 300 issuers, and querying should stay flat.
@@ -104,7 +106,7 @@ So far the LLM reads the data and works out the answer. Here it never sees the r
 
 ## Phase 4: a second domain, research analytics on OpenAlex
 
-This is the test of whether the finding is about ontologies or about credit. It's also the domain you know best from Dimensions.
+This is the test of whether the finding is about ontologies or about credit.
 
 **Its implicit meanings** are the equivalents of the credit list:
 
@@ -136,10 +138,9 @@ This is the test of whether the finding is about ontologies or about credit. It'
 
 ## Phase 5: publish
 
-1. **This repo, made public.** It started as a clean copy of the first round, so there's nothing to strip. Add one script that rebuilds every table, a licence and a note on what the runs cost.
+1. **This repo, made public.** Add one script that rebuilds every table, a licence and a note on what the runs cost.
 2. **A blog post** built on the comparison tables: the claim, Splendiani's experiment as the starting point, the four questions with their answers, and what didn't work. The `write-blog` skill can draft it from the tables.
-3. **The first round** stays where it was built, with its own pages, and can link here.
-4. **A web app and a static site.** A `src/web/` Django app in the same style as the first round's pages: the experiment, each domain's data, questions, traps and ontology (with its chart), and the results, read live from `results/` and `RESULTS.md`. Then mirror it into `site/` as a static site for GitHub Pages, following the `init-django-static-site` approach (Django as the authoring tool, `wget` to mirror).
+3. **A web app and a static site.** A `src/web/` Django app: the experiment, each domain's data, questions, traps and ontology (with its chart), and the results, read live from `results/` and `RESULTS.md`. Then mirror it into `site/` as a static site for GitHub Pages, following the `init-django-static-site` approach (Django as the authoring tool, `wget` to mirror).
 
 ## Decisions to make before starting
 
