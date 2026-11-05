@@ -1,4 +1,4 @@
-Three small files, shown exactly as the model gets them in the `csv` conditions. The `rdf` conditions get the same rows as `facts.ttl`: a straight conversion, one resource per row and one property per column, with nothing merged or inferred.
+Three small files, shown exactly as the model gets them in the conditions that read CSV. The conditions that read RDF get the same rows as `facts.ttl`: a straight conversion, one resource per row and one property per column, with nothing merged or inferred.
 
 Some details are deliberate:
 

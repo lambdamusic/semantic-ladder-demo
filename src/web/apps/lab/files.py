@@ -16,11 +16,33 @@ RESULTS = ROOT / "results"
 MARK = {"correct": "✅", "partial": "🟡", "wrong": "❌"}
 
 
+# --- conditions: a short label for each, R for reading the data and D for querying a database ---
+
+LABELS = {c: f"R{i}" for i, c in enumerate(["csv", "rdf", "csv+padding", "csv+markdown", "csv+ontology", "rdf+ontology",
+                                             "csv+neutral", "csv+axioms", "csv+axioms+markdown", "executed"], 1)}
+LABELS |= {c: f"D{i}" for i, c in enumerate(["sql", "sql+markdown", "sql+executed",
+                                              "sparql", "sparql+ontology", "sparql+axioms"], 1)}
+
+
+def by_label(c):
+    """Sort key: conditions in ladder order, R before D, any without a label last."""
+    lab = LABELS.get(c, "Z0")
+    return lab[0] == "D", lab[0] == "Z", int(lab[1:])
+
+
+def cond(c):
+    """A condition as the pages show it: its label, then its name."""
+    lab = LABELS.get(c)
+    return mark_safe((f'<span class="lbl">{lab}</span> ' if lab else "") + f"<code>{c}</code>")
+
+
 def md(text):
-    """Markdown to HTML, with links to the repo's own Markdown files pointed at their pages."""
+    """Markdown to HTML, with links to the repo's own Markdown files pointed at their pages,
+    and every condition written as `name` given its label."""
     html = markdown.markdown(text, extensions=["tables", "fenced_code", "toc"])
     for name, url in (("README.md", "/readme/"), ("RESULTS.md", "/log/")):
         html = html.replace(f'href="{name}"', f'href="{url}"')
+    html = re.sub(r"<code>([a-z+]+)</code>", lambda m: cond(m[1]) if m[1] in LABELS else m[0], html)
     return mark_safe(html)
 
 
@@ -132,7 +154,7 @@ def summary(domain, folder):
     grades = json.loads(grades_file.read_text()) if grades_file.exists() else {}
     questions = questions_for(domain, folder, grades) if grades else []
     rows = []
-    for c in meta["conditions"]:
+    for c in sorted(meta["conditions"], key=by_label):
         sheets = grades.get(c, [])
         if not sheets or not questions:
             rows.append({"condition": c, "repeats": 0})
@@ -152,7 +174,7 @@ def run_detail(domain, run_id):
     s = summary(domain, folder)
     grades = json.loads((folder / "grades.json").read_text()) if (folder / "grades.json").exists() else {}
     questions = questions_for(domain, folder, grades) if grades else []
-    conditions = [c for c in s["meta"]["conditions"] if c in grades]
+    conditions = sorted((c for c in s["meta"]["conditions"] if c in grades), key=by_label)
     grid = []
     for q in questions:
         cells = [[{"mark": MARK.get(sh.get(q["id"], {}).get("grade"), "?"),
@@ -162,7 +184,7 @@ def run_detail(domain, run_id):
     stats = json.loads((folder / "stats.json").read_text()) if (folder / "stats.json").exists() else {}
     query_stats = [{"condition": c, "queries": sum(x["queries"] for x in v), "failed": sum(x["failed"] for x in v),
                     "rounds": round(sum(x["rounds"] for x in v) / len(v), 1), "repeats": len(v),
-                    "timeouts": sum(x.get("timeouts", 0) for x in v)} for c, v in stats.items()]
+                    "timeouts": sum(x.get("timeouts", 0) for x in v)} for c, v in sorted(stats.items(), key=lambda kv: by_label(kv[0]))]
     return {**s, "conditions": conditions, "grid": grid, "report": md(text(folder / "report.md")),
             "query_stats": query_stats, "folder": folder}
 

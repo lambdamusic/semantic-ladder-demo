@@ -31,7 +31,14 @@ The [results summary](/summary/) takes each goal in turn and says how far the ru
 | `csv+axioms+markdown` | the axioms and the Markdown definitions together | whether logic and prose add up |
 | `executed` | the data after the definitions' rules have been applied in code, with no definitions: test records dropped, duplicate records merged into one entity, each rating with the period it held, ownership chains spelt out | whether applying the meaning upstream, as a curated knowledge graph would, can replace telling the model what the data means |
 
-A second ladder asks the same questions without showing the rows. The model writes SQL (DuckDB) or SPARQL (rdflib), the runner executes each query and sends back the results, and the model answers from those. It's given the schema only, the schema plus the definitions, or a store where the rules have already run (`sql+executed`, `sparql+axioms`).
+Each condition has a label, R1 to R10 for reading, so that the pages can refer to it briefly.
+
+A second ladder asks the same questions without showing the rows. The model writes SQL (DuckDB) or SPARQL (rdflib), the runner executes each query and sends back the results, and the model answers from those. Its conditions are labelled D1 to D6, for querying a database:
+
+| | Schema only | Schema plus the definitions | Rules already run in the store |
+|---|---|---|---|
+| **SQL** (DuckDB) | `sql` | `sql+markdown`: the definitions in Markdown | `sql+executed`: the tables of `executed` |
+| **SPARQL** (rdflib) | `sparql` | `sparql+ontology`: `ontology.ttl` | `sparql+axioms`: the graph after the SHACL rules have run |
 
 ## The domains
 

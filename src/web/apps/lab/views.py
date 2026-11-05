@@ -83,7 +83,7 @@ def run(request, domain, run):
     r = files.run_detail(domain, run)
     if not r:
         raise Http404(run)
-    prompts = [{"condition": c, "text": files.prompt(domain, run, c)} for c in r["meta"]["conditions"]]
+    prompts = [{"condition": c, "text": files.prompt(domain, run, c)} for c in sorted(r["meta"]["conditions"], key=files.by_label)]
     return render(request, "lab/run.html", {"title": f"Run {run}", "r": r, "prompts": prompts})
 
 
@@ -99,5 +99,5 @@ def transcript(request, domain, run, condition, repeat):
     t = files.transcript(domain, run, condition, repeat)
     if not t:
         raise Http404(condition)
-    return render(request, "lab/transcript.html", {"title": f"{condition}, run {repeat}: the query session", "t": t,
+    return render(request, "lab/transcript.html", {"title": f"{files.LABELS.get(condition, '')} {condition}, run {repeat}: the query session".strip(), "t": t,
                                                    "domain": domain, "run": run, "condition": condition, "repeat": repeat})

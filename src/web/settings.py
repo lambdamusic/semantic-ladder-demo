@@ -28,7 +28,8 @@ TEMPLATES = [{
     "BACKEND": "django.template.backends.django.DjangoTemplates",
     "DIRS": [WEB_DIR / "templates-global"],
     "APP_DIRS": True,
-    "OPTIONS": {"context_processors": ["lab.views.nav"]},
+    "OPTIONS": {"context_processors": ["lab.views.nav"],
+                "builtins": ["lab.templatetags.lab_tags"]},  # the cond filter, on every page
 }]
 
 STATIC_URL = "/static/"

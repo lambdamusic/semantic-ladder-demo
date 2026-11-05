@@ -1,4 +1,4 @@
-Six files, shown as the model gets them in the `csv` conditions. `generate_data.py` writes them from a fixed seed.
+Six files, shown as the model gets them in the conditions that read CSV. `generate_data.py` writes them from a fixed seed.
 
 There are 52 designed works and 33 background works. The background works are noise: their authors are at four background institutions, and they cite only each other, except for the few that set up the citation-window questions.
 

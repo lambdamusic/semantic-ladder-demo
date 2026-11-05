@@ -38,9 +38,9 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 
 | | No definitions | With the definitions |
 |---|---|---|
-| Reading | 80% | 95% |
-| SQL | 86% | 96% |
-| SPARQL | 79% | 95% |
+| Reading (`csv`, `csv+markdown`) | 80% | 95% |
+| SQL (`sql`, `sql+markdown`) | 86% | 96% |
+| SPARQL (`sparql`, `sparql+ontology`) | 79% | 95% |
 
 - **The definitions matter as much when querying as when reading:** +10 to +16 points in each mode.
 - **Querying helps a little with long lists,** where reading misses an item or two.
