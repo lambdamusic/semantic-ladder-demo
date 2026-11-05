@@ -593,8 +593,10 @@ def build(total):
     target = HERE.parent / f"research_{total}"
     shutil.rmtree(target, ignore_errors=True)
     (target / "data").mkdir(parents=True)
-    for name in ["ontology.ttl", "ontology.md", "padding.md", "domain.py"]:
-        shutil.copy(HERE / name, target / name)
+    shutil.copy(HERE / "domain.py", target / "domain.py")
+    (target / "ontology").mkdir(parents=True, exist_ok=True)
+    for name in ["ontology.ttl", "ontology.md", "padding.md"]:  # the ontology, copied unchanged
+        shutil.copy(HERE / "ontology" / name, target / "ontology" / name)
     n_add = total - len(read(HERE, "works.csv"))
     g = Generator(n_add, seed=int(hashlib.sha256(f"research-{total}".encode()).hexdigest()[:8], 16))
     g.designed()

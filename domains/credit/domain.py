@@ -4,7 +4,8 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 DATA = HERE / "data"
-ONTOLOGY = HERE / "ontology.ttl"
+ONTO = HERE / "ontology"  # ontology.ttl, ontology.md, axioms.ttl, padding.md
+ONTOLOGY = ONTO / "ontology.ttl"
 QUESTIONS = HERE / "questions.json"
 CSV_FILES = ["entities.csv", "instruments.csv", "rating_actions.csv"]
 
@@ -83,15 +84,15 @@ def context(condition):
         parts.append("### ontology.ttl, without its definitions (the vocabulary the data uses)\n"
                      "The codes in the CSV files are the skos:notation values of the concepts below.\n"
                      f"```turtle\n{bare_ontology()}\n```")
-        parts.append(f"### axioms.ttl (OWL axioms and SHACL rules over the vocabulary)\n```turtle\n{read(HERE / 'axioms.ttl')}\n```")
+        parts.append(f"### axioms.ttl (OWL axioms and SHACL rules over the vocabulary)\n```turtle\n{read(ONTO / 'axioms.ttl')}\n```")
         if extra == "axioms+markdown":
-            parts.append(f"### ontology.md (the vocabulary the data uses)\n\n{read(HERE / 'ontology.md')}")
+            parts.append(f"### ontology.md (the vocabulary the data uses)\n\n{read(ONTO / 'ontology.md')}")
         elif extra != "axioms":
             raise ValueError(condition)
     elif extra == "markdown":  # the same definitions, generated from ontology.ttl by ontology_to_md.py
-        parts.append(f"### ontology.md (the vocabulary the data uses)\n\n{read(HERE / 'ontology.md')}")
+        parts.append(f"### ontology.md (the vocabulary the data uses)\n\n{read(ONTO / 'ontology.md')}")
     elif extra == "padding":  # the length control: finance text of the same length, about none of this
-        parts.append(f"### background.md\n\n{read(HERE / 'padding.md')}")
+        parts.append(f"### background.md\n\n{read(ONTO / 'padding.md')}")
     elif extra:
         raise ValueError(condition)
     return "\n\n".join(parts)

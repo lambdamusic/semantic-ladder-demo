@@ -4,7 +4,8 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 DATA = HERE / "data"
-ONTOLOGY = HERE / "ontology.ttl"
+ONTO = HERE / "ontology"  # ontology.ttl, ontology.md, axioms.ttl, padding.md
+ONTOLOGY = ONTO / "ontology.ttl"
 QUESTIONS = HERE / "questions.json"
 CSV_FILES = ["institutions.csv", "authors.csv", "sources.csv", "works.csv", "authorships.csv", "citations.csv"]
 CONDITIONS = ["csv", "rdf", "rdf+ontology", "csv+ontology", "csv+markdown", "csv+padding", "executed"]
@@ -56,9 +57,9 @@ def context(condition):
         parts.append(f"### ontology.ttl (the vocabulary the data uses){chr(10) + note if note else ''}\n"
                      f"```turtle\n{read(ONTOLOGY)}\n```")
     elif extra == "markdown":  # the same definitions, generated from ontology.ttl by ontology_to_md.py
-        parts.append(f"### ontology.md (the vocabulary the data uses)\n\n{read(HERE / 'ontology.md')}")
+        parts.append(f"### ontology.md (the vocabulary the data uses)\n\n{read(ONTO / 'ontology.md')}")
     elif extra == "padding":  # the length control: text on scholarly publishing of the same length, about none of this
-        parts.append(f"### background.md\n\n{read(HERE / 'padding.md')}")
+        parts.append(f"### background.md\n\n{read(ONTO / 'padding.md')}")
     return "\n\n".join(parts)
 
 

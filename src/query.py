@@ -104,7 +104,7 @@ class SPARQLStore:
     def __init__(self, domain, extra=""):
         if extra == "axioms":  # the facts with what the rules derived; the schema lists the derived terms too
             self.g = inferred(domain)
-            terms = set(Graph().parse(domain.ONTOLOGY).subjects()) | set(Graph().parse(domain.HERE / "axioms.ttl").subjects())
+            terms = set(Graph().parse(domain.ONTOLOGY).subjects()) | set(Graph().parse(domain.ONTO / "axioms.ttl").subjects())
             self.facts = Graph()
             self.facts.bind("lad", "https://example.org/ladder/")
             for s, p, o in self.g:
@@ -227,7 +227,7 @@ def inferred(domain):
     cache = domain.DATA / "inferred.ttl"
     if not cache.exists():
         from pyshacl import validate
-        axioms = domain.HERE / "axioms.ttl"
+        axioms = domain.ONTO / "axioms.ttl"
         g = Graph().parse(domain.DATA / "facts.ttl").parse(domain.ONTOLOGY).parse(axioms)
         validate(g, shacl_graph=Graph().parse(axioms), advanced=True, inplace=True, allow_infos=True)
         g.serialize(cache, format="turtle")
@@ -251,7 +251,7 @@ def opening(domain, condition, store, questions):
     elif extra == "axioms":
         parts += ["", domain.AXIOMS_NOTE]
     elif extra:
-        parts += ["", "### ontology.md (the vocabulary the data uses)", "", (domain.HERE / "ontology.md").read_text()]
+        parts += ["", "### ontology.md (the vocabulary the data uses)", "", (domain.ONTO / "ontology.md").read_text()]
     qs = "\n".join(f"{q['id']}. {q['question']}" for q in questions)
     parts += ["", "## Questions", "", INSTRUCTIONS.format(entity_hint=domain.ENTITY_HINT, fields=fields), "", qs]
     return "\n".join(parts)

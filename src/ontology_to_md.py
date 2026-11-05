@@ -1,6 +1,6 @@
 """Write a domain's ontology as Markdown: the same labels, codes and definitions, without RDF.
 
-    python src/ontology_to_md.py credit      # domains/credit/ontology.ttl -> domains/credit/ontology.md
+    python src/ontology_to_md.py credit      # domains/credit/ontology/ontology.ttl -> ontology.md beside it
 
 Generated rather than written, so the Markdown and the Turtle can't drift apart: the
 csv+markdown and csv+ontology conditions differ only in form.
@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent  # the repo: domains/
 
 def build(name):
     folder = ROOT / "domains" / name
-    text = (folder / "ontology.ttl").read_text()
+    text = (folder / "ontology" / "ontology.ttl").read_text()
     g = Graph().parse(data=text, format="turtle")
     local = lambda u: str(u).rsplit("/", 1)[-1]
     order = lambda items: sorted(items, key=lambda u: text.find(f":{local(u)} a "))
@@ -54,7 +54,7 @@ def build(name):
         for c in order(g.subjects(SKOS.inScheme, s)):
             lines.append(f"- **{g.value(c, SKOS.notation)}**, {g.value(c, SKOS.prefLabel)}: {say(g.value(c, SKOS.definition))}")
         lines.append("")
-    out = folder / "ontology.md"
+    out = folder / "ontology" / "ontology.md"
     out.write_text("\n".join(lines))
     print(f"{out.relative_to(ROOT)}: {len(out.read_text()):,} characters (ontology.ttl: {len(text):,})")
 

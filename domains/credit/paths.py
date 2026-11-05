@@ -136,8 +136,10 @@ def main():
     target = HERE.parent / "credit_paths"
     shutil.rmtree(target, ignore_errors=True)
     (target / "data").mkdir(parents=True)
-    for name in ["ontology.ttl", "ontology.md", "padding.md", "domain.py", "axioms.ttl"]:
-        shutil.copy(HERE / name, target / name)
+    shutil.copy(HERE / "domain.py", target / "domain.py")
+    (target / "ontology").mkdir(parents=True, exist_ok=True)
+    for name in ["ontology.ttl", "ontology.md", "padding.md", "axioms.ttl"]:  # the ontology, copied unchanged
+        shutil.copy(HERE / "ontology" / name, target / "ontology" / name)
     entities, instruments, actions, anchors = build()
     random.Random(7).shuffle(actions)
     for name, extra in [("entities.csv", entities), ("instruments.csv", instruments), ("rating_actions.csv", actions)]:

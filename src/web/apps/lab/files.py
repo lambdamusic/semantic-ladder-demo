@@ -154,7 +154,7 @@ def domain_info(name):
     return {"name": name, "folder": folder, "tables": tables,
             "questions": json.loads((folder / "questions.json").read_text()),
             "notes": md(notes.read_text()) if notes else "", "notes_name": notes.name if notes else "",
-            "has": {f: (folder / f).exists() for f in ("ontology.ttl", "ontology.md", "axioms.ttl", "padding.md")}}
+            "has": {f: (folder / "ontology" / f).exists() for f in ("ontology.ttl", "ontology.md", "axioms.ttl", "padding.md")}}
 
 
 def diagram(domain):

@@ -7,8 +7,8 @@ from rdflib import Graph, Namespace, RDF
 from pyshacl import validate
 folder = sys.argv[1]
 LAD = Namespace("https://example.org/ladder/")
-data = Graph().parse(f"{folder}/data/facts.ttl").parse(f"{folder}/ontology.ttl").parse(f"{folder}/axioms.ttl")
-shapes = Graph().parse(f"{folder}/axioms.ttl")
+data = Graph().parse(f"{folder}/data/facts.ttl").parse(f"{folder}/ontology/ontology.ttl").parse(f"{folder}/ontology/axioms.ttl")
+shapes = Graph().parse(f"{folder}/ontology/axioms.ttl")
 conforms, results, text = validate(data, shacl_graph=shapes, advanced=True, inplace=True, allow_infos=True)
 print("conforms:", conforms); print(text[:1500])
 q = lambda s: list(data.query("PREFIX lad: <https://example.org/ladder/> " + s))
@@ -24,7 +24,7 @@ legal = {str(l) for (l,) in q("SELECT ?l { ?e a lad:Entity ; lad:lei ?l FILTER N
 print("distinct legal entities with an LEI (sovereigns have none):", len(legal))
 print("in force on I08 (EX):", q("ASK { ?a lad:ratedThing lad:I08 ; a lad:RatingInForce }"))
 # the ceiling constraint must catch a breach: lift Valdoria Telecom's FC rating above BB and validate again
-bad = Graph().parse(f"{folder}/data/facts.ttl").parse(f"{folder}/ontology.ttl").parse(f"{folder}/axioms.ttl")
+bad = Graph().parse(f"{folder}/data/facts.ttl").parse(f"{folder}/ontology/ontology.ttl").parse(f"{folder}/ontology/axioms.ttl")
 from rdflib import Literal
 bad.set((LAD.A14, LAD.rating, Literal("BBB")))
 c2, _, t2 = validate(bad, shacl_graph=shapes, advanced=True, inplace=True, allow_infos=True)

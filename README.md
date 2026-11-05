@@ -45,7 +45,7 @@ from it.
 | `src/ontology_to_md.py` | writes a domain's `ontology.md` from its `ontology.ttl`, so the two can't drift |
 | `src/web/` | the web pages (see below) |
 | `docs/` | the web pages' text, in Markdown |
-| `domains/credit/` | credit ratings: `data/` (three CSV files and `facts.ttl`), `ontology.ttl`, `axioms.ttl` (checked by `check_axioms.py`), `questions.json` (48 questions with typed keys, written by `build_questions.py`, which stops if a key disagrees with the data), `domain.py`, `execute.py`, `csv_to_rdf.py`, and `concepts.md`, the credit terms explained for people. `scale.py` and `paths.py` build the larger copies |
+| `domains/credit/` | credit ratings: `data/` (three CSV files and `facts.ttl`), `ontology/` (`ontology.ttl`, the `ontology.md` generated from it, `axioms.ttl`, checked by `check_axioms.py`, and the decoy glossary `padding.md`), `questions.json` (48 questions with typed keys, written by `build_questions.py`, which stops if a key disagrees with the data), `domain.py`, `execute.py`, `csv_to_rdf.py`, and `concepts.md`, the credit terms explained for people. `scale.py` and `paths.py` build the larger copies |
 | `domains/credit_100/`, `credit_300/` | the credit domain at 100 and 300 issuers |
 | `domains/credit_paths/` | 300 issuers plus six deep ownership groups, with 61 questions, 13 of which follow links |
 | `domains/research/` | research analytics: works, authors, institutions and citations, with 48 questions; `NOTES.md` describes how it was built |
@@ -73,7 +73,7 @@ python domains/credit/build_questions.py   # after editing a CSV or a question: 
 python domains/credit/execute.py           # then: the tables for the executed condition
 python domains/credit/scale.py 300         # a scaled copy: domains/credit_300
 python domains/credit/paths.py             # 300 issuers plus deep groups and path questions: domains/credit_paths
-python src/ontology_to_md.py credit        # after editing ontology.ttl
+python src/ontology_to_md.py credit        # after editing ontology/ontology.ttl
 ```
 
 ## The web pages
