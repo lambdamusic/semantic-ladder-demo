@@ -23,7 +23,8 @@ lad:lei a owl:DatatypeProperty, owl:FunctionalProperty ; rdfs:domain lad:Entity 
 lad:country a owl:DatatypeProperty ; rdfs:domain lad:Entity ; rdfs:range xsd:string .
 lad:entityType a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain lad:Entity ; rdfs:range skos:Concept .
 lad:sourceSystem a owl:DatatypeProperty, owl:FunctionalProperty ; rdfs:domain lad:Entity ; rdfs:range xsd:string .
-lad:parent a owl:ObjectProperty ; rdfs:domain lad:Entity ; rdfs:range lad:Entity ; rdfs:subPropertyOf lad:ancestor .
+lad:parent a owl:ObjectProperty ; rdfs:domain lad:Entity ; rdfs:range lad:Entity ;
+    rdfs:comment "as this record gives it; see lad:parentEntity" .
 lad:ancestor a owl:ObjectProperty, owl:TransitiveProperty ; rdfs:label "ancestor" .
 
 lad:description a owl:DatatypeProperty ; rdfs:domain lad:Instrument .
@@ -48,6 +49,8 @@ lad:comment a owl:DatatypeProperty ; rdfs:domain lad:RatingAction .
 lad:sameEntityAs a owl:ObjectProperty, owl:SymmetricProperty, owl:TransitiveProperty ; rdfs:subPropertyOf owl:sameAs .
 lad:validTo a owl:DatatypeProperty ; rdfs:domain lad:RatingAction ; rdfs:range xsd:date .
 lad:domicile a owl:DatatypeProperty, owl:FunctionalProperty ; rdfs:domain lad:Entity .
+lad:parentEntity a owl:ObjectProperty ; rdfs:subPropertyOf lad:ancestor ; rdfs:label "parent, as the entity's RATINGS record gives it" .
+lad:ultimateParent a owl:ObjectProperty ; rdfs:label "ultimate parent: the ancestor with no parent, or the entity itself" .
 lad:creditRiskOf a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain lad:Instrument ; rdfs:range lad:Entity .
 lad:localCurrency a owl:DatatypeProperty ; rdfs:domain lad:Instrument ; rdfs:range xsd:boolean .
 
@@ -77,7 +80,9 @@ lad:ExpectedRating owl:equivalentClass [ a owl:Restriction ; owl:onProperty lad:
 lad:DefaultRating owl:equivalentClass [ a owl:Restriction ; owl:onProperty lad:rating ; owl:oneOf ( "RD" "D" ) ] .
 
 lad:TestRecord owl:equivalentClass [ a owl:Restriction ; owl:onProperty lad:sourceSystem ; owl:hasValue "QA" ] ;
-    rdfs:subClassOf lad:Entity ; owl:disjointWith lad:Issuer .
+    owl:disjointWith lad:LegalEntity, lad:Issuer .
+lad:LegalEntity rdfs:label "legal entity" ; owl:equivalentClass [ a owl:Class ; owl:intersectionOf (
+        lad:Entity [ a owl:Class ; owl:complementOf lad:TestRecord ] ) ] .
 lad:Issuer owl:equivalentClass [ a owl:Restriction ; owl:onProperty [ owl:inverseOf lad:ratedThing ] ;
         owl:someValuesFrom [ owl:intersectionOf ( lad:IssuerRatingAction lad:RatingInForce ) ] ] .
 
@@ -107,12 +112,35 @@ lad:IdentityRule a sh:NodeShape ; sh:targetClass lad:Entity ;
     sh:rule [ a sh:SPARQLRule ; sh:order 2 ; sh:prefixes <https://example.org/ladder/axioms> ; sh:construct """
         CONSTRUCT { $this lad:domicile ?c }
         WHERE {
-          { $this lad:sourceSystem "RATINGS" ; lad:country ?c }
+          { $this lad:sourceSystem "RESEARCH" ; lad:country ?c }
           UNION
-          { $this lad:sameEntityAs ?r . ?r lad:sourceSystem "RATINGS" ; lad:country ?c }
+          { $this lad:sameEntityAs ?r . ?r lad:sourceSystem "RESEARCH" ; lad:country ?c }
           UNION
-          { $this lad:country ?c FILTER NOT EXISTS { $this lad:sameEntityAs/lad:sourceSystem "RATINGS" }
-                                 FILTER NOT EXISTS { $this lad:sourceSystem "RATINGS" } }
+          { $this lad:country ?c FILTER NOT EXISTS { $this lad:sameEntityAs/lad:sourceSystem "RESEARCH" }
+                                 FILTER NOT EXISTS { $this lad:sourceSystem "RESEARCH" } }
+        }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 2 ; sh:prefixes <https://example.org/ladder/axioms> ; sh:construct """
+        CONSTRUCT { $this lad:parentEntity ?p , ?p2 }
+        WHERE {
+          { $this lad:sourceSystem "RATINGS" ; lad:parent ?p }
+          UNION
+          { $this lad:sameEntityAs ?r . ?r lad:sourceSystem "RATINGS" ; lad:parent ?p }
+          UNION
+          { $this lad:parent ?p FILTER NOT EXISTS { $this lad:sameEntityAs/lad:sourceSystem "RATINGS" }
+                                FILTER NOT EXISTS { $this lad:sourceSystem "RATINGS" } }
+          OPTIONAL { ?p lad:sameEntityAs ?p2 }
+          FILTER NOT EXISTS { $this lad:sourceSystem "QA" }
+        }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 2.5 ; sh:prefixes <https://example.org/ladder/axioms> ; sh:construct """
+        CONSTRUCT { $this lad:ancestor ?a }
+        WHERE { $this lad:parentEntity+ ?a }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 2.6 ; sh:prefixes <https://example.org/ladder/axioms> ; sh:construct """
+        CONSTRUCT { $this lad:ultimateParent ?u }
+        WHERE {
+          FILTER NOT EXISTS { $this lad:sourceSystem "QA" }
+          { $this lad:ancestor ?u FILTER NOT EXISTS { ?u lad:parentEntity ?x } }
+          UNION
+          { BIND ($this AS ?u) FILTER NOT EXISTS { $this lad:parentEntity ?x } }
         }""" ] .
 
 lad:RatingPeriodRule a sh:NodeShape ; sh:targetClass lad:RatingAction ;

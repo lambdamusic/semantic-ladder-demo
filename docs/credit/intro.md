@@ -17,8 +17,6 @@ One ontology and one question bank are asked of three datasets. Each dataset com
 
 The base records plus 300 invented issuers that repeat the same traps many times over: duplicate RESEARCH records, QA test records, group chains, finance subsidiaries, local currencies, expected ratings, withdrawals, Watches, and rows out of date order. That makes 370 entity records, 115 instruments and 787 rating actions. The same 48 questions now need counting and joining across many records, which is where reading the data should start to fail and writing queries should pay off. `scale.py` builds it from a fixed seed.
 
-This dataset still uses the domain's version 1 rules, where the RATINGS record holds for every field (see the [ontology](/domains/credit/ontology/)).
-
 ### Ownership paths
 
 Does the store need to be a graph? With one or two levels of parent, the data can't show a graph's strength. This dataset is the 300-issuer data, on the current rules, plus six invented groups four to six levels deep, built so that answering means walking parent and guarantee links:

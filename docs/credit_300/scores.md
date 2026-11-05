@@ -1,4 +1,4 @@
-Sonnet, on the version 1 rules.
+The runs below were made on the version 1 rules, where the RATINGS record held for every field, before this dataset was rebuilt on version 2. Their keys differ in Q42 and Q43, and each is graded against its own. Runs on version 2 will replace them in the table.
 
 | | No definitions | With the definitions | Rules executed |
 |---|---|---|---|

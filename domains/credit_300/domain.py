@@ -24,9 +24,19 @@ def read(path):
     return path.read_text().strip()
 
 
+EXECUTED_TABLES = ["entities.csv", "instruments.csv", "ratings.csv", "ceilings.csv", "ancestors.csv"]
 EXECUTED_NOTE = ("These tables are the data after its rules have been applied: duplicate records merged into "
                  "one entity (record_ids lists the records each entity merges), and each rating with the "
-                 "period it held. An empty valid_to means the rating was still in force on 1 October 2026.")
+                 "period it held. An empty valid_to means the rating was still in force on 1 October 2026. "
+                 "ancestors lists every entity above each entity in its chain of parents, with how many levels up.")
+
+AXIOMS_NOTE = ("The store holds the data after the rules of its axioms have run, with no definitions alongside. "
+               "Besides the data's own properties, it holds what the rules derived: lad:sameEntityAs links the "
+               "records of one entity; lad:domicile is the country that holds for an entity; lad:parentEntity, "
+               "lad:ancestor and lad:ultimateParent give ownership entity by entity (an entity with no parent is "
+               "its own ultimate parent); lad:validTo is when a rating stopped holding, and the class "
+               "lad:RatingInForce holds the actions whose rating was in force on 1 October 2026; lad:creditRiskOf "
+               "and lad:localCurrency describe instruments.")
 
 
 SLANTED = "The foreign-currency (FC) one is the headline rating; there may also be a local-currency (LC) one."
@@ -51,7 +61,7 @@ def bare_ontology():
 
 def context(condition):
     if condition == "executed":  # written by execute.py: the rules applied, no definitions
-        tables = ["entities.csv", "instruments.csv", "ratings.csv", "ceilings.csv"]
+        tables = EXECUTED_TABLES
         return EXECUTED_NOTE + "\n\n" + "\n\n".join(
             f"### {name}\n```csv\n{read(DATA / 'executed' / name)}\n```" for name in tables)
     parts = []
