@@ -1,4 +1,4 @@
-Sonnet. The query runs used three repeats.
+Sonnet. The querying run used three repeats, the reading run five.
 
 | | All 61 questions | The 13 path questions |
 |---|---|---|

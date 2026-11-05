@@ -48,7 +48,7 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 - **On ownership paths of unknown depth** ([reading](/runs/credit_paths/2026-11-04-2022-sonnet/), [querying](/runs/credit_paths/2026-11-04-2024-sonnet-query/)), a graph store doesn't help without the definitions: SPARQL gets 33% of the path questions and SQL 44%. With the definitions, SPARQL is the steadiest querying condition (92%). A precomputed `ancestors` table gives SQL every path right, and reading the 100 KB of CSV with the definitions also gets every path right.
 - **So the graph's advantage, following links of any depth, disappears once the rules have computed the chains.**
 
-*Still open:* the querying runs used three repeats, and one bad session moves a path score by about 30 points, so SQL and SPARQL can't yet be told apart; five repeats are next. Querying should pay off when the data is too large to read, which hasn't been tested yet. The research domain hasn't been queried.
+*Still open:* the querying run on ownership paths used three repeats, and one bad session moves a path score by about 30 points, so SQL and SPARQL can't yet be told apart; five repeats are next. Querying should pay off when the data is too large to read, which hasn't been tested yet. The research domain hasn't been queried.
 
 ## 4. Does it hold across models?
 
