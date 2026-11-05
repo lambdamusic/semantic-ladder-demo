@@ -6,13 +6,15 @@ The experiment asks the same questions over the same invented data, given in dif
 
 The experiment sets out to answer five questions:
 
-- **Does written-down meaning help?** Compare answers given with the data's definitions against answers given without them, while ruling out that a longer prompt alone explains the difference.
-- **Does the form of the meaning matter?** The same definitions as Markdown prose, as RDF, as logical axioms, or as rules already run over the data.
-- **Should the model read the data or query it?** Have it write SQL or SPARQL instead of reading the rows, and see whether the store needs to be a graph, or whether any database will do.
-- **Does it hold across models?** Claude Haiku and Sonnet so far; Opus and Gemini later.
-- **Does it hold in another domain?** Credit ratings first, then research analytics.
+1. **Does written-down meaning help?** Compare answers given with the data's definitions against answers given without them, while ruling out that a longer prompt alone explains the difference.
+2. **Does the form of the meaning matter?** The same definitions as Markdown prose, as RDF, as logical axioms, or as rules already run over the data.
+3. **Should the model read the data or query it?** Have it write SQL or SPARQL instead of reading the rows, and see whether the store needs to be a graph, or whether any database will do.
+4. **Does it hold across models?** Claude Haiku and Sonnet so far; Opus and Gemini later.
+5. **Does it hold in another domain?** Credit ratings first, then research analytics.
 
 Behind all five is a practical aim: to find out what an ontology is worth to an LLM, separating the meaning it writes down and the rules it runs from its file format.
+
+The [results summary](/summary/) takes each goal in turn and says how far the runs have answered it.
 
 ## The ladder
 

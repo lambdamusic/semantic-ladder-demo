@@ -16,6 +16,10 @@ def home(request):
                                              "domains": [dict(d, runs=files.headline(d["name"])) for d in files.nav()]})
 
 
+def summary(request):
+    return render(request, "lab/doc.html", {"title": "Results summary", "body": files.page("summary")})
+
+
 def doc(request, name):
     titles = {"README": "The repository", "RESULTS": "Results log"}
     return render(request, "lab/doc.html", {"title": titles[name], "body": files.doc(name), "name": name})
