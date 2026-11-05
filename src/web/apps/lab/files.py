@@ -37,17 +37,13 @@ def cond(c):
 
 
 def md(text):
-    """Markdown to HTML, with links to the repo's own Markdown files pointed at their pages,
+    """Markdown to HTML, with links to the repo's own Markdown files pointed at GitHub,
     and every condition written as `name` given its label."""
     html = markdown.markdown(text, extensions=["tables", "fenced_code", "toc"])
-    for name, url in (("README.md", "/readme/"), ("RESULTS.md", "/log/")):
-        html = html.replace(f'href="{name}"', f'href="{url}"')
+    for name in ("README.md", "RESULTS.md"):
+        html = html.replace(f'href="{name}"', f'href="{settings.REPO_URL}/blob/main/{name}"')
     html = re.sub(r"<code>([a-z+]+)</code>", lambda m: cond(m[1]) if m[1] in LABELS else m[0], html)
     return mark_safe(html)
-
-
-def doc(name):
-    return md((ROOT / f"{name}.md").read_text())
 
 
 # --- site structure: a section of pages per domain --------------------------------------------

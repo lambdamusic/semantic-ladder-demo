@@ -1,4 +1,4 @@
-Where each of the [five goals](/#goals) stands, from the runs so far. The [results](/results/) put each dataset's latest runs side by side, the [lab notebook](/log/) records each run's findings in the order they ran, and each run's own page has the numbers behind them. Accuracy is the mean over questions of each question's score across five repeats, unless a run says otherwise. Differences are paired, question by question, with a 95% bootstrap interval.
+Where each of the [five goals](/#goals) stands, from the runs so far. The [results](/results/) put each dataset's latest runs side by side, and each run's own page has the numbers behind them. Accuracy is the mean over questions of each question's score across five repeats, unless a run says otherwise. Differences are paired, question by question, with a 95% bootstrap interval.
 
 The credit figures come from the domain's current rules (version 2: [Sonnet](/runs/credit/2026-11-04-2013-sonnet/), [Haiku](/runs/credit/2026-11-04-2028-haiku/)). The earlier credit runs had a rule the model could guess, and the log keeps them.
 

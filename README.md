@@ -80,10 +80,10 @@ tools/run-web        # http://127.0.0.1:8030
 ```
 
 A Django app in `src/web/` that shows the experiment from its own files, read when each
-page opens: this README, the findings and the lab notebook (`RESULTS.md`); each domain's data, questions and
+page opens: the introduction, the findings and the results; each domain's data, questions and
 ontology; and every run, with accuracy and intervals, a grid of marks by question, every
 answer to a question, the prompts, and for query runs each session's queries and results.
-No database. The pages' text is in `src/web/content/`.
+No database. The pages' text is in `src/web/content/`. `RESULTS.md`, the lab notebook, records what each run showed in the order they ran; it isn't part of the pages.
 
 ```bash
 tools/site-dump      # the same pages as a static site in site/, for GitHub Pages (needs wget)

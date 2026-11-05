@@ -18,7 +18,7 @@ The [findings](/findings/) take each goal in turn and say how far the runs have 
 
 ## Method
 
-The models run through the `claude` command line from an empty directory, with no tools, so they see only the prompt. Each condition is asked five times. A question's score is its mean over the repeats, a condition's accuracy is the mean over questions, and intervals come from a bootstrap over questions. Differences between conditions are paired, question by question. The [lab notebook](/log/) records every run's findings in the order they ran.
+The models run through the `claude` command line from an empty directory, with no tools, so they see only the prompt. Each condition is asked five times. A question's score is its mean over the repeats, a condition's accuracy is the mean over questions, and intervals come from a bootstrap over questions. Differences between conditions are paired, question by question.
 
 The idea follows Andrea Splendiani's ["Ontologies for AI in practice / part I"](https://www.linkedin.com/pulse/ontologies-ai-practice-part-i-andrea-splendiani-fpihe/) (October 2026), which ran a family-tree question up a similar ladder.
 
@@ -68,4 +68,8 @@ Read across, D1 against D4, D2 against D5 and D3 against D6 compare SQL with SPA
 
 ## Results
 
-The [findings](/findings/) take the goals in turn and say how far the runs have answered each. The [results](/results/) put each dataset's latest runs side by side, and the [lab notebook](/log/) records what each run showed, in the order they ran.
+The [findings](/findings/) take the goals in turn and say how far the runs have answered each. The [results](/results/) put each dataset's latest runs side by side.
+
+## The code and data
+
+Everything is in the [GitHub repository](https://github.com/lambdamusic/semantic-ladder-demo): the data and how it's built, the ontologies and axioms, the questions and their keys, the code that runs and grades the ladder, and every run's prompts, answers and grades. Its README says how to run it.

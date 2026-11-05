@@ -26,11 +26,6 @@ def all_results(request):
     return render(request, "lab/all_results.html", {"title": "Results", "body": files.page("results"), "groups": groups})
 
 
-def doc(request, name):
-    titles = {"README": "The repository", "RESULTS": "Lab notebook"}
-    return render(request, "lab/doc.html", {"title": titles[name], "body": files.doc(name), "name": name})
-
-
 def runs(request):
     rows = [files.summary(d, f) for d, f in files.run_folders()]
     return render(request, "lab/runs.html", {"title": "All runs", "runs": rows})

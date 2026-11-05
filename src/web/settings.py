@@ -2,9 +2,9 @@
 Django settings: the semantics ladder's web pages, local only.
 
 Django here is a way to write pages, not a live backend: no database, no auth, no admin.
-Every page reads the experiment's own files when it opens (README.md, RESULTS.md,
-domains/, results/), so a new run shows up on reload. tools/site-dump mirrors the running
-site into docs/ as a static site for GitHub Pages.
+Every page reads the experiment's own files when it opens (src/web/content/, domains/,
+results/), so a new run shows up on reload. tools/site-dump mirrors the running site into
+site/ as a static site for GitHub Pages.
 """
 import sys
 from pathlib import Path
@@ -37,3 +37,4 @@ STATICFILES_DIRS = [WEB_DIR / "static"]
 STATIC_ROOT = REPO_ROOT / "build" / "collectstatic"
 
 APP_NAME = "Semantics ladder"
+REPO_URL = "https://github.com/lambdamusic/semantic-ladder-demo"
