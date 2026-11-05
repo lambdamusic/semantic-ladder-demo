@@ -65,3 +65,7 @@ The data sits in DuckDB, queried with SQL, or in an rdflib graph store, queried 
 | `sparql+axioms` | the graph after the SHACL rules have run, holding what they derive (one entity per LEI, ancestors, the ultimate parent), with no definitions (credit only) | rules run in the graph, against `sql+executed` |
 
 Read across, D1 against D4, D2 against D5 and D3 against D6 compare SQL with SPARQL given the same meaning.
+
+## Results
+
+The [results summary](/summary/) takes the goals in turn and says how far the runs have answered each. Every domain's Results page has its runs, and the [results log](/log/) has every run's findings in order.

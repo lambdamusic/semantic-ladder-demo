@@ -12,10 +12,7 @@ def nav(request):
 
 def home(request):
     return render(request, "lab/home.html", {"title": "The semantics ladder: how much does an LLM gain from being told what data means?",
-                                             "body": files.page("intro"),
-                                             "domains": [dict(g, parts=[dict(d, table=files.score_table(files.headline(d["name"])))
-                                                                           for d in g["datasets"]])
-                                                         for g in files.nav()]})
+                                             "body": files.page("intro")})
 
 
 def summary(request):
