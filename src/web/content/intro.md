@@ -29,7 +29,7 @@ The [results summary](/summary/) takes each goal in turn and says how far the ru
 | `csv+neutral` | as `csv+ontology`, with one slanted sentence made neutral (credit only) | whether the wording of a single definition can change an answer |
 | `csv+axioms` | the data plus OWL axioms and SHACL rules, with the prose taken out (credit only, so far) | whether the model can use logic it has to read |
 | `csv+axioms+markdown` | the axioms and the Markdown definitions together | whether logic and prose add up |
-| `executed` | the data after the rules have run: records merged, ratings with their periods | what curation buys |
+| `executed` | the data after the definitions' rules have been applied in code, with no definitions: test records dropped, duplicate records merged into one entity, each rating with the period it held, ownership chains spelt out | whether applying the meaning upstream, as a curated knowledge graph would, can replace telling the model what the data means |
 
 A second ladder asks the same questions without showing the rows. The model writes SQL (DuckDB) or SPARQL (rdflib), the runner executes each query and sends back the results, and the model answers from those. It's given the schema only, the schema plus the definitions, or a store where the rules have already run (`sql+executed`, `sparql+axioms`).
 
