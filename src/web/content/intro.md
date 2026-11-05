@@ -24,8 +24,11 @@ The [results summary](/summary/) takes each goal in turn and says how far the ru
 | `rdf` | the same facts as RDF, no ontology | what the format adds alone |
 | `csv+padding` | the CSV plus a decoy: a glossary on the same subject (bond markets; scholarly publishing), as long as the definitions in Markdown, that defines none of the terms the questions depend on | whether the gain comes from any expert text on the subject, a longer prompt full of domain words, or only from the definitions of this data |
 | `csv+markdown` | the CSV plus the ontology's definitions as Markdown | whether an ontology is just good documentation |
-| `csv+ontology`, `rdf+ontology` | the data plus `ontology.ttl`, definitions in SKOS | the definitions in RDF |
-| `csv+axioms` | the data plus OWL axioms and SHACL rules, with the prose taken out | whether the model can use logic it has to read |
+| `csv+ontology` | the CSV plus `ontology.ttl`: the same definitions in RDF (SKOS, in Turtle) | whether writing the definitions in RDF adds anything to the same definitions as Markdown |
+| `rdf+ontology` | the RDF data plus `ontology.ttl` | the full knowledge-graph form: whether data and definitions in one format do better than the CSV with the definitions |
+| `csv+neutral` | as `csv+ontology`, with one slanted sentence made neutral (credit only) | whether the wording of a single definition can change an answer |
+| `csv+axioms` | the data plus OWL axioms and SHACL rules, with the prose taken out (credit only, so far) | whether the model can use logic it has to read |
+| `csv+axioms+markdown` | the axioms and the Markdown definitions together | whether logic and prose add up |
 | `executed` | the data after the rules have run: records merged, ratings with their periods | what curation buys |
 
 A second ladder asks the same questions without showing the rows. The model writes SQL (DuckDB) or SPARQL (rdflib), the runner executes each query and sends back the results, and the model answers from those. It's given the schema only, the schema plus the definitions, or a store where the rules have already run (`sql+executed`, `sparql+axioms`).
