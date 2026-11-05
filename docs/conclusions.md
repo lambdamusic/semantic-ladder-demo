@@ -2,6 +2,16 @@ Where each of the [five goals](/#goals) stands, from the runs so far. The [score
 
 Goals 1, 2, 4 and 5 rest on one run per model and domain, each asking every reading condition its domain has: credit on its current rules, version 2 ([Sonnet](/runs/credit/2026-11-05-1227-sonnet/), [Haiku](/runs/credit/2026-11-05-1233-haiku/)), and research ([Sonnet](/runs/research/2026-11-05-1234-sonnet/), [Haiku](/runs/research/2026-11-05-1235-haiku/)). Earlier runs, including the credit runs on version 1, whose rule the model could guess, are in the [run archive](/runs/).
 
+## In short
+
+| Goal | Short answer |
+|---|---|
+| [1. Does written-down meaning help?](#1-does-written-down-meaning-help) | **Yes, by a lot.** The definitions lift both models from 45–84% to 96–100%, and a decoy glossary of the same length adds nothing. |
+| [2. Does the form of the meaning matter?](#2-does-the-form-of-the-meaning-matter) | **Little.** Markdown matches Turtle, axioms alone do as well as prose, and RDF without definitions adds nothing. Rules already run match the definitions on credit, but fall short on research. |
+| [3. Should the model read the data or query it?](#3-should-the-model-read-the-data-or-query-it) | **Not yet shown.** At the sizes tried, querying doesn't beat reading, and SPARQL doesn't beat SQL. The definitions matter as much either way. |
+| [4. Does it hold across models?](#4-does-it-hold-across-models) | **Yes, for Haiku and Sonnet.** The weaker model gains more, and with the definitions the two end up level. |
+| [5. Does the domain matter?](#5-does-the-domain-matter) | **The pattern holds; the size of the gain doesn't.** It's +15 to +21 points on credit and +41 to +53 on research, where more of the questions rest on local rules. |
+
 ## 1. Does written-down meaning help?
 
 **Answered: yes, and by a lot where the data has rules of its own.**
