@@ -101,7 +101,8 @@ def trap(q):
 
 def headline(domain):
     """The finished runs on the domain's current questions, the latest for each model, mode and set of
-    conditions: reading before querying, then by model, oldest first."""
+    conditions, leaving out a run whose conditions a newer one with the same model and mode all asked:
+    reading before querying, then by model, oldest first."""
     current = json.loads((DOMAINS / domain / "questions.json").read_text())
     found = {}
     for d, f in run_folders(domain):  # newest first
@@ -110,7 +111,8 @@ def headline(domain):
             continue  # asked before the domain last changed: its keys differ
         s = summary(d, f)
         key = (s["mode"], s["meta"]["model"], frozenset(s["meta"]["conditions"]))
-        if s["finished"] and key not in found:
+        covered = any(k[:2] == key[:2] and key[2] <= k[2] for k in found)
+        if s["finished"] and not covered:
             found[key] = s
     return sorted(found.values(), key=lambda s: (s["mode"] != "read", s["meta"]["model"], s["id"]))
 

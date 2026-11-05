@@ -219,3 +219,27 @@ Haiku's run is `results/credit/2026-11-04-2028-haiku/`.
 - **With definitions, both stores mostly get there.** `sparql+ontology` is the steadiest querying condition (85 to 100). `sql+markdown` scored 100 twice, but one session stopped after two rounds and guessed (12). `sparql+axioms` also scored 100 twice, with one session that got empty results (46). With three repeats, one bad session moves a path score by about 30 points, so the SQL and SPARQL averages don't separate them.
 - **Precomputing the closure wins:** with an `ancestors` table, SQL gets every path question right in every session. The graph's advantage is that it can follow links of any depth at query time. Once the rules have computed the chains, a table does as well.
 - **Reading beats querying at this size:** with the definitions, reading the 100 KB of CSV gets all 13 path questions right in all five sessions. Querying pays off when the data is too big to read, not because it's a graph.
+
+## 5 November 2026: every reading condition, one run per model and domain
+
+`results/credit/2026-11-05-1227-sonnet/` and `2026-11-05-1233-haiku/` (credit, version 2, R1 to R10), and `results/research/2026-11-05-1234-sonnet/` and `2026-11-05-1235-haiku/` (research, R1 to R6 and R10). Until now each condition's figures came from whichever run had asked it, some on credit's version 1 rules. These runs ask every condition together, so each table comes from one run per model, on the current keys.
+
+| Condition | Credit, Sonnet | Credit, Haiku | Research, Sonnet | Research, Haiku |
+|---|---|---|---|---|
+| `csv` | 84% | 78% | 57% | 45% |
+| `rdf` | 85% (+1) | 72% (−6, −12 to −1) | 47% (−9, −17 to −3) | 43% (−3) |
+| `csv+padding` | 84% (+0) | 76% (−2) | 57% (+0) | 44% (−1) |
+| `csv+markdown` | 100% (+16) | 98% (+20) | 98% (+41) | 99% (+53) |
+| `csv+ontology` | 99% (+15) | 99% (+21) | 98% (+41) | 96% (+51) |
+| `rdf+ontology` | 100% (+16) | 97% (+19) | 98% (+41) | 98% (+53) |
+| `csv+neutral` | 100% (+16) | 100% (+22) | | |
+| `csv+axioms` | 99% (+15) | 99% (+21) | | |
+| `csv+axioms+markdown` | 100% (+16) | 99% (+21) | | |
+| `executed` | 99% (+15) | 97% (+19) | 90% (+34) | 92% (+46) |
+
+- **The earlier findings hold in one run.** Every form of the definitions reaches 96–100%, Markdown matches Turtle, and the decoy stays within 2 points of `csv`.
+- **RDF alone can cost.** It never beats the CSV, and twice the loss has an interval below zero: Haiku on credit (−6) and Sonnet on research (−9).
+- **The decoy doesn't hurt Haiku after all.** An earlier credit run had it at −5 with an interval below zero. Here it's −2 (−6 to +1).
+- **Executed rules now match the definitions on credit:** +15 and +19, where version 1 gave +9. On research they're still 6 to 9 points short: versions (Q2, Q20), counting shares (Q12, Q13), the ultimate parent (Q46) and the "why" questions (Q47, Q48).
+- **The slant is still there.** Haiku gets Q10 right in 2 of 5 repeats with `csv+ontology`, 1 of 5 with `csv+markdown` and 3 of 5 with `csv+axioms+markdown`, against 5 of 5 with `csv+neutral` and with `csv+axioms`. Sonnet slips in 2 of 5 with `csv+ontology`.
+- **Logic and executed tables say what, not why.** Q6 is mostly partial with `csv+axioms` and `executed`, and right with the prose.

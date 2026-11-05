@@ -1,6 +1,6 @@
 Where each of the [five goals](/#goals) stands, from the runs so far. The [results](/results/) put each dataset's latest runs side by side, and each run's own page has the numbers behind them. Accuracy is the mean over questions of each question's score across five repeats, unless a run says otherwise. Differences are paired, question by question, with a 95% bootstrap interval.
 
-The credit figures come from the domain's current rules (version 2: [Sonnet](/runs/credit/2026-11-04-2013-sonnet/), [Haiku](/runs/credit/2026-11-04-2028-haiku/)). The earlier credit runs had a rule the model could guess, and the log keeps them.
+Goals 1, 2, 4 and 5 rest on one run per model and domain, each asking every reading condition its domain has: credit on its current rules, version 2 ([Sonnet](/runs/credit/2026-11-05-1227-sonnet/), [Haiku](/runs/credit/2026-11-05-1233-haiku/)), and research ([Sonnet](/runs/research/2026-11-05-1234-sonnet/), [Haiku](/runs/research/2026-11-05-1235-haiku/)). Earlier runs, including the credit runs on version 1, whose rule the model could guess, are under [all runs](/runs/).
 
 ## 1. Does written-down meaning help?
 
@@ -8,25 +8,26 @@ The credit figures come from the domain's current rules (version 2: [Sonnet](/ru
 
 | Domain | Model | Data only (`csv`) | With the definitions |
 |---|---|---|---|
-| Credit | Sonnet | 85% | 99–100% |
-| Credit | Haiku | 78% | 99–100% |
-| Research | Sonnet | 56% | 97–98% |
-| Research | Haiku | 44% | 96–97% |
+| Credit | Sonnet | 84% | 99–100% |
+| Credit | Haiku | 78% | 98–100% |
+| Research | Sonnet | 57% | 98% |
+| Research | Haiku | 45% | 96–99% |
 
-- **It isn't just any expert text on the subject.** `csv+padding` gives the data plus a decoy: a glossary as long as the definitions, on the same subject (bond markets; scholarly publishing), that defines none of the terms the questions depend on. It scores about the same as `csv`, or a little lower. So the gain comes from what the definitions say, not from a longer prompt full of domain words.
-- **The gain sits in each dataset's own rules.** These are the meanings an analyst can't know from outside: which record is a test record, which system holds an entity's domicile, whether an affiliated institute counts for its parent. In the research domain they go from 18% to 98% with Sonnet. Where a question only needs general knowledge, the models mostly know it already.
+- **It isn't just any expert text on the subject.** `csv+padding` gives the data plus a decoy: a glossary as long as the definitions, on the same subject (bond markets; scholarly publishing), that defines none of the terms the questions depend on. It scores within 2 points of `csv` in every case. So the gain comes from what the definitions say, not from a longer prompt full of domain words.
+- **The gain sits in each dataset's own rules.** These are the meanings an analyst can't know from outside: which record is a test record, which system holds an entity's domicile, whether an affiliated institute counts for its parent. On those questions, `csv` scores 40–57% on credit and 16–18% on research; with the definitions, 97–100%. Where a question only needs general knowledge, the models mostly know it already.
 - **The meaning has to be right.** The definitions are followed as written, so one slanted sentence in the prose can flip an answer (see goal 2).
 
 ## 2. Does the form of the meaning matter?
 
 **Mostly answered: the format matters little; what's written down, and whether the rules have run, matters more.**
 
-- **Markdown matches Turtle.** The same definitions as a Markdown glossary or as SKOS in `ontology.ttl` score within a point or two of each other in both domains.
-- **RDF alone adds nothing.** The same facts as RDF, without the ontology, score the same as the CSV or a little lower, and the prompt is larger.
-- **Logic without prose does about as well as prose.** With the definitions removed and only OWL axioms and SHACL rules left (`csv+axioms`), credit scores 99% with Sonnet and 100% with Haiku. The models read and apply the axioms.
-- **But axioms are followed to the letter, mistakes included.** When an axiom wrongly made a test record a kind of entity, both models counted it in every repeat. Once the axiom was fixed, the count came right.
-- **Prose carries its author's emphasis; axioms don't.** One sentence calling the foreign-currency rating "the headline rating" made Haiku answer a question wrongly in most repeats. With the sentence made neutral, or with the axioms alone, the answer is right.
-- **Rules already run over the data get most of the way, but not all.** The `executed` data, with records merged and rules applied and no definitions, gains +9 to +15 points on credit and +35 to +48 on research. It still falls 4 to 6 points short of the definitions on research, because of how the tables were built: merging hides what was merged, and the reasons behind the rules are lost.
+- **Markdown matches Turtle.** The same definitions as a Markdown glossary or as SKOS in `ontology.ttl` score within one to three points of each other in both domains.
+- **RDF alone adds nothing, and can cost.** The same facts as RDF, without the ontology, never beat the CSV. Haiku loses 6 points on credit and Sonnet 9 on research, both with intervals below zero, and the prompt is larger.
+- **Logic without prose does about as well as prose.** With the definitions removed and only OWL axioms and SHACL rules left (`csv+axioms`), credit scores 99% with both models. The models read and apply the axioms.
+- **But axioms are followed to the letter, mistakes included.** When an earlier version of the axioms wrongly made a test record a kind of entity, both models counted it in every repeat. Once the axiom was fixed, the count came right.
+- **Prose carries its author's emphasis; axioms don't.** One sentence calling the foreign-currency rating "the headline rating" makes Haiku answer Q10 wrongly: it's right in 2 of 5 repeats with the Turtle and 1 of 5 with the Markdown. With the sentence made neutral (`csv+neutral`), or with the axioms alone, it's right in 5 of 5. Sonnet slips too, in 2 of 5 with the Turtle.
+- **Logic and executed rules say what, not why.** The one question that asks for a cause (Q6, why a rating sits where it does) is answered only partly in most repeats with the axioms alone or the executed data, and in full with the prose.
+- **Rules already run over the data match the definitions on credit, but not on research.** The `executed` data, with records merged and rules applied and no definitions, gains +15 to +19 points on credit, reaching 97–99%, and +34 to +46 on research, reaching 90–92%: 6 to 9 points short of the definitions. The research misses come from how the tables were built: merging a preprint into its published version hides it (Q2, Q20), the counting questions lose the per-author shares (Q12, Q13), there's no ultimate-parent column (Q46), and the reasons behind the rules are lost (Q47, Q48).
 
 *Still open:* axioms for the research domain, and executed tables that keep what they merged.
 
@@ -53,9 +54,9 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 
 **Partly answered: for Claude Haiku and Sonnet, yes.**
 
-- **The weaker the model, the more the definitions are worth.** Haiku gains +21 points on credit and +52 on research, against Sonnet's +14 and +41.
+- **The weaker the model, the more the definitions are worth.** Haiku gains +20 to +21 points on credit and +51 to +53 on research, against Sonnet's +15 to +16 and +41.
 - **With the definitions, the two models end up level.** Both reach 96–100% in both domains.
-- **A small model is hurt more by text that doesn't help:** Haiku lost 5 points with the decoy glossary, in an earlier credit run.
+- **Text that doesn't carry the meaning helps neither model.** The decoy glossary stays within 2 points of `csv` for both. An earlier credit run had Haiku lose 5 points with it, which this run doesn't repeat (−2, −6 to +1).
 
 *Still open:* Opus and Gemini, set aside for now.
 
@@ -65,15 +66,15 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 
 | | Credit ratings | Research analytics |
 |---|---|---|
-| Data only (`csv`), Sonnet and Haiku | 85% and 78% | 56% and 44% |
-| With the definitions | 99–100% | 96–98% |
+| Data only (`csv`), Sonnet and Haiku | 84% and 78% | 57% and 45% |
+| With the definitions | 98–100% | 96–99% |
 | RDF alone, or the decoy glossary | no gain | no gain |
 | Markdown against Turtle | level | level |
-| Executed rules, no definitions | +9 to +15 | +35 to +48 |
+| Executed rules, no definitions | +15 to +19 | +34 to +46 |
 
 - **The findings hold in both:** RDF alone and the decoy glossary add nothing, Markdown matches Turtle, and the definitions lift both models to 96–100%.
-- **What changes is how much the data says for itself.** Without the definitions, the models start much lower on research, because more of its questions rest on the dataset's own rules and terms (what counts as a "research work", which affiliation is credited, what an affiliated institute's parent link means). So the definitions are worth +41 to +52 points there, against +14 to +21 on credit. A domain whose meaning is mostly general knowledge gains less, and one with many local conventions gains more.
-- **Executed rules depend more on the domain:** on research they also depend on how the tables were designed, since merging records and rolling up institutions decide what the data can still answer.
+- **What changes is how much the data says for itself.** Without the definitions, the models start much lower on research, because more of its questions rest on the dataset's own rules and terms (what counts as a "research work", which affiliation is credited, what an affiliated institute's parent link means). So the definitions are worth +41 to +53 points there, against +15 to +21 on credit. A domain whose meaning is mostly general knowledge gains less, and one with many local conventions gains more.
+- **Executed rules depend more on the domain:** they match the definitions on credit and fall short on research, where they also depend on how the tables were designed, since merging records and rolling up institutions decide what the data can still answer.
 
 *A caveat:* some of the research questions use the dataset's own terms, which only the ontology defines, so some answers marked wrong without it are defensible readings of the question. A review found they're mostly the questions that depend on the local rules anyway.
 
