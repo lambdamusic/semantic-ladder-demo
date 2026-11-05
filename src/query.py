@@ -15,6 +15,10 @@ The runner owns the loop, so any provider can play: each reply may hold several 
 ```sparql blocks, which are run and their results sent back, for up to eight rounds. A reply
 with a ```json block and no queries is the final answer, graded as in run.py. Each run writes
 results/<domain>/<timestamp>-<model>-query/ with a transcript per condition and repeat.
+
+The SPARQL conditions run on rdflib by default. With --store graphdb they run on a local GraphDB
+(GRAPHDB_URL, default http://localhost:7200), in a repository of their own with no inference, loaded
+with exactly the triples rdflib would hold, so only the engine changes. Such a run's folder ends -query-graphdb.
 """
 import argparse
 import csv
@@ -23,11 +27,15 @@ import json
 import re
 import signal
 import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+import os
 from datetime import datetime
 from pathlib import Path
 
 import duckdb
-from rdflib import BNode, Graph
+from rdflib import BNode, Graph, URIRef
 
 import grade
 import providers
@@ -39,6 +47,18 @@ CONDITIONS = ["sql", "sql+markdown", "sparql", "sparql+ontology", "sql+executed"
 ROUNDS = 8
 MAX_ROWS = 60
 TIMEOUT = 60  # seconds per query: a query that runs longer is reported to the model as failed
+STORE = "rdflib"  # or "graphdb", from --store
+GRAPHDB = os.environ.get("GRAPHDB_URL", "http://localhost:7200")
+GRAPHDB_REPO = "semantics-ladder"
+GRAPHDB_CONFIG = """@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix rep: <http://www.openrdf.org/config/repository#>.
+@prefix sr: <http://www.openrdf.org/config/repository/sail#>.
+@prefix sail: <http://www.openrdf.org/config/sail#>.
+@prefix graphdb: <http://www.ontotext.com/config/graphdb#>.
+[] a rep:Repository ; rep:repositoryID "%s" ; rdfs:label "semantics-ladder query runs (cleared each session)" ;
+   rep:repositoryImpl [ rep:repositoryType "graphdb:SailRepository" ;
+     sr:sailImpl [ sail:sailType "graphdb:Sail" ; graphdb:ruleset "empty" ; graphdb:disable-sameAs "true" ] ] .
+""" % GRAPHDB_REPO
 
 PROTOCOL = """You can't see the data, but you can query it. {how}
 
@@ -124,6 +144,55 @@ class SPARQLStore:
             return str(x)
 
 
+class GraphDBStore(SPARQLStore):
+    """The same triples as SPARQLStore, loaded into a local GraphDB with no inference, and queried there."""
+
+    def __init__(self, domain, extra=""):
+        super().__init__(domain, extra)
+        graphdb_repo()
+        url = f"{GRAPHDB}/repositories/{GRAPHDB_REPO}/statements"
+        http(url, method="DELETE")
+        http(url, data=self.g.serialize(format="nt").encode(), headers={"Content-Type": "application/n-triples"})
+
+    def run(self, q):
+        if re.search(r"\b(SERVICE|LOAD|INSERT|DELETE|CLEAR|DROP)\b", q, re.I):
+            raise ValueError("only SELECT and ASK queries over the store are allowed")
+        body = urllib.parse.urlencode({"query": q, "timeout": TIMEOUT}).encode()
+        try:
+            res = json.loads(http(f"{GRAPHDB}/repositories/{GRAPHDB_REPO}", data=body, headers={
+                "Content-Type": "application/x-www-form-urlencoded", "Accept": "application/sparql-results+json"}))
+        except urllib.error.HTTPError as e:
+            msg = e.read().decode(errors="replace").strip()
+            if "timeout" in msg.lower() or "timed out" in msg.lower():
+                raise TimeoutError(f"stopped after {TIMEOUT} seconds")
+            raise ValueError(msg.splitlines()[0] if msg else str(e))
+        if "boolean" in res:
+            return ["ask"], [(res["boolean"],)]
+        cols = res["head"]["vars"]
+        cell = lambda b: None if b is None else self.short(URIRef(b["value"])) if b["type"] == "uri" else b["value"]
+        return cols, [tuple(cell(row.get(c)) for c in cols) for row in res["results"]["bindings"]]
+
+
+def http(url, data=None, headers=None, method=None):
+    req = urllib.request.Request(url, data=data, headers=headers or {}, method=method)
+    with urllib.request.urlopen(req, timeout=TIMEOUT + 30) as r:
+        return r.read().decode()
+
+
+def graphdb_repo():
+    """Create the runs' own repository, with no inference, unless it's there. Nothing else in GraphDB is touched."""
+    try:
+        http(f"{GRAPHDB}/rest/repositories/{GRAPHDB_REPO}")
+        return
+    except urllib.error.HTTPError as e:
+        if e.code != 404:
+            raise
+    boundary = "----semanticsladder"
+    body = (f"--{boundary}\r\nContent-Disposition: form-data; name=\"config\"; filename=\"config.ttl\"\r\n"
+            f"Content-Type: text/turtle\r\n\r\n{GRAPHDB_CONFIG}\r\n--{boundary}--\r\n").encode()
+    http(f"{GRAPHDB}/rest/repositories", data=body, headers={"Content-Type": f"multipart/form-data; boundary={boundary}"})
+
+
 def timed(run, q):
     """run(q), stopped after TIMEOUT seconds. rdflib can loop for hours on a bad join."""
     def stop(*_):
@@ -168,7 +237,7 @@ def inferred(domain):
 def store_for(domain, condition):
     if condition.startswith("sql"):
         return SQLStore(domain, executed=condition.endswith("+executed"))
-    return SPARQLStore(domain, condition.partition("+")[2])
+    return (GraphDBStore if STORE == "graphdb" else SPARQLStore)(domain, condition.partition("+")[2])
 
 
 def opening(domain, condition, store, questions):
@@ -231,13 +300,16 @@ def main():
     ap.add_argument("--runs", type=int, default=5)
     ap.add_argument("--only", nargs="+", choices=CONDITIONS)
     ap.add_argument("--resume", type=Path)
+    ap.add_argument("--store", choices=["rdflib", "graphdb"], default="rdflib", help="the engine for the SPARQL conditions")
     args = ap.parse_args()
+    global STORE
+    STORE = args.store
 
     domain = importlib.import_module(f"domains.{args.domain}.domain")
     questions = json.loads(domain.QUESTIONS.read_text())
     conditions = args.only or CONDITIONS
     canon = domain.canonical()
-    out = args.resume or ROOT / "results" / args.domain / f"{datetime.now():%Y-%m-%d-%H%M}-{providers.split(args.model)[1]}-query"
+    out = args.resume or ROOT / "results" / args.domain / f"{datetime.now():%Y-%m-%d-%H%M}-{providers.split(args.model)[1]}-query" + ("-graphdb" if STORE == "graphdb" else "")
     out.mkdir(parents=True, exist_ok=True)
     if not (out / "questions.json").exists():  # the questions as asked, keys included, kept with the run
         (out / "questions.json").write_text(json.dumps(questions, indent=2, ensure_ascii=False) + "\n")
@@ -245,7 +317,7 @@ def main():
         (out / "meta.json").write_text(json.dumps({
             "domain": args.domain, "model": args.model, "grader": args.grader, "runs": args.runs, "mode": "query",
             "conditions": conditions, "started": f"{datetime.now():%Y-%m-%d %H:%M}", "rounds": ROUNDS,
-            "questions": len(questions), "commit": commit()}, indent=2) + "\n")
+            "questions": len(questions), "commit": commit(), "store": STORE}, indent=2) + "\n")
 
     def ask_grader(text, system):
         return providers.ask(text, system, args.grader)

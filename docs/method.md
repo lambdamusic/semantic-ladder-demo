@@ -49,7 +49,9 @@ Within each group, the conditions differ in how much of the data's meaning the m
 
 ### Querying conditions
 
-The data sits either in [DuckDB](https://duckdb.org/), an in-process SQL database, queried with SQL, or in an in-memory graph store built with [rdflib](https://rdflib.readthedocs.io/), the Python library for RDF, queried with SPARQL. The model gets up to eight rounds of queries before it must answer.
+The data sits either in [DuckDB](https://duckdb.org/), an in-process SQL database, queried with SQL, or in an in-memory graph store built with [rdflib](https://rdflib.readthedocs.io/), the Python library for RDF, queried with SPARQL. The model gets up to eight rounds of queries before it must answer, and a query that runs for more than 60 seconds is stopped and reported to it as failed.
+
+The SPARQL conditions can also run on [GraphDB](https://graphdb.ontotext.com/) (the free edition), a graph database built for speed. Such a run loads exactly the same triples, in a repository with no inference, so that only the engine changes; its column in the scores says GraphDB. Reproducing those runs needs a local GraphDB.
 
 | Condition | What the model gets | What it tests |
 |---|---|---|

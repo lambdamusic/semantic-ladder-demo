@@ -37,7 +37,7 @@ from it.
 | | |
 |---|---|
 | `src/run.py` | the reading ladder: asks, grades and writes the report. Conditions: `csv`, `rdf`, `rdf+ontology`, `csv+ontology`, `csv+markdown` (the same definitions as Markdown), `csv+padding` (a decoy: a glossary on the same subject, as long as the definitions in Markdown, that defines none of the terms the questions depend on), `csv+neutral` (the ontology with one slanted sentence made neutral), `executed` (the data after its rules have run, with no definitions), and `csv+axioms` (the ontology's names and codes with the definitions removed, plus OWL axioms and SHACL rules), with or without `+markdown` |
-| `src/query.py` | the querying ladder: the model never sees the rows, but writes SQL (DuckDB) or SPARQL (rdflib), and the runner sends back each query's results. Conditions: `sql`, `sql+markdown`, `sparql`, `sparql+ontology`, `sql+executed`, `sparql+axioms` |
+| `src/query.py` | the querying ladder: the model never sees the rows, but writes SQL (DuckDB) or SPARQL (rdflib, or a local GraphDB with `--store graphdb`), and the runner sends back each query's results. Conditions: `sql`, `sql+markdown`, `sparql`, `sparql+ontology`, `sql+executed`, `sparql+axioms` |
 | `src/grade.py` | grading by code, and by an LLM with a checklist |
 | `src/report.py` | accuracy with intervals, paired differences, grader agreement |
 | `src/reasons.py` | checks whether answers graded correct rest on sound reasoning |
@@ -64,6 +64,8 @@ python src/run.py --resume results/credit/<run>    # finish a stopped run
 python src/run.py --regrade results/credit/<run>   # redo the code grading, with the run's own questions
 python src/report.py results/credit/<run>          # rebuild a report
 python src/query.py --domain credit_300            # the model writes SQL or SPARQL instead of reading the data
+python src/query.py --domain credit_paths --only sparql sparql+ontology sparql+axioms --store graphdb
+                                                   # the SPARQL conditions on GraphDB (needs GraphDB running at GRAPHDB_URL, default localhost:7200)
 python src/reasons.py results/credit/<run>         # check the reasoning behind correct answers
 
 python domains/credit/csv_to_rdf.py        # after editing a CSV
