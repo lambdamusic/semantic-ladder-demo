@@ -35,10 +35,16 @@ Each condition has a label, R1 to R10 for reading, so that the pages can refer t
 
 A second ladder asks the same questions without showing the rows. The model writes SQL (DuckDB) or SPARQL (rdflib), the runner executes each query and sends back the results, and the model answers from those. Its conditions are labelled D1 to D6, for querying a database:
 
-| | Schema only | Schema plus the definitions | Rules already run in the store |
-|---|---|---|---|
-| **SQL** (DuckDB) | `sql` | `sql+markdown`: the definitions in Markdown | `sql+executed`: the tables of `executed` |
-| **SPARQL** (rdflib) | `sparql` | `sparql+ontology`: `ontology.ttl` | `sparql+axioms`: the graph after the SHACL rules have run |
+| Condition | What the model gets | What it tests |
+|---|---|---|
+| `sql` | the raw CSV files as DuckDB tables, described by their names, columns and row counts; it queries them with SQL | the querying baseline: whether a model that writes queries does better than one that reads |
+| `sql+markdown` | the same, plus the definitions in Markdown, as `csv+markdown` gets them | whether the definitions help as much when the model writes queries as when it reads |
+| `sql+executed` | the tables of `executed` in DuckDB, after the rules have run: test records dropped, records merged, rating periods and ownership chains computed | whether rules applied upstream make SQL reliable, with no definitions |
+| `sparql` | the raw RDF data in a graph store, described by its prefixes, classes and properties; it queries it with SPARQL | whether a graph store helps on its own, against `sql` |
+| `sparql+ontology` | the same, plus the definitions in Markdown, as `sql+markdown` gets them; the ontology's triples are also loaded into the store, where queries can use them | a graph with its ontology, against `sql+markdown`: whether the store needs to be a graph |
+| `sparql+axioms` | the graph after the SHACL rules have run, holding what they derive (one entity per LEI, ancestors, the ultimate parent), with no definitions (credit only) | rules run in the graph, against `sql+executed` |
+
+Read across, D1 against D4, D2 against D5 and D3 against D6 compare SQL with SPARQL given the same meaning.
 
 ## The domains
 
