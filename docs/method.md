@@ -19,7 +19,7 @@ A run asks one model every question of one dataset under several conditions, eac
 ## The domains
 
 - **[Credit ratings](/domains/credit/):** issuers, instruments and rating actions, with the traps of time, identity, ceilings and groups. It has three datasets: the [base data](/domains/credit/#the-base-data), the same domain at [300 issuers](/domains/credit/#at-300-issuers), and a dataset with [deep ownership chains](/domains/credit/#ownership-paths) to test whether a graph store helps with paths.
-- **[Research analytics](/domains/research/):** works, authors, institutions and citations, shaped like OpenAlex, with the traps of who is who, institution hierarchies, counting methods and versions.
+- **[Research analytics](/domains/research/):** works, authors, institutions and citations, shaped like OpenAlex, with the traps of who is who, institution hierarchies, counting methods and versions. It has two datasets: the [base data](/domains/research/#the-base-data) and the same domain at [850 works](/domains/research/#at-850-works).
 
 All the data is invented.
 

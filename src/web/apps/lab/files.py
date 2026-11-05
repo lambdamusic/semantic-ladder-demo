@@ -55,7 +55,7 @@ SECTIONS = [("", "Introduction"), ("data", "Data"), ("questions", "Questions and
 # A domain is one ontology and one question bank, asked of one or more datasets, each a folder in domains/.
 GROUPS = [("credit", "Credit ratings", [("credit", "The base data"), ("credit_300", "At 300 issuers"),
                                          ("credit_paths", "Ownership paths")]),
-          ("research", "Research analytics", [("research", "The base data")])]
+          ("research", "Research analytics", [("research", "The base data"), ("research_850", "At 850 works")])]
 
 
 def page(name):

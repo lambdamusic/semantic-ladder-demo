@@ -8,12 +8,17 @@ disagree with the data after an edit (to generate_data.py, then the CSV files).
 """
 import csv
 import json
+import os
 from collections import Counter
 from fractions import Fraction
+from functools import cache
 from pathlib import Path
 
 HERE = Path(__file__).parent
-DATA = HERE / "data"
+# A scaled copy of the domain (scale.py) sets RESEARCH_FOLDER: its data is read and its
+# questions written there, with keys computed from the data only, since none were written by hand.
+FOLDER = Path(os.environ.get("RESEARCH_FOLDER", HERE))
+DATA = FOLDER / "data"
 
 
 def rows(name):
@@ -43,6 +48,7 @@ def is_research(w):
             and SOURCES[r["source_id"]]["tier"] != "K0")  # local rule: K0 sources are delisted
 
 
+@cache  # the rules are pure; cached so a scaled copy builds in seconds
 def identity(w):
     """A preprint with its published version in the data is that version."""
     v = WORKS[w]["version_of"]
@@ -57,15 +63,18 @@ def year(w):
     return int(WORKS[w]["year"])
 
 
+@cache
 def records(work):
     return [w for w in WORKS if identity(w) == work]
 
 
+@cache
 def people(work):
     """The distinct people on any record of the work."""
     return {PERSON[a["author_id"]] for a in AUTHORSHIPS if a["work_id"] in records(work)}
 
 
+@cache
 def credited(work):
     """{person: the one institution credited for them}: local rule, the affiliation listed last.
 
@@ -79,6 +88,7 @@ def credited(work):
     return {p: inst for p, (_, inst) in best.items()}
 
 
+@cache
 def chain(inst):
     """The institution and every one above it; an affiliated institute (AFF) is not a unit of its parent."""
     out = [inst]
@@ -91,10 +101,12 @@ def ultimate_parent(inst):
     return chain(inst)[-1]
 
 
+@cache
 def institutions_of(work):
     return {i for inst in credited(work).values() for i in chain(inst)}
 
 
+@cache
 def countries_of(work):
     return {INSTS[i]["country"] for i in credited(work).values()}
 
@@ -119,6 +131,7 @@ def whole(x):
     return int(x)
 
 
+@cache
 def citers(work):
     """The distinct works citing either record of a work, test records and retracted works left out."""
     return sorted({identity(c) for c, d in CITES if identity(d) == work
@@ -416,7 +429,24 @@ CHECKLIST = {
 }
 
 
+def scaled_q47():
+    """Q47's checklist and expected answer for a scaled copy: the same question, the numbers read from the data."""
+    def side(inst):
+        shares = {w: Fraction(sum(inst in chain(i) for i in credited(w).values()), len(credited(w)))
+                  for w in works_of(inst, 2024)}
+        return len(shares), sum(shares.values()), sum(s <= Fraction(1, 4) for s in shares.values()), sum(s == 1 for s in shares.values())
+    nr, fr, small, _ = side("I09")
+    nk, fk, _, alone = side("I07")
+    checklist = ["Says most of Rostval's 2024 works have several authors with only one from Rostval, so it gets a small share of each",
+                 "Says Kesting holds larger shares of its 2024 works: many by Kesting authors alone, or with few co-authors"]
+    expected = (f"Rostval is on {nr} works in 2024, but on {'every one' if small == nr else small} of them it has at most a quarter of the authors, "
+                f"so its shares add up to {fr}. Kesting is on {nk}, {alone} of them by Kesting authors alone, "
+                f"so its shares add up to {fk}.")
+    return checklist, expected
+
+
 def main():
+    scaled = FOLDER != HERE
     # The preprints' bylines agree with their published versions', so reading credit from the latter is safe.
     for w in WORKS:
         if identity(w) != w:
@@ -424,13 +454,17 @@ def main():
     out = []
     for qid, text, fields, key, compute, tests, expected in Q:
         got = compute()
+        if scaled:
+            key, expected = got, json.dumps(got)
         assert got == key, (qid, "by hand", key, "from the data", got)
         out.append({"id": qid, "question": text, "expected": expected, "tests": tests, "fields": fields, "key": key})
     for qid, (text, checklist, tests, expected) in CHECKLIST.items():
+        if scaled and qid == "Q47":
+            checklist, expected = scaled_q47()
         out.append({"id": qid, "question": text, "expected": expected, "tests": tests, "checklist": checklist})
     out.sort(key=lambda q: int(q["id"][1:]))
-    (HERE / "questions.json").write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
-    print(f"{len(out)} questions, every typed key matches the data")
+    (FOLDER / "questions.json").write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
+    print(f"{len(out)} questions" + (", keys computed from the data" if scaled else ", every typed key matches the data"))
 
 
 if __name__ == "__main__":
