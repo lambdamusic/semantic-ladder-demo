@@ -44,6 +44,7 @@ from it.
 | `src/providers.py` | `ask(text, system, model)` for each provider |
 | `src/ontology_to_md.py` | writes a domain's `ontology.md` from its `ontology.ttl`, so the two can't drift |
 | `src/web/` | the web pages (see below) |
+| `docs/` | the web pages' text, in Markdown |
 | `domains/credit/` | credit ratings: `data/` (three CSV files and `facts.ttl`), `ontology.ttl`, `axioms.ttl` (checked by `check_axioms.py`), `questions.json` (48 questions with typed keys, written by `build_questions.py`, which stops if a key disagrees with the data), `domain.py`, `execute.py`, `csv_to_rdf.py`, and `concepts.md`, the credit terms explained for people. `scale.py` and `paths.py` build the larger copies |
 | `domains/credit_100/`, `credit_300/` | the credit domain at 100 and 300 issuers |
 | `domains/credit_paths/` | 300 issuers plus six deep ownership groups, with 61 questions, 13 of which follow links |
@@ -83,7 +84,7 @@ A Django app in `src/web/` that shows the experiment from its own files, read wh
 page opens: the introduction, the findings and the results; each domain's data, questions and
 ontology; and every run, with accuracy and intervals, a grid of marks by question, every
 answer to a question, the prompts, and for query runs each session's queries and results.
-No database. The pages' text is in `src/web/content/`. `RESULTS.md`, the lab notebook, records what each run showed in the order they ran; it isn't part of the pages.
+No database. The pages' text is in `docs/`. `RESULTS.md`, the lab notebook, records what each run showed in the order they ran; it isn't part of the pages.
 
 ```bash
 tools/site-dump      # the same pages as a static site in site/, for GitHub Pages (needs wget)
@@ -91,4 +92,4 @@ tools/site-dump      # the same pages as a static site in site/, for GitHub Page
 
 It runs its own server on port 8031, mirrors every page with wget, and syncs the result into
 `site/`. It doesn't commit: check `site/` and commit it. On a push to `main`, `.github/workflows/pages.yml`
-publishes `site/` to GitHub Pages. `docs/` is for the project's own Markdown documentation.
+publishes `site/` to GitHub Pages. `docs/` holds the pages' text, in Markdown.

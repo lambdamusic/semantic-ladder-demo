@@ -2,7 +2,7 @@
 Django settings: the semantics ladder's web pages, local only.
 
 Django here is a way to write pages, not a live backend: no database, no auth, no admin.
-Every page reads the experiment's own files when it opens (src/web/content/, domains/,
+Every page reads the experiment's own files when it opens (docs/, domains/,
 results/), so a new run shows up on reload. tools/site-dump mirrors the running site into
 site/ as a static site for GitHub Pages.
 """

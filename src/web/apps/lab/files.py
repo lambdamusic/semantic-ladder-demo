@@ -48,7 +48,7 @@ def md(text):
 
 # --- site structure: a section of pages per domain --------------------------------------------
 
-CONTENT = settings.WEB_DIR / "content"
+CONTENT = ROOT / "docs"  # the pages' text
 SECTIONS = [("", "Introduction"), ("data", "Data"), ("questions", "Questions and traps"),
             ("ontology", "Ontology"), ("results", "Results")]
 # A domain is one ontology and one question bank, asked of one or more datasets, each a folder in domains/.
@@ -58,7 +58,7 @@ GROUPS = [("credit", "Credit ratings", [("credit", "The base data"), ("credit_30
 
 
 def page(name):
-    """A page's own text: content/<name>.md, rendered, or "" if there is none."""
+    """A page's own text: docs/<name>.md, rendered, or "" if there is none."""
     f = CONTENT / f"{name}.md"
     return md(f.read_text()) if f.exists() else ""
 
