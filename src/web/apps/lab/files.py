@@ -55,7 +55,7 @@ SECTIONS = [("", "Introduction"), ("data", "Data"), ("questions", "Questions and
 # A domain is one ontology and one question bank, asked of one or more datasets, each a folder in domains/.
 GROUPS = [("credit", "Credit ratings", [("credit", "The base data"), ("credit_300", "At 300 issuers"),
                                          ("credit_paths", "Ownership paths")]),
-          ("research", "Research analytics", [("research", "The data")])]
+          ("research", "Research analytics", [("research", "The base data")])]
 
 
 def page(name):
@@ -152,9 +152,14 @@ def domain_info(name):
 
 
 def diagram(domain):
-    """The static path of the domain's ontology diagram, shared by its scaled copies (credit_300 uses credit's), or ""."""
+    """The domain's ontology diagram, shared by its scaled copies (credit_300 uses credit's): its static path,
+    and its <desc> (or else its <title>) as the alt text. None if it has none."""
     name = f"img/{domain.split('_')[0]}-ontology.svg"
-    return name if (settings.WEB_DIR / "static" / name).exists() else ""
+    path = settings.WEB_DIR / "static" / name
+    if not path.exists():
+        return None
+    alt = re.search(r"<desc>(.*?)</desc>", path.read_text(), re.S) or re.search(r"<title>(.*?)</title>", path.read_text(), re.S)
+    return {"src": name, "alt": alt[1] if alt else ""}
 
 
 def text(path):

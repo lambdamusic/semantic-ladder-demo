@@ -12,4 +12,4 @@ Each question is answered as typed JSON and graded by code, except Q47 and Q48, 
 | Citations at several levels | Q27 to Q32 |
 | Local rules | Q33 to Q46, Q48 |
 
-"Research work" is the dataset's own term, so some answers given without the ontology, such as counting editorials, could be called a reasonable reading rather than an error. The credit domain's "issuer rating" was the same. A review of those questions is on the [plan](/plan/).
+"Research work" is the dataset's own term, so some answers given without the ontology, such as counting editorials, could be called a reasonable reading rather than an error. A review found they're mostly the questions that depend on the local rules anyway (see the [conclusions](/conclusions/#5-does-the-domain-matter)).

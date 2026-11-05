@@ -11,6 +11,7 @@ A run asks one model every question of one dataset under several conditions, eac
 ## Grading
 
 - **By code, against keys computed from the data.** Each dataset's build script computes the key to every question from the data and its rules, and in the base datasets each key is also checked against one written by hand.
+- **A checklist, for the questions that ask why.** One credit question (Q6) and two research questions (Q47, Q48) ask for a reason, which code can't grade. Claude Sonnet grades them against a checklist of points, twice, so that its agreement with itself can be measured.
 - **Correct, partial or wrong.** An answer's JSON fields are compared with the key after normalising (ratings, yes and no, entity identifiers, counts). All fields right is correct, some right is partial, none is wrong. List answers are also scored by F1, reported beside the strict grade.
 - **Accuracy** is the mean over questions, with correct = 1 and partial = ½, of each question's mean over the repeats.
 - **Intervals** are 95% bootstrap intervals over questions. Differences between two conditions are paired, question by question, so they compare like with like.
