@@ -14,6 +14,8 @@ The experiment sets out to answer five questions:
 
 Behind all five is a practical aim: to find out what an ontology is worth to an LLM, separating the meaning it writes down and the rules it runs from its file format.
 
+The idea follows Andrea Splendiani's ["Ontologies for AI in practice / part I"](https://www.linkedin.com/pulse/ontologies-ai-practice-part-i-andrea-splendiani-fpihe/) (October 2026), which ran a family-tree question up a similar ladder.
+
 ## How the pages are arranged
 
 - **[Method](/method/):** how the runs are made and graded, and the ladder of conditions they compare.
