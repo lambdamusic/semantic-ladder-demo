@@ -13,7 +13,7 @@ The credit figures come from the domain's current rules (version 2: [Sonnet](/ru
 | Research | Sonnet | 56% | 97–98% |
 | Research | Haiku | 44% | 96–97% |
 
-- **Length doesn't explain it.** `csv+padding`, the data plus a finance text of the same length about other things, scores about the same as `csv`, or a little lower.
+- **It isn't just any expert text on the subject.** `csv+padding` gives the data plus a decoy: a glossary as long as the definitions, on the same subject (bond markets; scholarly publishing), that defines none of the terms the questions depend on. It scores about the same as `csv`, or a little lower. So the gain comes from what the definitions say, not from a longer prompt full of domain words.
 - **The gain sits in each dataset's own rules.** These are the meanings an analyst can't know from outside: which record is a test record, which system holds an entity's domicile, whether an affiliated institute counts for its parent. In the research domain they go from 18% to 98% with Sonnet. Where a question only needs general knowledge, the models mostly know it already.
 - **The meaning has to be right.** The definitions are followed as written, so one slanted sentence in the prose can flip an answer (see goal 2).
 
@@ -55,7 +55,7 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 
 - **The weaker the model, the more the definitions are worth.** Haiku gains +21 points on credit and +52 on research, against Sonnet's +14 and +41.
 - **With the definitions, the two models end up level.** Both reach 96–100% in both domains.
-- **A small model is hurt more by irrelevant text:** Haiku lost 5 points with the padding, in an earlier credit run.
+- **A small model is hurt more by text that doesn't help:** Haiku lost 5 points with the decoy glossary, in an earlier credit run.
 
 *Still open:* Opus and Gemini, set aside for now.
 
@@ -67,11 +67,11 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 |---|---|---|
 | Data only (`csv`), Sonnet and Haiku | 85% and 78% | 56% and 44% |
 | With the definitions | 99–100% | 96–98% |
-| RDF alone, or the length control | no gain | no gain |
+| RDF alone, or the decoy glossary | no gain | no gain |
 | Markdown against Turtle | level | level |
 | Executed rules, no definitions | +9 to +15 | +35 to +48 |
 
-- **The findings hold in both:** RDF alone and the length control add nothing, Markdown matches Turtle, and the definitions lift both models to 96–100%.
+- **The findings hold in both:** RDF alone and the decoy glossary add nothing, Markdown matches Turtle, and the definitions lift both models to 96–100%.
 - **What changes is how much the data says for itself.** Without the definitions, the models start much lower on research, because more of its questions rest on the dataset's own rules and terms (what counts as a "research work", which affiliation is credited, what an affiliated institute's parent link means). So the definitions are worth +41 to +52 points there, against +14 to +21 on credit. A domain whose meaning is mostly general knowledge gains less, and one with many local conventions gains more.
 - **Executed rules depend more on the domain:** on research they also depend on how the tables were designed, since merging records and rolling up institutions decide what the data can still answer.
 

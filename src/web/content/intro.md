@@ -22,7 +22,7 @@ The [results summary](/summary/) takes each goal in turn and says how far the ru
 |---|---|---|
 | `csv` | the data as CSV files | the baseline |
 | `rdf` | the same facts as RDF, no ontology | what the format adds alone |
-| `csv+padding` | the CSV plus unrelated text of the same length as the ontology | whether a gain is just length |
+| `csv+padding` | the CSV plus a decoy: a glossary on the same subject (bond markets; scholarly publishing), as long as the definitions in Markdown, that defines none of the terms the questions depend on | whether the gain comes from any expert text on the subject, a longer prompt full of domain words, or only from the definitions of this data |
 | `csv+markdown` | the CSV plus the ontology's definitions as Markdown | whether an ontology is just good documentation |
 | `csv+ontology`, `rdf+ontology` | the data plus `ontology.ttl`, definitions in SKOS | the definitions in RDF |
 | `csv+axioms` | the data plus OWL axioms and SHACL rules, with the prose taken out | whether the model can use logic it has to read |

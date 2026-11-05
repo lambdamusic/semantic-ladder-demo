@@ -36,7 +36,7 @@ from it.
 
 | | |
 |---|---|
-| `src/run.py` | the reading ladder: asks, grades and writes the report. Conditions: `csv`, `rdf`, `rdf+ontology`, `csv+ontology`, `csv+markdown` (the same definitions as Markdown), `csv+padding` (finance text of the same length, about none of this: the length control), `csv+neutral` (the ontology with one slanted sentence made neutral), `executed` (the data after its rules have run, with no definitions), and `csv+axioms` (the ontology's names and codes with the definitions removed, plus OWL axioms and SHACL rules), with or without `+markdown` |
+| `src/run.py` | the reading ladder: asks, grades and writes the report. Conditions: `csv`, `rdf`, `rdf+ontology`, `csv+ontology`, `csv+markdown` (the same definitions as Markdown), `csv+padding` (a decoy: a glossary on the same subject, as long as the definitions in Markdown, that defines none of the terms the questions depend on), `csv+neutral` (the ontology with one slanted sentence made neutral), `executed` (the data after its rules have run, with no definitions), and `csv+axioms` (the ontology's names and codes with the definitions removed, plus OWL axioms and SHACL rules), with or without `+markdown` |
 | `src/query.py` | the querying ladder: the model never sees the rows, but writes SQL (DuckDB) or SPARQL (rdflib), and the runner sends back each query's results. Conditions: `sql`, `sql+markdown`, `sparql`, `sparql+ontology`, `sql+executed`, `sparql+axioms` |
 | `src/grade.py` | grading by code, and by an LLM with a checklist |
 | `src/report.py` | accuracy with intervals, paired differences, grader agreement |
