@@ -29,6 +29,15 @@ The idea follows Andrea Splendiani's ["Ontologies for AI in practice / part I"](
 
 ## The ladder
 
+Each run asks the same questions under different conditions: what the model is given, and how it gets at the data. The conditions fall into two groups:
+
+- **Reading** (R1 to R10): the model sees the rows, in the prompt, with or without their meaning in some form, and works out each answer itself.
+- **Querying** (D1 to D6): the model never sees the rows. It writes SQL or SPARQL, the runner executes each query and sends back the results, and the model answers from those.
+
+Within each group, the conditions differ in how much of the data's meaning the model is given, and in what form. Each has a label, so that the pages can refer to it briefly.
+
+### Reading conditions
+
 | Condition | What the model gets | What it tests |
 |---|---|---|
 | `csv` | the data as CSV files | the baseline |
@@ -42,9 +51,9 @@ The idea follows Andrea Splendiani's ["Ontologies for AI in practice / part I"](
 | `csv+axioms+markdown` | the axioms and the Markdown definitions together | whether logic and prose add up |
 | `executed` | the data after the definitions' rules have been applied in code, with no definitions: test records dropped, duplicate records merged into one entity, each rating with the period it held, ownership chains spelt out | whether applying the meaning upstream, as a curated knowledge graph would, can replace telling the model what the data means |
 
-Each condition has a label, R1 to R10 for reading, so that the pages can refer to it briefly.
+### Querying conditions
 
-A second ladder asks the same questions without showing the rows. The model writes SQL (DuckDB) or SPARQL (rdflib), the runner executes each query and sends back the results, and the model answers from those. Its conditions are labelled D1 to D6, for querying a database:
+The data sits in DuckDB, queried with SQL, or in an rdflib graph store, queried with SPARQL. The model gets up to eight rounds of queries before it must answer.
 
 | Condition | What the model gets | What it tests |
 |---|---|---|
