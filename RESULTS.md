@@ -243,3 +243,22 @@ Haiku's run is `results/credit/2026-11-04-2028-haiku/`.
 - **Executed rules now match the definitions on credit:** +15 and +19, where version 1 gave +9. On research they're still 6 to 9 points short: versions (Q2, Q20), counting shares (Q12, Q13), the ultimate parent (Q46) and the "why" questions (Q47, Q48).
 - **The slant is still there.** Haiku gets Q10 right in 2 of 5 repeats with `csv+ontology`, 1 of 5 with `csv+markdown` and 3 of 5 with `csv+axioms+markdown`, against 5 of 5 with `csv+neutral` and with `csv+axioms`. Sonnet slips in 2 of 5 with `csv+ontology`.
 - **Logic and executed tables say what, not why.** Q6 is mostly partial with `csv+axioms` and `executed`, and right with the prose.
+
+## 5 November 2026: ownership paths, querying with five repeats, Sonnet
+
+`results/credit_paths/2026-11-05-1515-sonnet-query/`: the six querying conditions again, with five repeats instead of three, since one session moved a path score by about 30 points. One session was refused by the API ("safeguards flagged this message") and redone on resume.
+
+| | All 61 questions | Path questions | Path score in each session |
+|---|---|---|---|
+| `sql` | 75% | 60% | 38, 62, 62, 69, 69 |
+| `sql+markdown` | 98% | 100% | 100 in all five |
+| `sql+executed` | 96% | 100% | 100 in all five |
+| `sparql` | 59% | 32% | 46, 62, 0, 31, 23 |
+| `sparql+ontology` | 77% | 42% | 4, 8, 46, 77, 77 |
+| `sparql+axioms` | 84% | 77% | 100, 100, 100, 8, 77 |
+
+- **The order of the stores reverses.** With three repeats, `sparql+ontology` was the steadiest querying condition (92% on paths) and `sql+markdown` 71%. With five, `sql+markdown` gets every path right in every session and `sparql+ontology` 42%. Against `sql`, `sparql+ontology` is now +2 points overall (−5 to +10), and `sql+markdown` +23 (+13 to +32).
+- **The SPARQL sessions fail on the store as well as the meaning.** In `sparql+ontology`, rdflib stopped up to three of the model's large queries a session after 60 seconds, and in the worst session it answered after six rounds with most path answers empty. `sparql+axioms` used all eight rounds in four sessions of five. No SQL query timed out. Plain `sparql` had no timeouts and still scored lowest, so without the definitions the meaning is missing too.
+- **Precomputed chains still win:** `sql+executed` gets every path right in every session.
+- **So the graph's advantage doesn't show here, at any level of meaning.** With rdflib as the store, SPARQL is slower and less steady than SQL. A faster triple store could change that, and is worth trying before concluding against graphs.
+

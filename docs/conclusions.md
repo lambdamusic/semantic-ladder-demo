@@ -8,7 +8,7 @@ Goals 1, 2, 4 and 5 rest on one run per model and domain, each asking every read
 |---|---|
 | [1. Does written-down meaning help?](#1-does-written-down-meaning-help) | **Yes, by a lot.** The definitions lift both models from 45–84% to 96–100%, and a decoy glossary of the same length adds nothing. |
 | [2. Does the form of the meaning matter?](#2-does-the-form-of-the-meaning-matter) | **Little.** Markdown matches Turtle, axioms alone do as well as prose, and RDF without definitions adds nothing. Rules already run match the definitions on credit, but fall short on research. |
-| [3. Should the model read the data or query it?](#3-should-the-model-read-the-data-or-query-it) | **Not yet shown.** At the sizes tried, querying doesn't beat reading, and SPARQL doesn't beat SQL. The definitions matter as much either way. |
+| [3. Should the model read the data or query it?](#3-should-the-model-read-the-data-or-query-it) | **Not yet shown.** At the sizes tried, querying doesn't beat reading, and SPARQL doesn't beat SQL, even on ownership paths. The definitions matter as much either way. |
 | [4. Does it hold across models?](#4-does-it-hold-across-models) | **Yes, for Haiku and Sonnet.** The weaker model gains more, and with the definitions the two end up level. |
 | [5. Does the domain matter?](#5-does-the-domain-matter) | **The pattern holds; the size of the gain doesn't.** It's +15 to +21 points on credit and +41 to +53 on research, where more of the questions rest on local rules. |
 
@@ -55,10 +55,10 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 
 - **The definitions matter as much when querying as when reading:** +10 to +16 points in each mode.
 - **Querying helps a little with long lists,** where reading misses an item or two.
-- **On ownership paths of unknown depth** ([reading](/runs/credit_paths/2026-11-04-2022-sonnet/), [querying](/runs/credit_paths/2026-11-04-2024-sonnet-query/)), a graph store doesn't help without the definitions: SPARQL gets 33% of the path questions and SQL 44%. With the definitions, SPARQL is the steadiest querying condition (92%). A precomputed `ancestors` table gives SQL every path right, and reading the 100 KB of CSV with the definitions also gets every path right.
+- **On ownership paths of unknown depth** ([reading](/runs/credit_paths/2026-11-04-2022-sonnet/), [querying](/runs/credit_paths/2026-11-05-1515-sonnet-query/)), a graph store doesn't help, with or without the definitions. Without them, SPARQL gets 32% of the path questions and SQL 60%. With them, SQL gets every path right in all five sessions, and SPARQL swings from 4% to 77%, with queries that time out in rdflib. A precomputed `ancestors` table gives SQL every path right, and reading the 100 KB of CSV with the definitions also gets every path right.
 - **So the graph's advantage, following links of any depth, disappears once the rules have computed the chains.**
 
-*Still open:* the querying run on ownership paths used three repeats, and one bad session moves a path score by about 30 points, so SQL and SPARQL can't yet be told apart; five repeats are next. Querying should pay off when the data is too large to read, which hasn't been tested yet. The research domain hasn't been queried.
+*Still open:* the SPARQL results depend on rdflib, a store built for convenience rather than speed, and a faster triple store might close part of the gap. Querying should pay off when the data is too large to read, which hasn't been tested yet. The research domain hasn't been queried.
 
 ## 4. Does it hold across models?
 

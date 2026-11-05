@@ -5,7 +5,7 @@ How the experiment is run, and the conditions it compares. The [domains](/domain
 A run asks one model every question of one dataset under several conditions, each a few times over.
 
 - **The models:** Claude Haiku and Sonnet, through the `claude` command line in print mode, from an empty directory with no tools, so they see only the prompt.
-- **Repeats:** each condition is asked five times. The one exception so far is the querying run on ownership paths, which used three, to keep its six conditions within a few hours.
+- **Repeats:** each condition is asked five times.
 - **The prompt:** the data in the condition's form, then the questions, each to be answered in a sentence or two that cites the records used, and a closing JSON block that gives each answer in set fields. A run keeps its own prompts, so each one can be read on the run's page.
 
 ## Grading
