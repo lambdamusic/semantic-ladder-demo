@@ -113,9 +113,7 @@ def ontology(request, domain):
     folder = parts[0]["folder"]  # one ontology for the domain: the first dataset's
     return render(request, "lab/ontology.html", {
         "title": f"{g['title']}: the ontology", "body": parts[0]["body"],
-        "md": files.md(files.text(folder / "ontology.md")), "ttl": files.text(folder / "ontology.ttl"),
-        "axioms": files.text(folder / "axioms.ttl"), "padding": files.md(files.text(folder / "padding.md")),
-        "diagram": files.diagram(domain)})
+        "md": files.md(files.text(folder / "ontology.md")), "diagram": files.diagram(domain)})
 
 
 def run(request, domain, run):
