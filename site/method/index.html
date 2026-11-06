@@ -134,7 +134,7 @@
 </table>
 <h3 id="querying-conditions">Querying conditions</h3>
 <p>The data sits either in <a href="https://duckdb.org/" target="_blank" rel="noopener">DuckDB</a>, an in-process SQL database, queried with SQL, or in an in-memory graph store built with <a href="https://rdflib.readthedocs.io/" target="_blank" rel="noopener">rdflib</a>, the Python library for RDF, queried with SPARQL. The model gets up to eight rounds of queries before it must answer, and a query that runs for more than 60 seconds is stopped and reported to it as failed.</p>
-<p>The SPARQL conditions can also run on <a href="https://graphdb.ontotext.com/" target="_blank" rel="noopener">GraphDB</a> (the free edition), a graph database built for speed. Such a run loads exactly the same triples, in a repository with no inference, so that only the engine changes; its column in the scores says GraphDB. Reproducing those runs needs a local GraphDB.</p>
+<p>The SPARQL conditions can also run on <a href="https://graphdb.ontotext.com/" target="_blank" rel="noopener">GraphDB</a>, a graph database built for speed. Such a run loads exactly the same triples, in a repository with no inference, so that only the engine changes. One run did, on the ownership paths: see <a href="index.html#the-technical-setup">the technical setup</a>.</p>
 <table>
 <thead>
 <tr>
@@ -177,6 +177,49 @@
 </tbody>
 </table>
 <p>Read across, D1 against D4, D2 against D5 and D3 against D6 compare SQL with SPARQL given the same meaning.</p>
+<h2 id="the-technical-setup">The technical setup</h2>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>What</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The models</td>
+<td>Claude Sonnet 5.5 and Claude Haiku 5.5, through the <code>claude</code> command line in print mode</td>
+<td>every answer; Sonnet also grades the three "why" questions</td>
+</tr>
+<tr>
+<td>SQL store</td>
+<td><a href="https://duckdb.org/" target="_blank" rel="noopener">DuckDB</a> 1.5, in-process</td>
+<td>every SQL condition</td>
+</tr>
+<tr>
+<td>Graph store</td>
+<td><a href="https://rdflib.readthedocs.io/" target="_blank" rel="noopener">rdflib</a> 7.6, in memory</td>
+<td>every SPARQL condition, in every run but one</td>
+</tr>
+<tr>
+<td>Graph database</td>
+<td><a href="https://graphdb.ontotext.com/" target="_blank" rel="noopener">GraphDB</a> 11.5, free edition, local</td>
+<td>one run only: the three SPARQL conditions on the <a href="../domains/credit_paths/index.html#ownership-paths">ownership paths</a> (credit), to check whether a faster engine changes the result. Not used on research</td>
+</tr>
+<tr>
+<td>Rules</td>
+<td><a href="https://github.com/RDFLib/pySHACL" target="_blank" rel="noopener">pySHACL</a> 0.40, running the SHACL rules in <code>axioms.ttl</code></td>
+<td>the graph for <span class="lbl">D6</span> <code>sparql+axioms</code>, and the checks that the rules agree with the answer keys</td>
+</tr>
+<tr>
+<td>The rest</td>
+<td>Python 3.13; <a href="https://www.djangoproject.com/" target="_blank" rel="noopener">Django</a> 5.2 for these pages, mirrored to a static site with wget and published on GitHub Pages</td>
+<td>building the data, grading, and showing the results</td>
+</tr>
+</tbody>
+</table>
+<p>The versions are pinned in <a href="https://github.com/lambdamusic/semantic-ladder-demo/blob/main/requirements.txt" target="_blank" rel="noopener"><code>requirements.txt</code></a>, and <a href="https://github.com/lambdamusic/semantic-ladder-demo/blob/main/BUILDING.md" target="_blank" rel="noopener"><code>BUILDING.md</code></a> says how to set them up.</p>
 <h2 id="what-the-runs-cost-and-how-long-they-took">What the runs cost, and how long they took</h2>
 <p>Every model call went through the <code>claude</code> command line in print mode, on a Claude subscription, so the runs cost nothing beyond the subscription. They did count against its usage limits, which stopped one run for about an hour.</p>
 <p>At the API's list prices, the same calls would cost roughly <strong>$45</strong>, almost all of it Sonnet:</p>
