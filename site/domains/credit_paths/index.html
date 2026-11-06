@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Credit ratings · Semantics ladder</title>
+  <link rel="stylesheet" href="../../static/css/site.css">
+  <script src="../../static/js/site.js" defer></script>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <a class="brand" href="../../index.html">Semantics ladder</a>
+    <p class="brand-sub">How much does an LLM gain from being told what data means?</p>
+    <div class="nav-group">The experiment</div>
+    <ul>
+      <li><a class="" href="../../index.html">Goals</a></li>
+      <li><a class="" href="../../method/index.html">Method</a></li>
+    </ul>
+    
+    <div class="nav-group">Credit ratings</div>
+    <ul>
+      <li><a class="active" href="index.html">Introduction</a></li><li><a class="" href="../credit/data/index.html">Data</a></li><li><a class="" href="../credit/questions/index.html">Questions and traps</a></li><li><a class="" href="../credit/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">Research analytics</div>
+    <ul>
+      <li><a class="" href="../research_850/index.html">Introduction</a></li><li><a class="" href="../research/data/index.html">Data</a></li><li><a class="" href="../research/questions/index.html">Questions and traps</a></li><li><a class="" href="../research/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">The results</div>
+    <ul>
+      <li><a class="" href="../../scores/index.html">Scores</a></li>
+      <li><a class="" href="../../conclusions/index.html">Conclusions</a></li>
+      <li><a class="" href="../../runs/index.html">Run archive</a></li>
+    </ul>
+    <p class="nav-foot">All data is invented: the companies, LEIs, ratings, works, people and institutions. Nothing here is any rating agency's or bibliographic database's data or definitions.</p>
+  </nav>
+  <main class="content">
+    <h1>Credit ratings</h1>
+    
+<p class="flag">Synthetic: every record in this domain is invented.</p>
+<div class="prose"><p>An invented credit-ratings world: issuers, the bonds they issue, and the rating actions on both, as an analyst's extract from two internal systems would come. The codes (<code>LTIDR</code>, <code>AF</code>, <code>RWN</code>) are left cryptic, and nothing in the files says what they stand for.</p>
+<p>The 48 questions are of two kinds:</p>
+<ul>
+<li><strong>Implicit meanings</strong> (Q1 to Q40): what any credit analyst knows without saying. A rating holds from one action to the next. An outlook isn't a rating change. A withdrawal isn't a default. A Country Ceiling caps foreign-currency ratings. A guaranteed note carries the guarantor's risk. Two records with one LEI are one entity. A strong model gets many of these right from general knowledge.</li>
+<li><strong>Local meanings</strong> (Q41 to Q48): rules this dataset sets for itself, stated only in the ontology. QA records are test data. Domicile comes from the RESEARCH system, and names and parents from RATINGS. <code>XVD</code> and <code>CVK</code> are local currency codes. <code>CO</code> is a credit opinion, not a rating. <code>EX</code> is an expected rating, not yet assigned. No model can know these without being told, which is where an ontology should earn its place.</li>
+</ul>
+<p>One ontology and one question bank are asked of three datasets. Each dataset computes its own answer keys from its own data.</p>
+<h2 id="the-datasets">The datasets</h2>
+<h3 id="the-base-data">The base data</h3>
+<p>19 entity records (two of them sovereigns), 8 instruments and 47 rating actions, every one designed by hand so that each question has its point. Small enough to read in full, it's where the ladder was first tested.</p>
+<h3 id="at-300-issuers">At 300 issuers</h3>
+<p>The base records plus 300 invented issuers that repeat the same traps many times over: duplicate RESEARCH records, QA test records, group chains, finance subsidiaries, local currencies, expected ratings, withdrawals, Watches, and rows out of date order. That makes 370 entity records, 115 instruments and 787 rating actions. The same 48 questions now need counting and joining across many records, which is where reading the data should start to fail and writing queries should pay off. <code>scale.py</code> builds it from a fixed seed.</p>
+<h3 id="ownership-paths">Ownership paths</h3>
+<p>Does the store need to be a graph? With one or two levels of parent, the data can't show a graph's strength. This dataset is the 300-issuer data, on the current rules, plus six invented groups four to six levels deep, built so that answering means walking parent and guarantee links:</p>
+<ul>
+<li>in the largest group, a parent link names a <strong>RESEARCH record</strong> of the parent, so the chain goes on from that entity's RATINGS record;</li>
+<li>a RESEARCH record gives a <strong>stale parent</strong> in another group, which the RATINGS record overrules;</li>
+<li>a member is <strong>in Valdoria by its RESEARCH record</strong>, which holds for country, while RATINGS puts it in the Netherlands;</li>
+<li>a note is <strong>guaranteed by another group's top entity</strong>;</li>
+<li>a <strong>QA test record</strong> sits under one group's top, with a rating of its own.</li>
+</ul>
+<p>It asks the 48 questions plus 13 that follow links (Q49 to Q61). <code>paths.py</code> builds it, and the designed entities' IDs go in <code>anchors.json</code>.</p>
+<h2 id="version-2">Version 2</h2>
+<p>Since commit 18a2f42, domicile comes from RESEARCH. In version 1 the RATINGS record held for everything, and <span class="lbl">R1</span> <code>csv</code> got those questions right in every run, because "RATINGS" sounds authoritative, so the rule could be guessed. Runs before that commit used version 1's keys, and each run's page grades it against its own.</p></div>
+<p class="note">How the models score on this domain: <a href="../../scores/index.html#credit">scores</a>.</p>
+<details class="source"><summary>The base data: <code>concepts.md</code></summary><div class="prose"><h1 id="credit-concepts-behind-the-data">Credit concepts behind the data</h1>
+<p>Plain-English explanations of the terms the <a href="https://github.com/lambdamusic/semantic-ladder-demo/blob/main/README.md" target="_blank" rel="noopener">semantics ladder</a> data relies on,
+using its invented records as examples. <code>ontology.ttl</code> holds the formal definitions, which
+are what the LLM sees. This file is for people, and is not sent to the LLM.</p>
+<h2 id="instruments">Instruments</h2>
+<p>An instrument is a specific piece of debt that a company has sold to investors, such as a
+bond or note. It is the thing being rated, as distinct from the company that owes the money.</p>
+<p>"Kestrel Energy 6.25% notes due 2031" (<code>I02</code>) breaks down as:</p>
+<ul>
+<li><strong>Issuer:</strong> Kestrel Energy (<code>E01</code>), which borrowed the money and owes the payments.</li>
+<li><strong>Coupon:</strong> 6.25% is the annual interest paid to investors.</li>
+<li><strong>Maturity:</strong> 30 September 2031, when the money must be repaid.</li>
+<li><strong>Currency:</strong> GBP, the currency it pays in.</li>
+<li><strong>Seniority:</strong> subordinated (<code>SUB</code>), so if Kestrel fails, these investors are repaid after
+  the senior ones.</li>
+</ul>
+<p>The data has four instruments:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Instrument</th>
+<th>Issuer</th>
+<th>Seniority</th>
+<th>Currency</th>
+<th>Guarantor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>I01</code></td>
+<td>Kestrel Energy 4.50% due 2030</td>
+<td><code>E01</code></td>
+<td>Senior unsecured</td>
+<td>GBP</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>I02</code></td>
+<td>Kestrel Energy 6.25% due 2031</td>
+<td><code>E01</code></td>
+<td>Subordinated</td>
+<td>GBP</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>I03</code></td>
+<td>Northwind Finance 3.75% due 2030</td>
+<td><code>E04</code></td>
+<td>Senior unsecured</td>
+<td>EUR</td>
+<td><code>E02</code></td>
+</tr>
+<tr>
+<td><code>I04</code></td>
+<td>Valdoria Telecom 5.00% due 2029</td>
+<td><code>E05</code></td>
+<td>Senior unsecured</td>
+<td>USD</td>
+<td>none</td>
+</tr>
+</tbody>
+</table>
+<p>One company can have many instruments, each with its own rating. That rating starts from
+the issuer's and moves up or down depending on the terms:</p>
+<ul>
+<li><strong>Seniority:</strong> Kestrel is rated BBB, but its subordinated note <code>I02</code> is BB+, below
+  investment grade. So "is Kestrel investment grade?" and "is this note investment grade?"
+  get different answers (Q3).</li>
+<li><strong>Guarantees:</strong> Northwind Finance's note <code>I03</code> is backed by <code>E02</code>, so investors are really
+  taking that guarantor's risk, not the issuer's (Q5).</li>
+<li><strong>Currency:</strong> <code>I04</code> pays in USD, so it is exposed to the risk that Valdoria stops money
+  leaving the country (Q6, and see <a href="index.html#country-ceilings">Country Ceilings</a> below).</li>
+</ul>
+<p>A knowledge graph therefore has to keep issuers and instruments as separate, linked things:
+"the rating of X" is ambiguous until you say which one.</p>
+<h2 id="instruments-notes-and-bonds">Instruments, notes and bonds</h2>
+<p>A note is one kind of instrument. "Instrument" is the general term for any tradable financial
+contract, and a note is a specific type of debt instrument.</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Instrument</strong></td>
+<td>The umbrella term: bonds, notes, loans, shares, derivatives and so on</td>
+</tr>
+<tr>
+<td><strong>Debt instrument</strong></td>
+<td>An instrument where someone owes money and must repay it</td>
+</tr>
+<tr>
+<td><strong>Bond</strong></td>
+<td>Debt sold to investors, usually long-term</td>
+</tr>
+<tr>
+<td><strong>Note</strong></td>
+<td>Much the same as a bond, usually with a shorter term</td>
+</tr>
+</tbody>
+</table>
+<p>The line between a note and a bond is mostly convention. A note is often described as running
+for about 1–10 years and a bond for longer, but it varies by market and issuer. The legal
+terms matter far more for credit risk: seniority, guarantees and currency.</p>
+<p>All four instruments in the data happen to be notes, but <code>lad:Instrument</code> is defined as "a
+debt instrument, such as a bond or note", so a bond would fit without any change.</p>
+<h2 id="country-ceilings">Country Ceilings</h2>
+<p>A Country Ceiling is a cap on the foreign-currency ratings of entities based in a country.
+It is written on the same scale as a rating, but it is not a judgement of anyone's
+creditworthiness. In the data, the BB on the Republic of Valdoria (<code>A12</code>, type <code>CC</code>) is its
+Country Ceiling.</p>
+<p><strong>What it captures:</strong> the risk that a government stops money being converted or sent abroad,
+for example through capital controls in a currency crisis. Then even a healthy company
+couldn't pay its foreign debts, because it couldn't get the dollars out. This is called
+transfer and convertibility risk.</p>
+<p><strong>Why currency matters:</strong> the risk only applies to paying in foreign currency.</p>
+<ul>
+<li><strong>Local currency:</strong> a Valdorian company paying a debt in Valdorian money doesn't need to
+  convert anything or send it abroad, so capital controls don't stop it. The ceiling doesn't
+  apply.</li>
+<li><strong>Foreign currency:</strong> a Valdorian company paying dollars has to get through that
+  restriction, however strong its business is. The ceiling applies.</li>
+</ul>
+<p>Valdoria Telecom (<code>E05</code>) shows this directly:</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>What is rated</th>
+<th>Rating</th>
+<th>Ceiling applies?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A13</code></td>
+<td>Issuer, local currency</td>
+<td><strong>BBB-</strong></td>
+<td>No, so this reflects the company's own strength</td>
+</tr>
+<tr>
+<td><code>A14</code></td>
+<td>Issuer, foreign currency</td>
+<td><strong>BB</strong></td>
+<td>Yes, capped at the ceiling</td>
+</tr>
+<tr>
+<td><code>A15</code></td>
+<td><code>I04</code>, its USD note</td>
+<td><strong>BB</strong></td>
+<td>Yes, because it pays in dollars</td>
+</tr>
+</tbody>
+</table>
+<p>So the same company is investment grade in local currency and below investment grade in
+foreign currency. Nothing about the business differs between the two; the gap comes entirely
+from the country. Q6 asks why the two ratings differ, and Q10 has no single answer until you
+say which rating you mean.</p>
+<p>Two distinctions are easy to mix up:</p>
+<ul>
+<li><strong>The ceiling isn't the sovereign's own rating.</strong> Valdoria the government would have its
+  own issuer rating, which is a separate thing and could be a different level. The data
+  doesn't include one, as <code>VD</code> only carries the ceiling. In real data, ceilings often sit
+  somewhat above the sovereign's foreign-currency rating; check an agency's published
+  criteria before relying on that.</li>
+<li><strong>It's a general cap, not an absolute one.</strong> The ontology says foreign-currency ratings are
+  "generally no higher than the ceiling". Real exceptions exist, such as a company with
+  substantial earnings or support from abroad.</li>
+</ul>
+<p>The rule links three things: an entity's country, the currency basis of a rating, and a
+separate country-level fact. No row states that link, so a model reading only the CSV has to
+bring it from its own training.</p></div></details>
+
+  </main>
+</div>
+</body>
+</html>

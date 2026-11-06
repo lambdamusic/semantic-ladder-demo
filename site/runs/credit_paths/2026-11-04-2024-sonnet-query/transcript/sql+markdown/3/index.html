@@ -1,0 +1,1139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>D2 sql+markdown, run 3: the query session · Semantics ladder</title>
+  <link rel="stylesheet" href="../../../../../../static/css/site.css">
+  <script src="../../../../../../static/js/site.js" defer></script>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <a class="brand" href="../../../../../../index.html">Semantics ladder</a>
+    <p class="brand-sub">How much does an LLM gain from being told what data means?</p>
+    <div class="nav-group">The experiment</div>
+    <ul>
+      <li><a class="" href="../../../../../../index.html">Goals</a></li>
+      <li><a class="" href="../../../../../../method/index.html">Method</a></li>
+    </ul>
+    
+    <div class="nav-group">Credit ratings</div>
+    <ul>
+      <li><a class="" href="../../../../../../domains/credit_paths/index.html">Introduction</a></li><li><a class="" href="../../../../../../domains/credit/data/index.html">Data</a></li><li><a class="" href="../../../../../../domains/credit/questions/index.html">Questions and traps</a></li><li><a class="" href="../../../../../../domains/credit/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">Research analytics</div>
+    <ul>
+      <li><a class="" href="../../../../../../domains/research_850/index.html">Introduction</a></li><li><a class="" href="../../../../../../domains/research/data/index.html">Data</a></li><li><a class="" href="../../../../../../domains/research/questions/index.html">Questions and traps</a></li><li><a class="" href="../../../../../../domains/research/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">The results</div>
+    <ul>
+      <li><a class="" href="../../../../../../scores/index.html">Scores</a></li>
+      <li><a class="" href="../../../../../../conclusions/index.html">Conclusions</a></li>
+      <li><a class="" href="../../../../../index.html">Run archive</a></li>
+    </ul>
+    <p class="nav-foot">All data is invented: the companies, LEIs, ratings, works, people and institutions. Nothing here is any rating agency's or bibliographic database's data or definitions.</p>
+  </nav>
+  <main class="content">
+    <h1>D2 sql+markdown, run 3: the query session</h1>
+    
+<p><a href="../../../index.html">← back to the run</a></p>
+<div class="status"><span class="pill ok">18 queries</span><span class="pill warn">2 failed</span><span class="pill ok">7 rounds</span></div>
+
+<details class="source" ><summary>The opening prompt</summary>
+  <div class="code"><pre><code>## The data
+
+You can&#x27;t see the data, but you can query it. It is in DuckDB, in the tables below. Write DuckDB SQL.
+
+To run queries, reply with one or more fenced blocks (```sql), and nothing else is needed:
+each is run and its results sent back to you. You have up to 8 rounds of queries.
+When you have what you need, reply with the final answers and no queries.
+
+All columns are text (VARCHAR); dates are ISO strings.
+
+- `entities` (540 rows): entity_id, name, lei, country, entity_type, parent_id, source_system
+- `instruments` (122 rows): instrument_id, description, issuer_id, guarantor_id, seniority, currency, maturity
+- `rating_actions` (914 rows): action_id, date, rated_id, rating_type, ccy_basis, action, rating, outlook, watch, comment
+
+### ontology.md (the vocabulary the data uses)
+
+# Credit ratings: a teaching ontology
+
+Entities, instruments, rating actions and the codes the data uses, each with a definition that states what it means and how to read it. Invented for an experiment; not a model of any real rating agency.
+
+## Classes
+
+### Entity
+
+A legal entity: a company, bank, finance subsidiary or sovereign. An entity is identified by its LEI (LEI), not by its name or record ID. The data holds records from more than one source system (source system), so the same entity can appear as several records with different IDs and differently spelled names: two records with the same LEI are the same entity, and every fact recorded against either record is a fact about that one entity.
+
+### Instrument
+
+A debt instrument, such as a bond or note, issued by an entity (issuer). An instrument&#x27;s rating is not the issuer&#x27;s rating: it can sit above or below it depending on seniority (seniority) and on any guarantee (guarantor).
+
+### Rating action
+
+Something a rating agency did to a rating on a date (date): assigned, affirmed, upgraded, downgraded, placed on Watch or withdrawn it. Each action applies to one rated thing (rated thing), one rating type (rating type) and, for issuer ratings, one currency basis (currency basis). A rating holds from its action date until the next action on the same thing, type and basis: so the rating on a date D is the one set by the latest action on or before D, and the current rating is the latest action overall. rating always holds the rating as it stands after the action, including when it did not change.
+
+## Properties
+
+### name (CSV column `name`)
+
+The name as the source system spells it. Names are not identifiers: the same entity can be spelled differently in different systems.
+
+### LEI (CSV column `lei`)
+
+Legal Entity Identifier: the identifier that says which legal entity a record describes. Same LEI, same entity. Sovereigns have none.
+
+### country (CSV column `country`)
+
+ISO-style code of the country where the entity is domiciled. Where an entity&#x27;s records disagree, see source system for which holds. It decides which Country Ceiling, if any, applies to the entity&#x27;s foreign-currency ratings. VD is the Republic of Valdoria and CV the Republic of Corvenia (both invented).
+
+### entity type (CSV column `entity_type`)
+
+What kind of entity it is: a concept of the scheme Entity types.
+
+### parent (CSV column `parent_id`)
+
+The entity that owns and controls this one. A parent link names a record, but points at the entity that record describes, so the chain continues from any of that entity&#x27;s records. Following parents up to an entity with no parent gives the ultimate parent; a group is an ultimate parent and every entity whose chain of parents ends at it.
+
+### source system (CSV column `source_system`)
+
+The internal system the record comes from (RATINGS, RESEARCH, QA). Each system keeps its own records of the same entities; see Entity. Where records of the same entity disagree, which one holds depends on the field. RATINGS is the system of record for names and parent links. Domicile is the exception: the RESEARCH team checks each entity&#x27;s registered office against its filings, so where records disagree on country, the RESEARCH record holds. QA records are test data, created to check the systems: they describe no real entity, so a QA record, and every action recorded against it, must be ignored.
+
+### description (CSV column `description`)
+
+The instrument&#x27;s name: issuer, coupon and maturity year.
+
+### issuer (CSV column `issuer_id`)
+
+The entity that issued the instrument and owes the payments. Not necessarily the entity whose credit risk the investor takes: see guarantor.
+
+### guarantor (CSV column `guarantor_id`)
+
+An entity that guarantees the instrument&#x27;s payments if the issuer does not pay. A guaranteed instrument carries the guarantor&#x27;s credit risk, so it is rated in line with the guarantor&#x27;s issuer rating, not the issuer&#x27;s.
+
+### seniority (CSV column `seniority`)
+
+Where the instrument ranks in repayment if the issuer fails: a concept of the scheme Seniorities.
+
+### currency (CSV column `currency`)
+
+The currency the instrument pays in, as an ISO 4217 code, or one of two local codes: XVD, the Valdorian dollar, the domestic currency of VD; and CVK, the Corvenian krone, the domestic currency of CV. Debt in a currency other than the domestic one of the issuer&#x27;s country is exposed to that country&#x27;s transfer and convertibility risk: see Country Ceiling (CC). Debt in the domestic currency is local-currency debt and is not capped by the ceiling.
+
+### maturity (CSV column `maturity`)
+
+The date the instrument is due to be repaid.
+
+### date (CSV column `date`)
+
+The date the action took effect.
+
+### rated thing (CSV column `rated_id`)
+
+What the action is about: an entity (for issuer ratings and Country Ceilings) or an instrument (for instrument ratings).
+
+### rating type (CSV column `rating_type`)
+
+Which kind of rating the action concerns: a concept of the scheme Rating types. Different types are different ratings and are never compared or combined with each other.
+
+### currency basis (CSV column `ccy_basis`)
+
+For issuer ratings, whether the rating covers foreign-currency (FC) or local-currency (LC) obligations: a concept of the scheme Currency bases. An entity can have both, with different values.
+
+### action (CSV column `action`)
+
+What was done: a concept of the scheme Action types. Only upgrades and downgrades change a rating.
+
+### rating (CSV column `rating`)
+
+The rating after the action, on the scale of its rating type. Long-term scale, strongest to weakest: AAA, AA+, AA, AA-, A+, A, A-, BBB+, BBB, BBB-, BB+, BB, BB-, B+, B, B-, CCC, CC, C, RD, D. Investment grade means BBB- or higher; BB+ and below is speculative grade (high yield). RD (restricted default) means the issuer has defaulted on some material obligations, for instance by completing a distressed debt exchange, without being wound up: RD is a default. D means a general default. Short-term scale, strongest to weakest: F1+, F1, F2, F3, B, C, RD, D. WD means the rating was withdrawn (see Withdrawn (WD)): it is not a point on either scale.
+
+### outlook (CSV column `outlook`)
+
+The likely direction of a long-term rating over the next one to two years: a concept of the scheme Outlooks. An outlook is not a rating: revising it does not change the rating.
+
+### rating watch (CSV column `watch`)
+
+Set when the rating is on Rating Watch: a concept of the scheme Rating Watches. A Watch is not a rating change.
+
+### comment (CSV column `comment`)
+
+The analyst&#x27;s note on the action, such as the reason for a withdrawal.
+
+## Codes
+
+The codes as they appear in the data, grouped by list.
+
+### Rating types
+
+- **LTIDR**, Long-term Issuer Default Rating: The issuer&#x27;s own creditworthiness: how likely it is to default on its obligations, on the long-term scale. This is what people usually mean by an entity&#x27;s rating. The foreign-currency (FC) one is the headline rating; there may also be a local-currency (LC) one.
+- **STIDR**, Short-term Issuer Default Rating: The issuer&#x27;s ability to meet obligations falling due within about a year, on the short-term scale (F1+ to D). Not comparable with long-term ratings.
+- **INST**, Instrument rating: The rating of one specific instrument. It starts from the issuer&#x27;s long-term rating and is notched for the instrument&#x27;s seniority and expected recovery: subordinated debt is usually rated below the issuer, and guaranteed debt is rated on the guarantor. An instrument rating is never the rating of the issuer.
+- **CC**, Country Ceiling: Not a rating of anyone. A cap, set for a country, on the foreign-currency ratings of entities domiciled there and of their foreign-currency debt. It reflects transfer and convertibility risk: the risk that the government stops money being converted or sent abroad, so even a sound company could not pay foreign-currency debt. Foreign-currency ratings of entities in the country are generally no higher than the ceiling; local-currency ratings are not capped. A Country Ceiling is not the sovereign&#x27;s own issuer rating.
+- **CO**, Credit opinion: A private, point-in-time view of an entity&#x27;s credit, given to one client. It is not a published rating and not an issuer rating: never count it as a rating, and never report its value as the entity&#x27;s rating.
+
+### Currency bases
+
+- **FC**, Foreign currency: Covers obligations in foreign currency, so it is subject to the Country Ceiling.
+- **LC**, Local currency: Covers obligations in the currency of the entity&#x27;s own country; not subject to the Country Ceiling.
+
+### Action types
+
+- **AS**, Assigned: A first rating is given.
+- **AF**, Affirmed: The rating is reviewed and kept the same. The outlook may be revised in the same action; that does not make it an upgrade or a downgrade.
+- **UG**, Upgraded: The rating is raised.
+- **DG**, Downgraded: The rating is lowered. The only action that counts as a downgrade.
+- **RW**, Placed on Rating Watch: The rating is flagged as likely to change soon, usually within about six months, in the direction rating watch gives. The rating itself is unchanged: not a downgrade.
+- **WD**, Withdrawn: The agency stops maintaining the rating, often for commercial reasons (the issuer no longer pays for it, or the debt is repaid). After a withdrawal the entity has no rating of that type. A withdrawal is not a credit event: it says nothing about default, and is not a downgrade.
+- **EX**, Expected rating: A rating signalled before an instrument&#x27;s final documents are signed. It is not yet a rating: the instrument stays unrated until an Assigned (AS) action confirms it.
+
+### Outlooks
+
+- **STA**, Stable: No direction expected.
+- **POS**, Positive: The rating may go up over one to two years.
+- **NEG**, Negative: The rating may go down over one to two years. Not a downgrade.
+
+### Rating Watches
+
+- **RWN**, Rating Watch Negative: A downgrade is likely in the near term. Not a downgrade yet.
+
+### Seniorities
+
+- **SU**, Senior unsecured: Ranks with the issuer&#x27;s ordinary debts; usually rated at the level of the issuer&#x27;s long-term rating.
+- **SUB**, Subordinated: Repaid only after senior debt, so investors recover less in a default; usually rated one or more notches below the issuer&#x27;s long-term rating.
+
+### Entity types
+
+- **CORP**, Corporate: A non-financial company.
+- **BANK**, Bank: A bank.
+- **FINSUB**, Finance subsidiary: A subsidiary that exists to raise debt for its parent group. It usually has no issuer rating of its own; its debt is guaranteed by the parent, so investors take the parent&#x27;s credit risk.
+- **SOV**, Sovereign: A national government. A sovereign record can carry a Country Ceiling, issuer ratings, or both: they are different things, and the ceiling is not the sovereign&#x27;s rating.
+
+
+## Questions
+
+Answer each question below from the data above. Start each answer on a new line with its
+number in bold, like **Q1.**, give the direct answer first, then at most two sentences of
+reasoning that cite the records (IDs) you relied on.
+
+Then end with one JSON block (```json) holding the structured answer to each question listed
+here, with exactly these fields, shaped like {&quot;Q1&quot;: {&quot;field&quot;: value}, ...}. Name entities by their record ID: the entity_id in the CSV files, or the part of the IRI after lad: in the RDF (E01, not Kestrel Energy plc).
+
+- Q1: rating (a rating, or &quot;none&quot;)
+- Q2: downgraded (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q3: investment_grade (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;), rating (a rating, or &quot;none&quot;)
+- Q4: outlook (an outlook)
+- Q5: risk_of (a record ID), rating (a rating, or &quot;none&quot;)
+- Q7: issuers (a list of record IDs)
+- Q8: entities (a list of record IDs)
+- Q9: count (a number)
+- Q10: investment_grade (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q11: rating (a rating, or &quot;none&quot;)
+- Q12: rating (a rating, or &quot;none&quot;)
+- Q13: count (a number)
+- Q14: rating (a rating, or &quot;none&quot;)
+- Q15: rating (a rating, or &quot;none&quot;)
+- Q16: changed (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q17: downgraded (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q18: issuers (a list of record IDs)
+- Q19: issuers (a list of record IDs)
+- Q20: in_default (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q21: entities (a list of record IDs)
+- Q22: entities (a list of record IDs)
+- Q23: rating (a rating, or &quot;none&quot;)
+- Q24: investment_grade (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q25: count (a number)
+- Q26: rating (a rating, or &quot;none&quot;)
+- Q27: rating (a rating, or &quot;none&quot;)
+- Q28: rating (a rating, or &quot;none&quot;)
+- Q29: rating (a rating, or &quot;none&quot;)
+- Q30: entities (a list of record IDs)
+- Q31: any (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q32: parent (a record ID)
+- Q33: risk_of (a record ID), rating (a rating, or &quot;none&quot;)
+- Q34: same_group (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q35: count (a number)
+- Q36: count (a number)
+- Q37: count (a number)
+- Q38: same (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q39: rating (a rating, or &quot;none&quot;)
+- Q40: count (a number)
+- Q41: rating (a rating, or &quot;none&quot;)
+- Q42: country (a country code)
+- Q43: count (a number)
+- Q44: local_currency (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q45: above_ceiling (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q46: issuer_rating (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q47: rating (a rating, or &quot;none&quot;)
+- Q48: count (a number)
+- Q49: parent (a record ID)
+- Q50: count (a number)
+- Q51: count (a number)
+- Q52: count (a number)
+- Q53: same_group (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q54: entities (a list of record IDs)
+- Q55: count (a number)
+- Q56: rating (a rating, or &quot;none&quot;)
+- Q57: entity (a record ID)
+- Q58: entities (a list of record IDs)
+- Q59: count (a number)
+- Q60: risk_of (a record ID), same_group (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q61: count (a number)
+
+Q1. What was Kestrel Energy&#x27;s rating on 1 January 2025?
+Q2. Has Kestrel Energy been downgraded in 2026?
+Q3. Is Kestrel Energy&#x27;s 2031 note investment grade?
+Q4. What is Northwind Holdings&#x27; current outlook?
+Q5. Whose credit risk does a holder of the Northwind Finance 2030 notes take, and how is it rated?
+Q6. Why is Valdoria Telecom&#x27;s foreign-currency rating lower than its local-currency rating?
+Q7. Which issuers were downgraded in 2026?
+Q8. Which entities were in default on 1 October 2026?
+Q9. As of 1 October 2026, how many distinct issuers hold an issuer rating?
+Q10. Is Valdoria Telecom investment grade?
+Q11. What was Marlow Utilities&#x27; rating on 1 June 2025?
+Q12. What was Marlow Utilities&#x27; rating on 1 January 2024?
+Q13. How many times has Marlow Utilities been downgraded?
+Q14. What was Halden Foods&#x27; rating on 1 January 2024?
+Q15. What was Halden Bank&#x27;s rating on 1 January 2026?
+Q16. Has Marlow Utilities&#x27; rating changed since 1 January 2025?
+Q17. Was Orrin Bank downgraded in 2026?
+Q18. Which issuers were on Rating Watch Negative on 1 October 2026?
+Q19. Which issuers had a Negative outlook on 1 October 2026?
+Q20. Is Pellam Retail in default?
+Q21. Which entities had an issuer rating at some point but no longer had one on 1 October 2026?
+Q22. Which entities have ever been in default?
+Q23. What is Kestrel Energy&#x27;s short-term rating?
+Q24. Is Kestrel Energy&#x27;s issuer rating investment grade?
+Q25. How many instruments held an investment-grade rating on 1 October 2026?
+Q26. What is Corvenia Power&#x27;s local-currency rating?
+Q27. How is Corvenia Power&#x27;s 2032 note rated?
+Q28. What is the Republic of Corvenia&#x27;s foreign-currency issuer rating?
+Q29. What is the Republic of Valdoria&#x27;s issuer rating?
+Q30. Which entities had a foreign-currency issuer rating exactly at their country&#x27;s ceiling on 1 October 2026?
+Q31. Did any company have a foreign-currency issuer rating above its country&#x27;s ceiling on 1 October 2026?
+Q32. Who is Halden Leasing&#x27;s ultimate parent?
+Q33. Whose credit risk does a holder of the Halden Leasing 2028 notes take, and how is it rated?
+Q34. Is Halden Foods part of the same group as Halden Bank?
+Q35. How many entities are in the Halden group, the parent included?
+Q36. How many entities are in the Northwind group, the parent included?
+Q37. How many distinct legal entities does the data describe?
+Q38. Are Orrin Bank AG and Orrin Bancorp Inc the same entity?
+Q39. What is Northwind Holdings&#x27; current rating?
+Q40. How many distinct issuers domiciled in GB held an issuer rating on 1 October 2026?
+Q41. What is Brindle Capital&#x27;s current rating?
+Q42. In which country is Halden Bank domiciled?
+Q43. How many distinct entities are domiciled in Luxembourg (LU)?
+Q44. Is Valdoria Telecom&#x27;s 2027 note a local-currency obligation?
+Q45. Is Valdoria Telecom&#x27;s 2027 note rated above what Valdoria&#x27;s Country Ceiling allows?
+Q46. Does Halden Leasing have an issuer rating?
+Q47. How is Corvenia Power&#x27;s 2034 note rated?
+Q48. How many instruments held a rating on 1 October 2026?
+Q49. Who is Cerid Rosor Holdings SA&#x27;s ultimate parent?
+Q50. How many levels of ownership separate Cerid Rosor Holdings SA from its ultimate parent?
+Q51. How many entities are in the Cerid Group plc group, the parent included?
+Q52. How many entities are in the Rotam Group Inc group, the parent included?
+Q53. Are Belir Mining SA and Rotam Group Inc in the same group?
+Q54. Which members of the Wonod Group SA group are domiciled in Valdoria (VD)?
+Q55. If Valdoria (VD) came under stress, how many entities with an issuer rating in force have an entity domiciled in VD somewhere above them in their chain of parents?
+Q56. What is the lowest current foreign-currency issuer rating held by any member of the Vesol Group BV group?
+Q57. Which is the nearest entity that Cerid Guven Energy SA and Cerid Telecom SA both have in their chains of parents?
+Q58. Which entities guarantee a note issued by an entity outside their own group?
+Q59. How many entities in the Cerid Group plc group sit exactly three levels below the top?
+Q60. Whose credit risk does a holder of the Cross-group 4.75% notes due 2031 take, and is that entity in the same group as the issuer?
+Q61. How many members of the Cerid Group plc group, the top included, hold a foreign-currency issuer rating below investment grade?</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>I&#x27;ll start by exploring the data.
+
+```sql
+SELECT * FROM entities ORDER BY entity_id;
+```
+
+```sql
+SELECT * FROM instruments ORDER BY instrument_id;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| entity_id | name | lei | country | entity_type | parent_id | source_system |
+|---|---|---|---|---|---|---|
+| CV | Republic of Corvenia |  | CV | SOV |  | RATINGS |
+| E01 | Kestrel Energy plc | 7245002OOPBG04092E43 | GB | CORP |  | RATINGS |
+| E02 | Northwind Holdings plc | 213800PHEIYNJMHTDV74 | GB | CORP |  | RATINGS |
+| E03 | NORTHWIND HLDGS | 213800PHEIYNJMHTDV74 | GB | CORP |  | RESEARCH |
+| E04 | Northwind Finance BV | 213800LA5RYJLGXV2T85 | NL | FINSUB | E02 | RATINGS |
+| E05 | Valdoria Telecom SA | 391200LESH03LMOY2U61 | VD | CORP |  | RATINGS |
+| E06 | Orrin Bank AG | 549300AMVE3VRVG7HK43 | DE | BANK |  | RATINGS |
+| E07 | Pellam Retail Ltd | 969500B6IUACELPI2291 | GB | CORP |  | RATINGS |
+| E08 | Saxby Shipping SA | 969500KOTZ1JFIZSG796 | GR | CORP |  | RATINGS |
+| E09 | Halden Group plc | 815600ASM9EHDG931T89 | GB | CORP |  | RATINGS |
+| E10 | Halden Bank AG | 391200QYPVFF2O9K2039 | DE | BANK | E09 | RATINGS |
+| E1001 | Tunod Steel SA | 3912003R00FP6CNV6210 | FR | CORP |  | RATINGS |
+| E1002 | TUNOD STEEL SA | 3912003R00FP6CNV6210 | FR | CORP |  | RESEARCH |
+| E1003 | Rilol Telecom plc | 3912009W4J483WB8PZ97 | GB | BANK |  | RATINGS |
+| E1004 | Munem Retail SA | 969500IBYK0X2ZT52780 | ES | CORP |  | RATINGS |
+| E1005 | Setan Airlines Inc | 815600JRN7AOE36KFR35 | US | CORP |  | RATINGS |
+| E1006 | Soson Airlines Inc | 213800WSVEOAQ5HD4C43 | US | CORP | E1005 | RATINGS |
+| E1007 | Golod Property plc | 815600N2UAHQREHHWF76 | GB | BANK |  | RATINGS |
+| E1008 | Sotil Retail plc | 213800RPNJ2OSQ387M40 | GB | CORP |  | RATINGS |
+| E1009 | Malam Chemicals Inc | 3912006EIY6TU9NVSC86 | US | CORP |  | RATINGS |
+| E1010 | Buvir Industries Inc | 3912004R2GZJL49URX69 | US | CORP |  | RATINGS |
+| E1011 | Falom Media Inc | 549300XX6U9N4Y7KPH74 | US | BANK |  | RATINGS |
+| E1012 | Posad Industries SA | 9695002JIQI5QYDN0G98 | FR | CORP |  | RATINGS |
+| E1013 | Pisol Pharma BV | 969500U072SAPPW32N81 | NL | BANK | E1004 | RATINGS |
+| E1014 | Toral Utilities BV | 391200J700D8T2H18W16 | NL | CORP |  | RATINGS |
+| E1015 | Civen Steel Inc | 815600JSNIJ4UFCBF662 | US | CORP |  | RATINGS |
+| E1016 | Ponar Telecom SA | 5493008DQ96XI37KZG24 | ES | BANK |  | RATINGS |
+| E1017 | Nisid Steel SA | 391200K600X7LWZTTM85 | FR | BANK |  | RATINGS |
+| E1018 | Tosem Mining Inc | 549300SEMGL6OXLWHQ59 | US | CORP |  | RATINGS |
+| E1019 | Losol Mining SA | 391200GSFO0F68KKUC67 | CV | CORP |  | RATINGS |
+| E1020 | Finel Media AG | 549300FCSHHELSCZX562 | DE | CORP |  | RATINGS |
+| E1021 | Niner Pharma plc | 391200KLG6G4KVIMIU52 | GB | CORP |  | RATINGS |
+| E1022 | NINER PHARMA | 391200KLG6G4KVIMIU52 | GB | CORP |  | RESEARCH |
+| E1023 | Heled Water plc | 3912006FHXTH5V6WNK07 | GB | CORP |  | RATINGS |
+| E1024 | Susin Shipping BV | 3912005J04HB7X0GTN24 | NL | CORP |  | RATINGS |
+| E1025 | Tulol Shipping SA | 2138007MIV2OS05PET94 | ES | BANK |  | RATINGS |
+| E1026 | Vunam Water BV | 969500C8XYHXZBFMUO41 | NL | CORP |  | RATINGS |
+| E1027 | Tesad Media Inc | 969500T86HNH5S920X18 | US | CORP |  | RATINGS |
+| E1028 | Mutir Retail SA | 213800TJ32NARU0BI982 | VD | CORP |  | RATINGS |
+| E1029 | Leson Telecom Inc | 8156008DPX4I9DNKWN26 | US | BANK |  | RATINGS |
+| E1030 | LESON TELECOM INC | 8156008DPX4I9DNKWN26 | US | BANK |  | RESEARCH |
+| E1031 | Kuvir Logistics SA | 969500GRHP48SQNEWH44 | ES | CORP |  | RATINGS |
+| E1032 | Helom Chemicals BV | 2138006H9XCYN2P1K228 | NL | BANK |  | RATINGS |
+| E1033 | Kunid Pharma SA | 213800Q84PS4FTJJB947 | ES | CORP | E1004 | RATINGS |
+| E1034 | Tanad Capital SpA | 815600KLV84WAQGPSX27 | IT | CORP |  | RATINGS |
+| E1035 | Kavod Utilities AG | 724500YHN51API4SE179 | DE | CORP |  | RATINGS |
+| E1036 | Lilor Retail AG | 9695000N72OQ0Q07IW61 | DE | CORP |  | RATINGS |
+| E1037 | Natil Retail SA | 391200OBAXI8590VQN12 | FR | CORP |  | RATINGS |
+| E1038 | Lanon Telecom BV | 549300EZ4HXP0L5RAZ01 | NL | CORP |  | RATINGS |
+| E1039 | Pulor Airlines SA | 969500HA9D5I7F73PW83 | CV | BANK |  | RATINGS |
+| E1040 | Dorid Mining AG | 549300SPMD9MEMFWMR12 | DE | CORP |  | RATINGS |
+| E1041 | Hiral Steel SA | 549300JU1O5MP1HSKQ01 | ES | CORP |  | RATINGS |
+| E1042 | Rerod Steel BV | 391200LC6V921W096L49 | NL | CORP |  | RATINGS |
+| E1043 | Vitom Property plc | 5493007IVTPIWJZLFF29 | GB | CORP |  | RATINGS |
+| E1044 | Hesid Telecom Inc | 3912003Y7VZHUGN50755 | US | BANK |  | RATINGS |
+| E1045 | Nesid Logistics Inc | 96950029VB162U3K1976 | US | BANK |  | RATINGS |
+| E1046 | Ditin Shipping Inc | 549300ZM08IADSAK3L87 | US | BANK | E1026 | RATINGS |
+| E1047 | Vaved Pharma plc | 391200WGA8OE30KZUD08 | GB | CORP | E1020 | RATINGS |
+| E1048 | Lised Pharma AG | 9695000T21G05UQMGF10 | DE | CORP |  | RATINGS |
+| E1049 | Paser Utilities plc | 391200R2EH7FELZFOV27 | GB | CORP |  | RATINGS |
+(480 more rows not shown)
+
+Query 2:
+
+| instrument_id | description | issuer_id | guarantor_id | seniority | currency | maturity |
+|---|---|---|---|---|---|---|
+| I01 | Kestrel Energy 4.50% notes due 2030 | E01 |  | SU | GBP | 2030-03-15 |
+| I02 | Kestrel Energy 6.25% notes due 2031 | E01 |  | SUB | GBP | 2031-09-30 |
+| I03 | Northwind Finance 3.75% notes due 2030 | E04 | E02 | SU | EUR | 2030-05-01 |
+| I04 | Valdoria Telecom 5.00% notes due 2029 | E05 |  | SU | USD | 2029-11-20 |
+| I05 | Halden Leasing 2.90% notes due 2028 | E11 | E10 | SU | EUR | 2028-06-30 |
+| I06 | Corvenia Power 7.10% notes due 2032 | E15 |  | SUB | USD | 2032-02-15 |
+| I07 | Valdoria Telecom 4.25% notes due 2027 | E05 |  | SU | XVD | 2027-08-31 |
+| I08 | Corvenia Power 6.00% notes due 2034 | E15 |  | SU | USD | 2034-09-01 |
+| I1001 | Soson Airlines 5.50% notes due 2031 | E1006 |  | SUB | USD | 2035-06-30 |
+| I1002 | Golod Property 8.75% notes due 2031 | E1007 |  | SU | USD | 2033-06-30 |
+| I1003 | Sotil Retail 3.00% notes due 2031 | E1008 |  | SU | GBP | 2034-06-30 |
+| I1004 | Malam Chemicals 2.25% notes due 2035 | E1009 |  | SU | USD | 2028-06-30 |
+| I1005 | Posad Industries 4.00% notes due 2033 | E1012 |  | SU | EUR | 2031-06-30 |
+| I1006 | Pisol Pharma 4.75% notes due 2030 | E1013 |  | SUB | USD | 2030-06-30 |
+| I1007 | Toral Utilities 7.75% notes due 2028 | E1014 |  | SU | EUR | 2033-06-30 |
+| I1008 | Ponar Telecom 4.75% notes due 2035 | E1016 |  | SU | EUR | 2033-06-30 |
+| I1009 | Tosem Mining 2.75% notes due 2031 | E1018 |  | SUB | USD | 2036-06-30 |
+| I1010 | Finel Media 6.50% notes due 2035 | E1020 |  | SU | EUR | 2036-06-30 |
+| I1011 | Niner Pharma 3.25% notes due 2029 | E1021 |  | SU | USD | 2035-06-30 |
+| I1012 | Heled Water 6.25% notes due 2030 | E1023 |  | SU | GBP | 2031-06-30 |
+| I1013 | Kuvir Logistics 2.00% notes due 2027 | E1031 |  | SU | EUR | 2027-06-30 |
+| I1014 | Kavod Utilities 2.50% notes due 2032 | E1035 |  | SU | USD | 2036-06-30 |
+| I1015 | Lanon Telecom 4.75% notes due 2033 | E1038 |  | SUB | EUR | 2032-06-30 |
+| I1016 | Hiral Steel 6.00% notes due 2035 | E1041 |  | SU | USD | 2034-06-30 |
+| I1017 | Lised Pharma 4.50% notes due 2036 | E1048 |  | SU | EUR | 2029-06-30 |
+| I1018 | Paser Utilities 3.75% notes due 2027 | E1049 |  | SUB | GBP | 2034-06-30 |
+| I1019 | Sunar Holdings 8.50% notes due 2036 | E1050 |  | SUB | USD | 2034-06-30 |
+| I1020 | Witad Steel 5.00% notes due 2033 | E1052 |  | SU | EUR | 2027-06-30 |
+| I1021 | Duver Shipping 8.50% notes due 2032 | E1056 |  | SU | EUR | 2030-06-30 |
+| I1022 | Levem Foods 6.50% notes due 2035 | E1067 |  | SUB | EUR | 2030-06-30 |
+| I1023 | Mored Utilities 4.25% notes due 2032 | E1071 |  | SUB | USD | 2033-06-30 |
+| I1024 | Ganed Holdings 5.75% notes due 2035 | E1077 |  | SU | EUR | 2032-06-30 |
+| I1025 | Menir Shipping 7.50% notes due 2028 | E1078 |  | SUB | EUR | 2034-06-30 |
+| I1026 | Nevar Property 6.75% notes due 2036 | E1079 |  | SU | GBP | 2028-06-30 |
+| I1027 | Gilen Capital 2.00% notes due 2031 | E1082 |  | SUB | USD | 2034-06-30 |
+| I1028 | Givim Mining 5.75% notes due 2036 | E1085 |  | SU | EUR | 2034-06-30 |
+| I1029 | Gorar Steel 7.25% notes due 2033 | E1086 |  | SUB | USD | 2035-06-30 |
+| I1030 | Vitid Holdings 5.75% notes due 2032 | E1087 |  | SU | EUR | 2034-06-30 |
+| I1031 | Koved Holdings 2.50% notes due 2032 | E1088 |  | SUB | EUR | 2033-06-30 |
+| I1032 | Getel Utilities 7.25% notes due 2033 | E1090 |  | SU | USD | 2032-06-30 |
+| I1033 | Vavam Pharma 8.75% notes due 2032 | E1103 |  | SUB | USD | 2032-06-30 |
+| I1034 | Kisil Logistics 8.50% notes due 2031 | E1108 |  | SU | EUR | 2033-06-30 |
+| I1035 | Verod Logistics 3.00% notes due 2035 | E1114 |  | SU | GBP | 2029-06-30 |
+| I1036 | Piren Foods 2.50% notes due 2030 | E1115 |  | SU | USD | 2033-06-30 |
+| I1037 | Reter Shipping 8.00% notes due 2028 | E1118 |  | SU | EUR | 2027-06-30 |
+| I1038 | Conan Capital 4.75% notes due 2033 | E1131 |  | SU | EUR | 2031-06-30 |
+| I1039 | Larid Steel 8.50% notes due 2028 | E1141 |  | SU | GBP | 2033-06-30 |
+| I1040 | Woner Media 5.75% notes due 2027 | E1143 |  | SUB | EUR | 2027-06-30 |
+| I1041 | Kanim Pharma 3.25% notes due 2033 | E1145 |  | SUB | EUR | 2036-06-30 |
+| I1042 | Daren Mining 5.75% notes due 2030 | E1147 |  | SU | EUR | 2035-06-30 |
+| I1043 | Honel Shipping 4.50% notes due 2028 | E1149 |  | SUB | EUR | 2029-06-30 |
+| I1044 | Wavad Foods 6.75% notes due 2035 | E1155 |  | SU | USD | 2036-06-30 |
+| I1045 | Ruven Airlines 5.75% notes due 2032 | E1156 |  | SUB | EUR | 2036-06-30 |
+| I1046 | Diled Steel 8.75% notes due 2027 | E1160 |  | SU | EUR | 2029-06-30 |
+| I1047 | Wunam Telecom 5.25% notes due 2032 | E1162 |  | SU | EUR | 2029-06-30 |
+| I1048 | Wenar Water 8.25% notes due 2028 | E1163 |  | SUB | EUR | 2028-06-30 |
+| I1049 | Ranim Shipping 8.00% notes due 2028 | E1166 |  | SUB | USD | 2036-06-30 |
+| I1050 | Fivan Holdings 2.25% notes due 2035 | E1168 |  | SU | EUR | 2027-06-30 |
+| I1051 | Molar Shipping 3.25% notes due 2031 | E1188 |  | SU | EUR | 2028-06-30 |
+| I1052 | Divid Property 4.25% notes due 2033 | E1189 |  | SUB | GBP | 2032-06-30 |
+(62 more rows not shown)
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>```sql
+SELECT * FROM entities WHERE entity_id NOT LIKE &#x27;E1%&#x27; OR length(entity_id)&lt;=3 ORDER BY entity_id;
+```
+
+```sql
+SELECT * FROM entities WHERE name ILIKE ANY (&#x27;%Cerid%&#x27;,&#x27;%Rotam%&#x27;,&#x27;%Wonod%&#x27;,&#x27;%Vesol%&#x27;,&#x27;%Belir%&#x27;,&#x27;%Brindle%&#x27;,&#x27;%Marlow%&#x27;,&#x27;%Halden%&#x27;,&#x27;%Corvenia%&#x27;,&#x27;%Orrin%&#x27;,&#x27;%Valdoria%&#x27;) ORDER BY entity_id;
+```
+
+```sql
+SELECT * FROM instruments WHERE instrument_id NOT LIKE &#x27;I1%&#x27; OR guarantor_id IS NOT NULL AND guarantor_id&lt;&gt;&#x27;&#x27; OR description ILIKE &#x27;%Cross%&#x27; ORDER BY instrument_id;
+```
+
+```sql
+SELECT * FROM rating_actions WHERE rated_id IN (&#x27;E01&#x27;,&#x27;E02&#x27;,&#x27;E03&#x27;,&#x27;E04&#x27;,&#x27;E05&#x27;,&#x27;E06&#x27;,&#x27;E07&#x27;,&#x27;E08&#x27;,&#x27;E09&#x27;,&#x27;E10&#x27;,&#x27;E11&#x27;,&#x27;E12&#x27;,&#x27;E13&#x27;,&#x27;E14&#x27;,&#x27;E15&#x27;,&#x27;E16&#x27;,&#x27;E17&#x27;,&#x27;E18&#x27;,&#x27;E19&#x27;,&#x27;E20&#x27;,&#x27;CV&#x27;,&#x27;VD&#x27;,&#x27;I01&#x27;,&#x27;I02&#x27;,&#x27;I03&#x27;,&#x27;I04&#x27;,&#x27;I05&#x27;,&#x27;I06&#x27;,&#x27;I07&#x27;,&#x27;I08&#x27;) ORDER BY rated_id, rating_type, ccy_basis, date;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| entity_id | name | lei | country | entity_type | parent_id | source_system |
+|---|---|---|---|---|---|---|
+| CV | Republic of Corvenia |  | CV | SOV |  | RATINGS |
+| E01 | Kestrel Energy plc | 7245002OOPBG04092E43 | GB | CORP |  | RATINGS |
+| E02 | Northwind Holdings plc | 213800PHEIYNJMHTDV74 | GB | CORP |  | RATINGS |
+| E03 | NORTHWIND HLDGS | 213800PHEIYNJMHTDV74 | GB | CORP |  | RESEARCH |
+| E04 | Northwind Finance BV | 213800LA5RYJLGXV2T85 | NL | FINSUB | E02 | RATINGS |
+| E05 | Valdoria Telecom SA | 391200LESH03LMOY2U61 | VD | CORP |  | RATINGS |
+| E06 | Orrin Bank AG | 549300AMVE3VRVG7HK43 | DE | BANK |  | RATINGS |
+| E07 | Pellam Retail Ltd | 969500B6IUACELPI2291 | GB | CORP |  | RATINGS |
+| E08 | Saxby Shipping SA | 969500KOTZ1JFIZSG796 | GR | CORP |  | RATINGS |
+| E09 | Halden Group plc | 815600ASM9EHDG931T89 | GB | CORP |  | RATINGS |
+| E10 | Halden Bank AG | 391200QYPVFF2O9K2039 | DE | BANK | E09 | RATINGS |
+| E11 | Halden Leasing SA | 549300XBZH4ULO9MQV55 | FR | FINSUB | E10 | RATINGS |
+| E12 | Halden Foods Ltd | 213800IJDL4OJ4DG5T19 | GB | CORP |  | RATINGS |
+| E13 | Orrin Bancorp Inc | 815600O8X8K2F154N214 | US | BANK |  | RATINGS |
+| E14 | Marlow Utilities plc | 3912005AH2C1I9YF8106 | GB | CORP |  | RATINGS |
+| E15 | Corvenia Power SA | 213800PBQVHVBBH6GV02 | CV | CORP |  | RATINGS |
+| E16 | Brindle Capital Ltd | 5493003Z3PXXR7KNFM81 | GB | CORP |  | QA |
+| E17 | HALDEN BANK | 391200QYPVFF2O9K2039 | LU | BANK |  | RESEARCH |
+| E5001 | Cerid Group plc | 815600F48PANJQE75352 | GB | CORP |  | RATINGS |
+| E5002 | Cerid Energy plc | 3912006ACANJUP8PLJ39 | GB | CORP | E5001 | RATINGS |
+| E5003 | Cerid Media BV | 724500EXQA91TPK6WL60 | NL | CORP | E5001 | RATINGS |
+| E5004 | Cerid Utilities plc | 969500SFWGRHVUTANY40 | GB | CORP | E5001 | RATINGS |
+| E5005 | Cerid Chemicals SA | 391200B1GR4AGTV5WY99 | VD | CORP | E5002 | RATINGS |
+| E5006 | Cerid Foods plc | 969500HZQBDFIIHLYK06 | GB | BANK | E5002 | RATINGS |
+| E5007 | Cerid Holdings BV | 391200Q98UGZZQTV1C88 | NL | CORP | E5003 | RATINGS |
+| E5008 | Cerid Airlines BV | 815600M8RE9386DDQB31 | NL | CORP | E5003 | RATINGS |
+| E5009 | Cerid Leror Logistics plc | 96950033222B9BRCGP58 | GB | CORP | E5004 | RATINGS |
+| E5010 | Cerid Gator Steel Inc | 724500E2OQMMMZVTBS53 | US | CORP | E5004 | RATINGS |
+| E5011 | Cerid Guven Energy SA | 391200IX7WB68Q29NJ46 | VD | CORP | E5167 | RATINGS |
+| E5012 | Cerid Gevin Pharma SA | 549300TPHB19IJU6VV67 | VD | CORP | E5005 | RATINGS |
+| E5013 | Cerid Telecom SA | 724500EU84AMOZS7U244 | ES | BANK | E5006 | RATINGS |
+| E5014 | Cerid Gusom Pharma SpA | 724500YWGS7BR1AKHD13 | IT | CORP | E5006 | RATINGS |
+| E5015 | Cerid Logistics BV | 969500C1TQV008QIYL28 | NL | CORP | E5007 | RATINGS |
+| E5016 | Cerid Rovem Industries BV | 549300WMHA09HQ7NGF72 | NL | CORP | E5007 | RATINGS |
+| E5017 | Cerid Steel BV | 213800BAYNUVR2EE0Y41 | NL | CORP | E5008 | RATINGS |
+| E5018 | Cerid Mining BV | 815600DDEIUOIMDS3N14 | NL | CORP | E5008 | RATINGS |
+| E5019 | Cerid Buvom Mining plc | 2138002W9KTVILKQ8Q89 | GB | CORP | E5009 | RATINGS |
+| E5020 | Cerid Tivim Retail SA | 9695003VHLA8O9WU7N54 | FR | BANK | E5009 | RATINGS |
+| E5021 | Cerid Retail Inc | 724500S8Q4HUNT229Y84 | US | CORP | E5010 | RATINGS |
+| E5022 | Cerid Industries Inc | 213800S7QJ9EVK96PK05 | US | CORP | E5010 | RATINGS |
+| E5023 | Cerid Dilal Utilities SA | 549300MXQ7UU7852PG70 | VD | CORP | E5011 | RATINGS |
+| E5024 | Cerid Fatal Shipping SA | 39120041ZCI02VDN2I18 | VD | CORP | E5012 | RATINGS |
+| E5025 | Cerid Fater Media SA | 213800AXPZD5MSP2GW32 | ES | CORP | E5013 | RATINGS |
+| E5026 | Cerid Hosad Retail Inc | 724500GF9ADSAA20FI77 | US | CORP | E5014 | RATINGS |
+| E5027 | Cerid Hutem Water plc | 391200TO1KK187R1JQ78 | GB | CORP | E5015 | RATINGS |
+| E5028 | Cerid Galon Chemicals BV | 724500EVQNRETR9CVD02 | NL | BANK | E5016 | RATINGS |
+| E5029 | Cerid Walol Water BV | 21380057HMIY2LIM5A29 | NL | BANK | E5017 | RATINGS |
+| E5030 | Cerid Tivor Holdings BV | 549300M13MMEINCT8W03 | NL | CORP | E5018 | RATINGS |
+| E5031 | Cerid Velin Water plc | 815600Q07VLOKJE53L06 | GB | CORP | E5019 | RATINGS |
+| E5032 | Cerid Meron Media SA | 213800CIZLWWL071KP85 | FR | CORP | E5020 | RATINGS |
+| E5033 | Cerid Pitam Energy Inc | 969500799KP9QCVM7739 | US | CORP | E5021 | RATINGS |
+| E5034 | Cerid Shipping BV | 7245008XDA202762F829 | NL | CORP | E5022 | RATINGS |
+| E5035 | Cerid Water SA | 724500637K0GA6PFC081 | VD | BANK | E5023 | RATINGS |
+| E5036 | Cerid Calin Energy SpA | 549300RJ7KMPDJVQY167 | IT | CORP | E5024 | RATINGS |
+| E5037 | Cerid Holom Water SA | 2138003NRPV4IDSP9314 | ES | CORP | E5025 | RATINGS |
+| E5038 | Cerid Holen Chemicals BV | 969500HETRKT6OQMNS48 | NL | CORP | E5026 | RATINGS |
+| E5039 | Cerid Property SA | 549300DBENKHP53C1C31 | ES | CORP | E5027 | RATINGS |
+| E5040 | Cerid Lovan Energy BV | 9695007VBLZNWG66LZ43 | NL | CORP | E5028 | RATINGS |
+| E5041 | Cerid Dolem Mining AG | 391200FXD4CH3FVZ4165 | DE | BANK | E5029 | RATINGS |
+| E5042 | Cerid Feral Property BV | 724500N6QZUJJJ1BJI79 | NL | BANK | E5030 | RATINGS |
+(129 more rows not shown)
+
+Query 2 failed: Parser Error: syntax error at or near &quot;,&quot;
+
+Query 3:
+
+| instrument_id | description | issuer_id | guarantor_id | seniority | currency | maturity |
+|---|---|---|---|---|---|---|
+| I01 | Kestrel Energy 4.50% notes due 2030 | E01 |  | SU | GBP | 2030-03-15 |
+| I02 | Kestrel Energy 6.25% notes due 2031 | E01 |  | SUB | GBP | 2031-09-30 |
+| I03 | Northwind Finance 3.75% notes due 2030 | E04 | E02 | SU | EUR | 2030-05-01 |
+| I04 | Valdoria Telecom 5.00% notes due 2029 | E05 |  | SU | USD | 2029-11-20 |
+| I05 | Halden Leasing 2.90% notes due 2028 | E11 | E10 | SU | EUR | 2028-06-30 |
+| I06 | Corvenia Power 7.10% notes due 2032 | E15 |  | SUB | USD | 2032-02-15 |
+| I07 | Valdoria Telecom 4.25% notes due 2027 | E05 |  | SU | XVD | 2027-08-31 |
+| I08 | Corvenia Power 6.00% notes due 2034 | E15 |  | SU | USD | 2034-09-01 |
+| I1093 | Poval Chemicals Finance 2.50% notes due 2034 | E1325 | E1084 | SU | EUR | 2027-03-31 |
+| I1094 | Witad Steel Finance 6.50% notes due 2027 | E1326 | E1052 | SU | EUR | 2033-03-31 |
+| I1095 | Nuner Holdings Finance 4.50% notes due 2032 | E1327 | E1119 | SU | EUR | 2030-03-31 |
+| I1096 | Palad Mining Finance 6.50% notes due 2030 | E1328 | E1244 | SU | EUR | 2028-03-31 |
+| I1097 | Ganen Shipping Finance 5.50% notes due 2030 | E1329 | E1069 | SU | EUR | 2029-03-31 |
+| I1098 | Niner Pharma Finance 3.50% notes due 2030 | E1330 | E1021 | SU | EUR | 2032-03-31 |
+| I1099 | Tulol Shipping Finance 3.50% notes due 2034 | E1331 | E1025 | SU | EUR | 2032-03-31 |
+| I1100 | Sanin Mining Finance 2.50% notes due 2032 | E1332 | E1068 | SU | EUR | 2028-03-31 |
+| I1101 | Gilen Capital Finance 3.50% notes due 2031 | E1333 | E1082 | SU | EUR | 2034-03-31 |
+| I1102 | Votim Industries Finance 3.50% notes due 2027 | E1334 | E1260 | SU | EUR | 2031-03-31 |
+| I1103 | Belor Telecom Finance 2.50% notes due 2027 | E1335 | E1234 | SU | EUR | 2030-03-31 |
+| I1104 | Navor Holdings Finance 2.50% notes due 2029 | E1336 | E1176 | SU | EUR | 2033-03-31 |
+| I1105 | Lanon Telecom Finance 5.50% notes due 2028 | E1337 | E1038 | SU | EUR | 2034-03-31 |
+| I1106 | Hivor Industries Finance 6.50% notes due 2027 | E1338 | E1073 | SU | EUR | 2033-03-31 |
+| I1107 | Wivin Airlines Finance 2.50% notes due 2031 | E1339 | E1241 | SU | EUR | 2030-03-31 |
+| I5001 | Cerid Funding 4.25% notes due 2033 | E5005 | E5001 | SU | EUR | 2030-12-31 |
+| I5002 | Belir Funding 5.25% notes due 2035 | E5062 | E5059 | SU | EUR | 2029-12-31 |
+| I5003 | Rotam Funding 3.25% notes due 2032 | E5090 | E5086 | SU | EUR | 2033-12-31 |
+| I5004 | Wonod Funding 4.25% notes due 2032 | E5108 | E5105 | SU | EUR | 2032-12-31 |
+| I5005 | Vesol Funding 7.25% notes due 2033 | E5135 | E5132 | SU | EUR | 2030-12-31 |
+| I5006 | Geren Funding 7.25% notes due 2030 | E5149 | E5145 | SU | EUR | 2032-12-31 |
+| I5007 | Cross-group 4.75% notes due 2031 | E5133 | E5145 | SU | USD | 2031-06-30 |
+
+Query 4:
+
+| action_id | date | rated_id | rating_type | ccy_basis | action | rating | outlook | watch | comment |
+|---|---|---|---|---|---|---|---|---|---|
+| A37 | 2024-01-01 | CV | CC |  | AS | A |  |  |  |
+| A38 | 2024-01-01 | CV | LTIDR | FC | AS | BBB+ | STA |  |  |
+| A39 | 2024-01-01 | CV | LTIDR | LC | AS | A- | STA |  |  |
+| A01 | 2024-03-12 | E01 | LTIDR | FC | AS | A- | STA |  |  |
+| A02 | 2025-06-20 | E01 | LTIDR | FC | DG | BBB | STA |  | weaker cash flow after asset sale |
+| A03 | 2026-02-10 | E01 | LTIDR | FC | AF | BBB | NEG |  |  |
+| A04 | 2026-02-10 | E01 | STIDR | FC | AF | F2 |  |  |  |
+| A08 | 2023-11-01 | E02 | LTIDR | FC | AS | A | STA |  |  |
+| A09 | 2025-09-15 | E03 | LTIDR | FC | AF | A | POS |  |  |
+| A14 | 2025-04-01 | E05 | LTIDR | FC | AS | BB | STA |  |  |
+| A13 | 2025-04-01 | E05 | LTIDR | LC | AS | BBB- | STA |  |  |
+| A16 | 2024-05-01 | E06 | LTIDR | FC | AS | A- | STA |  |  |
+| A17 | 2026-09-03 | E06 | LTIDR | FC | RW | A- |  | RWN |  |
+| A18 | 2024-01-10 | E07 | LTIDR | FC | AS | BB | STA |  |  |
+| A19 | 2026-05-12 | E07 | LTIDR | FC | WD | WD |  |  | commercial reasons |
+| A20 | 2024-06-01 | E08 | LTIDR | FC | AS | B | STA |  |  |
+| A21 | 2026-01-20 | E08 | LTIDR | FC | DG | CCC |  |  |  |
+| A22 | 2026-07-08 | E08 | LTIDR | FC | DG | RD |  |  | distressed debt exchange completed |
+| A24 | 2023-05-01 | E09 | LTIDR | FC | AS | A | STA |  |  |
+| A25 | 2026-03-01 | E09 | LTIDR | FC | AF | A | NEG |  |  |
+| A26 | 2023-05-01 | E10 | LTIDR | FC | AS | A- | STA |  | support from parent |
+| A27 | 2026-04-15 | E10 | LTIDR | FC | DG | BBB+ | STA |  |  |
+| A46 | 2025-02-01 | E11 | CO |  | AS | BBB |  |  |  |
+| A30 | 2024-02-01 | E12 | LTIDR | FC | AS | BB- | STA |  |  |
+| A31 | 2025-08-01 | E12 | LTIDR | FC | UG | BB | STA |  |  |
+| A32 | 2024-07-01 | E13 | LTIDR | FC | AS | BBB | STA |  |  |
+| A34 | 2023-01-15 | E14 | LTIDR | FC | AS | A- | STA |  |  |
+| A36 | 2024-09-30 | E14 | LTIDR | FC | DG | BBB+ | STA |  |  |
+| A35 | 2025-11-20 | E14 | LTIDR | FC | RW | BBB+ |  | RWN |  |
+| A33 | 2026-05-01 | E14 | LTIDR | FC | AF | BBB+ | STA |  |  |
+| A41 | 2024-03-01 | E15 | LTIDR | FC | AS | A | STA |  |  |
+| A40 | 2024-03-01 | E15 | LTIDR | LC | AS | A+ | STA |  |  |
+| A43 | 2024-04-01 | E16 | LTIDR | FC | AS | BBB- | STA |  |  |
+| A44 | 2026-06-01 | E16 | LTIDR | FC | DG | BB+ | STA |  |  |
+| A05 | 2024-03-12 | I01 | INST |  | AS | A- |  |  |  |
+| A06 | 2025-06-20 | I01 | INST |  | DG | BBB |  |  |  |
+| A23 | 2024-03-12 | I02 | INST |  | AS | BBB |  |  |  |
+| A07 | 2025-06-20 | I02 | INST |  | DG | BB+ |  |  |  |
+| A10 | 2023-11-01 | I03 | INST |  | AS | A |  |  |  |
+| A11 | 2025-09-15 | I03 | INST |  | AF | A |  |  |  |
+| A15 | 2025-04-01 | I04 | INST |  | AS | BB |  |  |  |
+| A28 | 2023-06-01 | I05 | INST |  | AS | A- |  |  |  |
+| A29 | 2026-04-15 | I05 | INST |  | DG | BBB+ |  |  |  |
+| A42 | 2024-03-01 | I06 | INST |  | AS | A- |  |  |  |
+| A45 | 2025-04-01 | I07 | INST |  | AS | BBB- |  |  |  |
+| A47 | 2026-09-01 | I08 | INST |  | EX | A |  |  |  |
+| A12 | 2025-04-01 | VD | CC |  | AS | BB |  |  |  |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;sql&quot;&gt;
+&lt;/invoke&gt;
+```sql
+SELECT entity_id,name,lei,country,entity_type,parent_id,source_system FROM entities WHERE entity_id &gt; &#x27;E5042&#x27; OR (entity_id LIKE &#x27;E1%&#x27; AND source_system&lt;&gt;&#x27;RATINGS&#x27;) ORDER BY entity_id;
+```
+
+```sql
+SELECT source_system, count(*), count(distinct lei) FROM entities GROUP BY 1;
+```
+
+```sql
+SELECT rating_type, ccy_basis, action, count(*) FROM rating_actions GROUP BY ALL ORDER BY ALL;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| entity_id | name | lei | country | entity_type | parent_id | source_system |
+|---|---|---|---|---|---|---|
+| E1002 | TUNOD STEEL SA | 3912003R00FP6CNV6210 | FR | CORP |  | RESEARCH |
+| E1022 | NINER PHARMA | 391200KLG6G4KVIMIU52 | GB | CORP |  | RESEARCH |
+| E1030 | LESON TELECOM INC | 8156008DPX4I9DNKWN26 | US | BANK |  | RESEARCH |
+| E1060 | KELIM MEDIA SA | 549300CRXZL5I1OT6L14 | CV | CORP |  | RESEARCH |
+| E1097 | RAVON CAPITAL SA | 549300NTCTGRKRYIAN83 | CV | CORP |  | RESEARCH |
+| E1104 | VAVAM PHARMA INC | 815600HDI8Y3IWGOOH22 | US | CORP |  | RESEARCH |
+| E1117 | HENER ENERGY | 391200JN4T4KY2HCRU75 | GB | CORP |  | RESEARCH |
+| E1139 | KONEL ENERGY BV | 724500BSV4X2J7KUR535 | NL | CORP |  | RESEARCH |
+| E1148 | DAREN MINING SA | 391200E9TAHDZV7CY568 | FR | CORP |  | RESEARCH |
+| E1153 | KIVEL PROPERTY | 549300E50JHDJNBUGF22 | GB | CORP |  | RESEARCH |
+| E1157 | RUVEN AIRLINES | 969500KYKHRI6N2WRN19 | US | CORP |  | RESEARCH |
+| E1161 | DILED STEEL SA | 969500PM41NS2PBZU440 | FR | CORP |  | RESEARCH |
+| E1170 | SEREN TELECOM | 549300XV49ES64RGNQ00 | GB | CORP |  | RESEARCH |
+| E1180 | COTAN FOODS SA | 391200USHZVHBK9FHP01 | IT | CORP |  | RESEARCH |
+| E1210 | MALID MINING SPA | 549300HWTXXHJP2HKU38 | DE | CORP |  | RESEARCH |
+| E1214 | WINIM MINING SA | 549300A64I73OEIC4R87 | NL | CORP |  | RESEARCH |
+| E1239 | WEVIN CAPITAL SA | 5493004IM0PRT8BSDK29 | GR | CORP |  | RESEARCH |
+| E1246 | GATER HOLDINGS SA | 815600LRX1P8142NMF42 | FR | CORP |  | RESEARCH |
+| E1254 | VUSIR TELECOM SA | 969500QXEZ0NSV6EIW69 | ES | BANK |  | RESEARCH |
+| E1259 | NIRAD RETAIL SA | 724500YEJSJ19G17TW94 | FR | BANK |  | RESEARCH |
+| E1262 | MUNAM WATER SA | 549300H1N0EQEAZLE362 | ES | CORP |  | RESEARCH |
+| E1299 | FANER STEEL SA | 815600RCZP0ISY44E024 | ES | CORP |  | RESEARCH |
+| E1311 | NATIL RETAIL SPA | 9695000PSF2HLPO9AE57 | IT | BANK |  | RESEARCH |
+| E1319 | SUTEM WATER | 724500UQKUINIUB80J18 | GB | CORP |  | RESEARCH |
+| E1340 | Biram Steel plc | 213800CSTQH7UO0A8E29 | GB | CORP |  | QA |
+| E1341 | Panar Airlines SA | 549300IFOJRHYHEP5N72 | FR | CORP |  | QA |
+| E1342 | Cuvol Water AG | 7245000RRKYSQSJ2DB31 | DE | CORP |  | QA |
+| E1343 | Bolem Energy plc | 969500F1DAQZF8FNJS41 | GB | CORP |  | QA |
+| E1344 | Naled Utilities plc | 724500N069ZCQGY1UI76 | GB | CORP |  | QA |
+| E1345 | Wesen Retail plc | 391200T3GEO5X4SJMO02 | GB | CORP |  | QA |
+| E1346 | Kalem Property AG | 391200MMTFNAN4NBM054 | DE | CORP |  | QA |
+| E1347 | Nunan Capital plc | 724500649FYULZG25F44 | GB | CORP |  | QA |
+| E1348 | Wosed Holdings AG | 724500JEL6C1PJZEDM26 | DE | CORP |  | QA |
+| E1349 | Parod Pharma SA | 724500PGN9P0AMIWNV47 | FR | CORP |  | QA |
+| E1350 | Palol Airlines plc | 213800GZMC02BI2WJX12 | GB | CORP |  | QA |
+| E1351 | Bisad Property plc | 969500MERFFSB2CHQE09 | GB | CORP |  | QA |
+| E16 | Brindle Capital Ltd | 5493003Z3PXXR7KNFM81 | GB | CORP |  | QA |
+| E17 | HALDEN BANK | 391200QYPVFF2O9K2039 | LU | BANK |  | RESEARCH |
+| E5043 | Cerid Retil Chemicals plc | 724500TQEHDQ1U12GG60 | GB | CORP | E5031 | RATINGS |
+| E5044 | Cerid Masim Retail plc | 969500Q2MORWVR40BH37 | GB | CORP | E5032 | RATINGS |
+| E5045 | Cerid Curel Water SA | 7245006QVOPQQK3JUP45 | CV | CORP | E5033 | RATINGS |
+| E5046 | Cerid Gevom Media BV | 5493004EWDCN8OTFZZ22 | NL | CORP | E5034 | RATINGS |
+| E5047 | Cerid Rosor Holdings SA | 8156004CDHFBVRR3LT54 | VD | BANK | E5035 | RATINGS |
+| E5048 | Cerid Pharma plc | 969500Z6AXSJ33YYZX35 | GB | CORP | E5036 | RATINGS |
+| E5049 | Cerid Ritir Foods plc | 969500W280QA6A7WLO22 | GB | CORP | E5037 | RATINGS |
+| E5050 | Cerid Futir Utilities BV | 213800KKF07D3TEWYS82 | NL | BANK | E5038 | RATINGS |
+| E5051 | Cerid Butad Capital SA | 969500P4S8FH9839YS39 | FR | CORP | E5039 | RATINGS |
+| E5052 | Cerid Viron Property SA | 391200Z0R0NKUJT0LS48 | FR | CORP | E5040 | RATINGS |
+| E5053 | Cerid Setom Media AG | 549300GMLMV9DA645M00 | DE | CORP | E5041 | RATINGS |
+| E5054 | Cerid Linin Media BV | 549300UVWD2URAQCNQ18 | NL | BANK | E5042 | RATINGS |
+| E5055 | Cerid Gosim Media SA | 391200627RBIC2DTG305 | CV | CORP | E5043 | RATINGS |
+| E5056 | Cerid Capital plc | 391200Q0XXMZJQSOR362 | GB | CORP | E5044 | RATINGS |
+| E5057 | Cerid Manid Airlines Inc | 5493008DY4URIBMCWM93 | US | CORP | E5045 | RATINGS |
+| E5058 | Cerid Cirad Industries BV | 391200XLOZO7S6T1FI61 | NL | BANK | E5046 | RATINGS |
+| E5059 | Belir Group AG | 969500YPO4CFVEL1XX12 | DE | CORP |  | RATINGS |
+| E5060 | Belir Retail AG | 549300PQXT9OXKZVXP03 | DE | CORP | E5059 | RATINGS |
+| E5061 | Belir Steel Inc | 5493004QWM1AN9Q59M90 | US | BANK | E5059 | RATINGS |
+| E5062 | Belir Mining SA | 54930011OTFCAUKB0A28 | FR | CORP | E5060 | RATINGS |
+| E5063 | Belir Harem Property AG | 391200DIHCC3BA4VZZ12 | DE | CORP | E5060 | RATINGS |
+| E5064 | Belir Holdings plc | 724500Q0JKSMWBXVBU93 | GB | CORP | E5061 | RATINGS |
+(107 more rows not shown)
+
+Query 2:
+
+| source_system | count_star() | count(DISTINCT lei) |
+|---|---|---|
+| QA | 14 | 14 |
+| RESEARCH | 29 | 29 |
+| RATINGS | 497 | 495 |
+
+Query 3:
+
+| rating_type | ccy_basis | action | count_star() |
+|---|---|---|---|
+| CC |  | AS | 2 |
+| CO |  | AS | 7 |
+| INST |  | AF | 1 |
+| INST |  | AS | 113 |
+| INST |  | DG | 3 |
+| INST |  | EX | 9 |
+| LTIDR | FC | AF | 81 |
+| LTIDR | FC | AS | 426 |
+| LTIDR | FC | DG | 108 |
+| LTIDR | FC | RW | 45 |
+| LTIDR | FC | UG | 45 |
+| LTIDR | FC | WD | 39 |
+| LTIDR | LC | AF | 4 |
+| LTIDR | LC | AS | 19 |
+| LTIDR | LC | DG | 4 |
+| LTIDR | LC | RW | 3 |
+| LTIDR | LC | UG | 3 |
+| LTIDR | LC | WD | 1 |
+| STIDR | FC | AF | 1 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;sql&quot;&gt;
+&lt;/invoke&gt;
+```sql
+SELECT string_agg(entity_id||&#x27;|&#x27;||name||&#x27;|&#x27;||coalesce(parent_id,&#x27;-&#x27;)||&#x27;|&#x27;||country||&#x27;|&#x27;||entity_type, &#x27;; &#x27; ORDER BY entity_id) FROM entities WHERE entity_id&gt;=&#x27;E5043&#x27; AND entity_id NOT IN (&#x27;E16&#x27;,&#x27;E17&#x27;);
+```
+
+```sql
+SELECT string_agg(entity_id||&#x27;|&#x27;||country||&#x27;|&#x27;||coalesce(parent_id,&#x27;-&#x27;),&#x27;; &#x27;) FROM entities WHERE entity_id IN (&#x27;VD&#x27;) OR name ILIKE &#x27;%valdoria%&#x27; OR country=&#x27;LU&#x27;;
+```
+
+```sql
+SELECT rated_id, string_agg(date||&#x27; &#x27;||rating_type||coalesce(&#x27;/&#x27;||ccy_basis,&#x27;&#x27;)||&#x27; &#x27;||action||&#x27; &#x27;||rating||&#x27; &#x27;||coalesce(outlook,&#x27;&#x27;)||&#x27; &#x27;||coalesce(watch,&#x27;&#x27;),&#x27;; &#x27; ORDER BY rating_type,ccy_basis,date) FROM rating_actions WHERE rated_id IN (SELECT entity_id FROM entities WHERE entity_id&gt;=&#x27;E5001&#x27; AND entity_id&lt;=&#x27;E5200&#x27; AND (name ILIKE &#x27;Cerid%&#x27; AND entity_id IN (&#x27;E5001&#x27;,&#x27;E5011&#x27;,&#x27;E5013&#x27;,&#x27;E5047&#x27;) OR name ILIKE &#x27;%Rotam%&#x27; OR name ILIKE &#x27;%Belir%&#x27; OR name ILIKE &#x27;%Wonod%&#x27; OR name ILIKE &#x27;%Vesol%&#x27; OR name ILIKE &#x27;%Geren%&#x27;)) OR rated_id IN (&#x27;I5001&#x27;,&#x27;I5002&#x27;,&#x27;I5003&#x27;,&#x27;I5004&#x27;,&#x27;I5005&#x27;,&#x27;I5006&#x27;,&#x27;I5007&#x27;) GROUP BY rated_id ORDER BY rated_id;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| string_agg(((((((((entity_id || &#x27;|&#x27;) || &quot;name&quot;) || &#x27;|&#x27;) || COALESCE(parent_id, &#x27;-&#x27;)) || &#x27;|&#x27;) || country) || &#x27;|&#x27;) || entity_type), &#x27;; &#x27; ORDER BY entity_id) |
+|---|
+| E5043|Cerid Retil Chemicals plc|E5031|GB|CORP; E5044|Cerid Masim Retail plc|E5032|GB|CORP; E5045|Cerid Curel Water SA|E5033|CV|CORP; E5046|Cerid Gevom Media BV|E5034|NL|CORP; E5047|Cerid Rosor Holdings SA|E5035|VD|BANK; E5048|Cerid Pharma plc|E5036|GB|CORP; E5049|Cerid Ritir Foods plc|E5037|GB|CORP; E5050|Cerid Futir Utilities BV|E5038|NL|BANK; E5051|Cerid Butad Capital SA|E5039|FR|CORP; E5052|Cerid Viron Property SA|E5040|FR|CORP; E5053|Cerid Setom Media AG|E5041|DE|CORP; E5054|Cerid Linin Media BV|E5042|NL|BANK; E5055|Cerid Gosim Media SA|E5043|CV|CORP; E5056|Cerid Capital plc|E5044|GB|CORP; E5057|Cerid Manid Airlines Inc|E5045|US|CORP; E5058|Cerid Cirad Industries BV|E5046|NL|BANK; E5059|Belir Group AG|-|DE|CORP; E5060|Belir Retail AG|E5059|DE|CORP; E5061|Belir Steel Inc|E5059|US|BANK; E5062|Belir Mining SA|E5060|FR|CORP; E5063|Belir Harem Property AG|E5060|DE|CORP; E5064|Belir Holdings plc|E5061|GB|CORP; E5065|Belir Nelad Property AG|E5061|DE|CORP; E5066|Belir Shipping SA|E5062|FR|CORP; E5067|Belir Capital AG|E5063|DE|CORP; E5068|Belir Kator Energy plc|E5064|GB|CORP; E5069|Belir Water SA|E5065|FR|CORP; E5070|Belir Rusin Media SA|E5066|FR|CORP; E5071|Belir Chemicals SA|E5066|FR|CORP; E5072|Belir Katin Telecom AG|E5067|DE|CORP; E5073|Belir Puvir Mining plc|E5067|GB|CORP; E5074|Belir Industries plc|E5068|GB|CORP; E5075|Belir Gitid Industries plc|E5068|GB|CORP; E5076|Belir Property SA|E5069|FR|CORP; E5077|Belir Media SA|E5069|FR|CORP; E5078|Belir Vasin Water plc|E5070|GB|BANK; E5079|Belir Sitom Logistics SA|E5071|FR|CORP; E5080|Belir Foods AG|E5072|DE|CORP; E5081|Belir Vusad Telecom SA|E5073|VD|CORP; E5082|Belir Bovid Telecom plc|E5074|GB|BANK; E5083|Belir Airlines plc|E5075|GB|CORP; E5084|Belir Luton Media SA|E5076|FR|BANK; E5085|Belir Rutel Water SA|E5077|CV|CORP; E5086|Rotam Group Inc|-|US|CORP; E5087|Rotam Mining Inc|E5086|US|CORP; E5088|Rotam Industries Inc|E5086|US|CORP; E5089|Rotam Airlines Inc|E5086|US|CORP; E5090|Rotam Logistics Inc|E5087|US|CORP; E5091|Rotam Water SA|E5088|VD|CORP; E5092|Rotam Hison Holdings Inc|E5089|US|CORP; E5093|Rotam Telecom Inc|E5090|US|CORP; E5094|Rotam Holdings Inc|E5090|US|CORP; E5095|Rotam Energy BV|E5091|NL|BANK; E5096|Rotam Lulel Mining SA|E5091|ES|BANK; E5097|Rotam Chemicals Inc|E5092|US|BANK; E5098|Rotam Pharma SA|E5092|CV|CORP; E5099|Rotam Fived Water Inc|E5093|US|CORP; E5100|Rotam Property Inc|E5094|US|BANK; E5101|Rotam Foods BV|E5095|NL|CORP; E5102|Rotam Utilities SA|E5096|ES|CORP; E5103|Rotam Goson Energy Inc|E5097|US|CORP; E5104|Rotam Media SA|E5098|CV|CORP; E5105|Wonod Group SA|-|FR|CORP; E5106|Wonod Steel BV|E5105|NL|CORP; E5107|Wonod Retail BV|E5105|NL|CORP; E5108|Wonod Shipping BV|E5106|NL|CORP; E5109|Wonod Holdings SA|E5106|FR|CORP; E5110|Wonod Capital BV|E5106|NL|CORP; E5111|Wonod Airlines SA|E5107|CV|CORP; E5112|Wonod Telecom BV|E5107|NL|CORP; E5113|Wonod Wetid Foods BV|E5107|NL|CORP; E5114|Wonod Pharma Inc|E5108|US|CORP; E5115|Wonod Water SA|E5109|FR|CORP; E5116|Wonod Media SA|E5110|CV|CORP; E5117|Wonod Mining SA|E5111|CV|CORP; E5118|Wonod Wevan Logistics BV|E5112|NL|CORP; E5119|Wonod Povem Telecom SA|E5113|FR|CORP; E5120|Wonod Property Inc|E5114|US|BANK; E5121|Wonod Energy SA|E5115|FR|CORP; E5122|Wonod Chemicals SA|E5116|FR|CORP; E5123|Wonod Utilities SA|E5117|ES|BANK; E5124|Wonod Kinon Holdings SA|E5118|VD|CORP; E5125|Wonod Koval Capital SA|E5119|FR|CORP; E5126|Wonod Tetim Holdings Inc|E5120|US|CORP; E5127|Wonod Pavad Media SA|E5121|CV|CORP; E5128|Wonod Horal Steel SA|E5122|FR|BANK; E5129|Wonod Logistics SA|E5123|ES|BANK; E5130|Wonod Huror Retail SA|E5124|VD|CORP; E5131|Wonod Bunem Industries SA|E5125|ES|CORP; E5132|Vesol Group BV|-|NL|CORP; E5133|Vesol Foods plc|E5132|GB|BANK; E5134|Vesol Steel BV|E5132|NL|CORP; E5135|Vesol Water plc|E5133|GB|CORP; E5136|Vesol Media BV|E5134|NL|CORP; E5137|Vesol Mining plc|E5135|GB|CORP; E5138|Vesol Industries Inc|E5135|US|CORP; E5139|Vesol Culol Energy Inc|E5136|US|CORP; E5140|Vesol Utilities BV|E5136|NL|CORP; E5141|Vesol Ruvil Media SA|E5137|FR|CORP; E5142|Vesol Virar Telecom Inc|E5138|US|CORP; E5143|Vesol Foter Logistics AG|E5139|DE|BANK; E5144|Vesol Fatel Utilities BV|E5140|NL|CORP; E5145|Geren Group SA|-|VD|CORP; E5146|Geren Energy SA|E5145|VD|CORP; E5147|Geren Water AG|E5145|DE|CORP; E5148|Geren Logistics SA|E5145|VD|CORP; E5149|Geren Neter Logistics plc|E5146|GB|BANK; E5150|Geren Mining SA|E5146|VD|CORP; E5151|Geren Telecom SA|E5147|FR|CORP; E5152|Geren Kisom Retail AG|E5147|DE|CORP; E5153|Geren Ruter Retail SA|E5148|CV|CORP; E5154|Geren Retail SA|E5148|ES|CORP; E5155|Geren Capital plc|E5149|GB|CORP; E5156|Geren Holdings AG|E5150|DE|CORP; E5157|Geren Vuned Holdings Inc|E5151|US|CORP; E5158|Geren Airlines AG|E5152|DE|CORP; E5159|Geren Shipping SA|E5153|ES|BANK; E5160|Geren Property AG|E5154|DE|BANK; E5161|Geren Pusar Holdings SA|E5155|FR|CORP; E5162|Geren Media AG|E5156|DE|CORP; E5163|Geren Steel Inc|E5157|US|CORP; E5164|Geren Pharma AG|E5158|DE|CORP; E5165|Geren Nuvel Logistics SA|E5159|ES|CORP; E5166|Geren Wuran Airlines AG|E5160|DE|CORP; E5167|CERID CHEMICALS SA|-|VD|CORP; E5168|BELIR MINING SA|E5086|FR|CORP; E5169|WONOD STEEL BV|-|VD|CORP; E5170|Hetar Test plc|E5001|VD|CORP; VD|Republic of Valdoria|-|VD|SOV |
+
+Query 2:
+
+| string_agg(((((entity_id || &#x27;|&#x27;) || country) || &#x27;|&#x27;) || COALESCE(parent_id, &#x27;-&#x27;)), &#x27;; &#x27;) |
+|---|
+| E05|VD|-; VD|VD|-; E17|LU|- |
+
+Query 3:
+
+| rated_id | string_agg((((((((((((date || &#x27; &#x27;) || rating_type) || COALESCE((&#x27;/&#x27; || ccy_basis), &#x27;&#x27;)) || &#x27; &#x27;) || &quot;action&quot;) || &#x27; &#x27;) || rating) || &#x27; &#x27;) || COALESCE(outlook, &#x27;&#x27;)) || &#x27; &#x27;) || COALESCE(watch, &#x27;&#x27;)), &#x27;; &#x27; ORDER BY rating_type, ccy_basis, date) |
+|---|---|
+| E5013 | 2022-12-20 LTIDR/FC AS B- STA ; 2024-06-01 LTIDR/FC DG B- NEG  |
+| E5047 | 2022-07-23 LTIDR/FC AS BB STA  |
+| E5059 | 2025-10-13 LTIDR/FC AS BBB- STA ; 2026-05-25 LTIDR/FC DG BB+ NEG  |
+| E5061 | 2022-09-10 LTIDR/FC AS BB STA  |
+| E5062 | 2024-05-17 LTIDR/FC AS B STA ; 2025-02-08 LTIDR/FC DG B- NEG  |
+| E5066 | 2023-07-12 LTIDR/FC AS B STA  |
+| E5067 | 2024-11-27 LTIDR/FC AS A- STA  |
+| E5069 | 2024-03-01 LTIDR/FC AS BBB- STA  |
+| E5070 | 2023-04-17 LTIDR/FC AS B+ STA  |
+| E5071 | 2023-04-04 LTIDR/FC AS BB STA  |
+| E5072 | 2024-01-09 LTIDR/FC AS BB STA  |
+| E5073 | 2023-10-14 LTIDR/FC AS BBB STA ; 2024-02-01 LTIDR/FC DG BBB- NEG  |
+| E5075 | 2025-08-06 LTIDR/FC AS BBB+ STA  |
+| E5076 | 2025-10-14 LTIDR/FC AS BBB+ STA  |
+| E5082 | 2025-05-20 LTIDR/FC AS A- STA  |
+| E5083 | 2025-08-09 LTIDR/FC AS A- STA  |
+| E5084 | 2025-08-09 LTIDR/FC AS A+ STA  |
+| E5087 | 2022-11-03 LTIDR/FC AS BBB+ STA  |
+| E5090 | 2022-01-17 LTIDR/FC AS BBB STA  |
+| E5091 | 2024-04-08 LTIDR/FC AS BB STA  |
+| E5092 | 2023-03-14 LTIDR/FC AS BB STA  |
+| E5097 | 2025-12-23 LTIDR/FC AS B STA ; 2026-08-16 LTIDR/FC DG B- NEG  |
+| E5098 | 2023-04-09 LTIDR/FC AS B- STA  |
+| E5099 | 2022-03-24 LTIDR/FC AS BB STA ; 2025-04-23 LTIDR/FC DG BB- NEG  |
+| E5101 | 2024-02-09 LTIDR/FC AS BBB+ STA  |
+| E5102 | 2022-06-26 LTIDR/FC AS BBB STA ; 2024-01-14 LTIDR/FC DG BBB- NEG  |
+| E5104 | 2022-01-15 LTIDR/FC AS BB STA  |
+| E5105 | 2025-08-06 LTIDR/FC AS BB- STA  |
+| E5106 | 2024-02-20 LTIDR/FC AS B- STA  |
+| E5108 | 2025-01-26 LTIDR/FC AS BBB STA  |
+| E5109 | 2023-03-04 LTIDR/FC AS B- STA  |
+| E5110 | 2023-04-20 LTIDR/FC AS BB STA  |
+| E5112 | 2025-04-27 LTIDR/FC AS BB+ STA  |
+| E5113 | 2024-10-19 LTIDR/FC AS BB STA ; 2026-06-21 LTIDR/FC DG BB- NEG  |
+| E5114 | 2023-07-20 LTIDR/FC AS B+ STA  |
+| E5115 | 2023-06-25 LTIDR/FC AS B STA  |
+| E5116 | 2025-05-28 LTIDR/FC AS A STA ; 2026-05-16 LTIDR/FC DG A NEG  |
+| E5117 | 2023-10-15 LTIDR/FC AS BB STA  |
+| E5119 | 2022-02-19 LTIDR/FC AS A+ STA ; 2025-05-20 LTIDR/FC DG A NEG  |
+| E5123 | 2025-09-13 LTIDR/FC AS BB- STA  |
+| E5124 | 2024-11-20 LTIDR/FC AS BB STA  |
+| E5126 | 2024-06-16 LTIDR/FC AS BBB+ STA  |
+| E5127 | 2025-09-20 LTIDR/FC AS B STA  |
+| E5129 | 2025-04-04 LTIDR/FC AS BB- STA  |
+| E5130 | 2025-10-01 LTIDR/FC AS B- STA  |
+| E5131 | 2022-08-25 LTIDR/FC AS B+ STA ; 2025-11-22 LTIDR/FC DG B NEG  |
+| E5132 | 2023-12-02 LTIDR/FC AS BB+ STA  |
+| E5133 | 2022-01-15 LTIDR/FC AS BBB- STA  |
+| E5136 | 2024-04-07 LTIDR/FC AS BBB- STA  |
+| E5140 | 2022-04-03 LTIDR/FC AS A+ STA  |
+| E5141 | 2022-08-02 LTIDR/FC AS BB+ STA ; 2024-08-13 LTIDR/FC DG BB NEG  |
+| E5143 | 2025-11-02 LTIDR/FC AS A STA  |
+| E5144 | 2023-11-05 LTIDR/FC AS BB- STA  |
+| E5149 | 2023-02-25 LTIDR/FC AS B- STA  |
+| E5151 | 2025-03-21 LTIDR/FC AS BB+ STA  |
+| E5152 | 2023-01-03 LTIDR/FC AS BB- STA  |
+| E5154 | 2022-09-14 LTIDR/FC AS BB+ STA  |
+| E5155 | 2024-02-10 LTIDR/FC AS BB- STA  |
+| E5156 | 2022-09-26 LTIDR/FC AS B STA ; 2026-02-16 LTIDR/FC DG B- NEG  |
+| E5157 | 2025-06-13 LTIDR/FC AS BBB+ STA  |
+(14 more rows not shown)
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;sql&quot;&gt;
+SELECT lei, string_agg(entity_id||&#x27;|&#x27;||source_system||&#x27;|&#x27;||country||&#x27;|&#x27;||coalesce(parent_id,&#x27;-&#x27;)||&#x27;|&#x27;||name, &#x27;; &#x27;) g FROM entities WHERE lei&lt;&gt;&#x27;&#x27; GROUP BY lei HAVING count(*)&gt;1 AND bool_or(entity_id IN (&#x27;E5167&#x27;,&#x27;E5168&#x27;,&#x27;E5169&#x27;,&#x27;E5170&#x27;,&#x27;E5005&#x27;,&#x27;E5062&#x27;,&#x27;E5106&#x27;,&#x27;E5011&#x27;,&#x27;E5013&#x27;,&#x27;E17&#x27;,&#x27;E10&#x27;,&#x27;E03&#x27;,&#x27;E02&#x27;)) ;
+&lt;/invoke&gt;
+```sql
+SELECT lei, string_agg(entity_id||&#x27;|&#x27;||source_system||&#x27;|&#x27;||country||&#x27;|&#x27;||coalesce(parent_id,&#x27;-&#x27;)||&#x27;|&#x27;||name, &#x27;; &#x27;) g FROM entities WHERE lei&lt;&gt;&#x27;&#x27; GROUP BY lei HAVING count(*)&gt;1 AND bool_or(entity_id IN (&#x27;E5167&#x27;,&#x27;E5168&#x27;,&#x27;E5169&#x27;,&#x27;E5170&#x27;,&#x27;E5005&#x27;,&#x27;E5062&#x27;,&#x27;E5106&#x27;,&#x27;E5011&#x27;,&#x27;E5013&#x27;,&#x27;E17&#x27;,&#x27;E10&#x27;,&#x27;E03&#x27;,&#x27;E02&#x27;));
+```
+
+```sql
+SELECT * FROM rating_actions WHERE rated_id IN (&#x27;E5167&#x27;,&#x27;E5168&#x27;,&#x27;E5169&#x27;,&#x27;E5170&#x27;,&#x27;E5011&#x27;,&#x27;E5005&#x27;,&#x27;E5001&#x27;,&#x27;E5002&#x27;,&#x27;E5003&#x27;,&#x27;E5004&#x27;,&#x27;E5006&#x27;,&#x27;E5007&#x27;,&#x27;E5008&#x27;,&#x27;E5009&#x27;,&#x27;E5010&#x27;,&#x27;I5001&#x27;,&#x27;I5002&#x27;,&#x27;I5003&#x27;,&#x27;I5004&#x27;,&#x27;I5005&#x27;,&#x27;I5006&#x27;,&#x27;I5007&#x27;,&#x27;E03&#x27;,&#x27;E17&#x27;,&#x27;E10&#x27;,&#x27;E11&#x27;,&#x27;E04&#x27;) ORDER BY rated_id,date;
+```
+
+```sql
+SELECT count(*), count(distinct lei), sum((lei=&#x27;&#x27; or lei is null)::int) FROM entities WHERE source_system&lt;&gt;&#x27;QA&#x27;;
+```
+
+
+&lt;invoke name=&quot;sql&quot;&gt;
+SELECT 1;
+&lt;/invoke&gt;
+```sql
+SELECT 1;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| lei | g |
+|---|---|
+| 391200B1GR4AGTV5WY99 | E5005|RATINGS|VD|E5002|Cerid Chemicals SA; E5167|RESEARCH|VD|-|CERID CHEMICALS SA |
+| 213800PHEIYNJMHTDV74 | E02|RATINGS|GB|-|Northwind Holdings plc; E03|RESEARCH|GB|-|NORTHWIND HLDGS |
+| 969500W1342GHBTOGH81 | E5106|RATINGS|NL|E5105|Wonod Steel BV; E5169|RESEARCH|VD|-|WONOD STEEL BV |
+| 391200QYPVFF2O9K2039 | E10|RATINGS|DE|E09|Halden Bank AG; E17|RESEARCH|LU|-|HALDEN BANK |
+| 54930011OTFCAUKB0A28 | E5062|RATINGS|FR|E5060|Belir Mining SA; E5168|RESEARCH|FR|E5086|BELIR MINING SA |
+
+Query 2:
+
+| action_id | date | rated_id | rating_type | ccy_basis | action | rating | outlook | watch | comment |
+|---|---|---|---|---|---|---|---|---|---|
+| A09 | 2025-09-15 | E03 | LTIDR | FC | AF | A | POS |  |  |
+| A26 | 2023-05-01 | E10 | LTIDR | FC | AS | A- | STA |  | support from parent |
+| A27 | 2026-04-15 | E10 | LTIDR | FC | DG | BBB+ | STA |  |  |
+| A46 | 2025-02-01 | E11 | CO |  | AS | BBB |  |  |  |
+| A5001 | 2025-10-16 | E5002 | LTIDR | FC | AS | A+ | STA |  |  |
+| A5002 | 2023-11-03 | E5007 | LTIDR | FC | AS | B | STA |  |  |
+| A5003 | 2023-04-15 | E5008 | LTIDR | FC | AS | BBB+ | STA |  |  |
+| A5004 | 2023-06-05 | E5010 | LTIDR | FC | AS | BB- | STA |  |  |
+| A5127 | 2026-03-01 | E5170 | LTIDR | FC | AS | B- | NEG |  |  |
+| A5043 | 2024-09-10 | I5001 | INST |  | AS | BBB+ |  |  |  |
+| A5062 | 2023-01-12 | I5002 | INST |  | AS | A |  |  |  |
+| A5076 | 2024-09-24 | I5003 | INST |  | AS | A |  |  |  |
+| A5100 | 2023-12-14 | I5004 | INST |  | AS | A |  |  |  |
+| A5109 | 2024-10-09 | I5005 | INST |  | AS | BBB- |  |  |  |
+| A5125 | 2024-06-26 | I5006 | INST |  | AS | BB+ |  |  |  |
+| A5126 | 2025-02-14 | I5007 | INST |  | AS | BBB |  |  |  |
+
+Query 3:
+
+| count_star() | count(DISTINCT lei) | sum(CAST(((lei = &#x27;&#x27;) OR (lei IS NULL)) AS INTEGER)) |
+|---|---|---|
+| 526 | 495 | 2 |
+
+Query 4:
+
+| 1 |
+|---|
+| 1 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;sql&quot;&gt;
+&lt;/invoke&gt;
+```sql
+WITH RECURSIVE m AS (SELECT entity_id, source_system, country, coalesce(min(CASE WHEN source_system=&#x27;RATINGS&#x27; THEN entity_id END) OVER (PARTITION BY coalesce(nullif(lei,&#x27;&#x27;),entity_id)), entity_id) canon FROM entities WHERE source_system&lt;&gt;&#x27;QA&#x27;),
+c AS (SELECT canon, coalesce(max(CASE WHEN source_system=&#x27;RESEARCH&#x27; THEN country END), max(CASE WHEN source_system=&#x27;RATINGS&#x27; THEN country END)) country FROM m GROUP BY canon),
+p AS (SELECT m.canon, mp.canon parent FROM entities e JOIN m ON m.entity_id=e.entity_id AND e.source_system=&#x27;RATINGS&#x27; LEFT JOIN m mp ON mp.entity_id=e.parent_id),
+g(canon,top,lvl) AS (SELECT canon,canon,0 FROM p WHERE parent IS NULL UNION ALL SELECT p.canon,g.top,g.lvl+1 FROM p JOIN g ON p.parent=g.canon),
+anc(canon,a) AS (SELECT canon,parent FROM p WHERE parent IS NOT NULL UNION ALL SELECT anc.canon,p.parent FROM anc JOIN p ON p.canon=anc.a WHERE p.parent IS NOT NULL),
+a AS (SELECT ra.*, coalesce(m.canon, ra.rated_id) cid FROM rating_actions ra LEFT JOIN m ON m.entity_id=ra.rated_id WHERE ra.rated_id NOT IN (SELECT entity_id FROM entities WHERE source_system=&#x27;QA&#x27;) AND ra.action&lt;&gt;&#x27;EX&#x27;),
+s AS (SELECT * FROM (SELECT a.*, row_number() OVER (PARTITION BY cid,rating_type,coalesce(ccy_basis,&#x27;&#x27;) ORDER BY date DESC, action_id DESC) rn FROM a WHERE date&lt;=&#x27;2026-10-01&#x27;) WHERE rn=1),
+sc AS (SELECT [&#x27;AAA&#x27;,&#x27;AA+&#x27;,&#x27;AA&#x27;,&#x27;AA-&#x27;,&#x27;A+&#x27;,&#x27;A&#x27;,&#x27;A-&#x27;,&#x27;BBB+&#x27;,&#x27;BBB&#x27;,&#x27;BBB-&#x27;,&#x27;BB+&#x27;,&#x27;BB&#x27;,&#x27;BB-&#x27;,&#x27;B+&#x27;,&#x27;B&#x27;,&#x27;B-&#x27;,&#x27;CCC&#x27;,&#x27;CC&#x27;,&#x27;C&#x27;,&#x27;RD&#x27;,&#x27;D&#x27;] l),
+cc AS (SELECT c.country, s.rating ccr FROM s JOIN c ON c.canon=s.cid WHERE rating_type=&#x27;CC&#x27;)
+SELECT &#x27;Q7&#x27; k, string_agg(DISTINCT cid||&#x27;:&#x27;||ccy_basis,&#x27;,&#x27;) v FROM a WHERE action=&#x27;DG&#x27; AND date LIKE &#x27;2026%&#x27; AND rating_type=&#x27;LTIDR&#x27;
+UNION ALL SELECT &#x27;Q8&#x27;, string_agg(cid||ccy_basis||rating,&#x27;,&#x27;) FROM s WHERE rating_type IN (&#x27;LTIDR&#x27;,&#x27;STIDR&#x27;) AND rating IN (&#x27;RD&#x27;,&#x27;D&#x27;)
+UNION ALL SELECT &#x27;Q9&#x27;, count(DISTINCT cid)::varchar FROM s WHERE rating_type IN (&#x27;LTIDR&#x27;,&#x27;STIDR&#x27;) AND rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q9ltidr&#x27;, count(DISTINCT cid)::varchar FROM s WHERE rating_type=&#x27;LTIDR&#x27; AND rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q18&#x27;, string_agg(cid||ccy_basis,&#x27;,&#x27;) FROM s WHERE watch=&#x27;RWN&#x27; AND rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q19&#x27;, string_agg(cid||ccy_basis,&#x27;,&#x27;) FROM s WHERE outlook=&#x27;NEG&#x27; AND rating_type=&#x27;LTIDR&#x27; AND rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q21&#x27;, string_agg(DISTINCT cid,&#x27;,&#x27;) FROM a WHERE rating_type IN (&#x27;LTIDR&#x27;,&#x27;STIDR&#x27;) AND cid NOT IN (SELECT cid FROM s WHERE rating_type IN (&#x27;LTIDR&#x27;,&#x27;STIDR&#x27;) AND rating&lt;&gt;&#x27;WD&#x27;)
+UNION ALL SELECT &#x27;Q22&#x27;, string_agg(DISTINCT cid,&#x27;,&#x27;) FROM a WHERE rating IN (&#x27;RD&#x27;,&#x27;D&#x27;) AND rating_type IN (&#x27;LTIDR&#x27;,&#x27;STIDR&#x27;)
+UNION ALL SELECT &#x27;Q25&#x27;, count(*)::varchar FROM s,sc WHERE rating_type=&#x27;INST&#x27; AND list_position(l,rating) BETWEEN 1 AND 10
+UNION ALL SELECT &#x27;Q48&#x27;, count(*)::varchar FROM s WHERE rating_type=&#x27;INST&#x27; AND rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q30&#x27;, string_agg(cid,&#x27;,&#x27;) FROM s JOIN c ON c.canon=s.cid JOIN cc ON cc.country=c.country WHERE rating_type=&#x27;LTIDR&#x27; AND ccy_basis=&#x27;FC&#x27; AND rating=ccr
+UNION ALL SELECT &#x27;Q31&#x27;, string_agg(cid||s.rating||&#x27;&gt;&#x27;||ccr,&#x27;,&#x27;) FROM s,sc JOIN c ON true WHERE false
+UNION ALL SELECT &#x27;Q31b&#x27;, string_agg(cid||&#x27;:&#x27;||s.rating||&#x27;/&#x27;||ccr,&#x27;,&#x27;) FROM s JOIN c ON c.canon=s.cid JOIN cc ON cc.country=c.country, sc WHERE rating_type=&#x27;LTIDR&#x27; AND ccy_basis=&#x27;FC&#x27; AND s.rating&lt;&gt;&#x27;WD&#x27; AND list_position(l,s.rating)&lt;list_position(l,ccr)
+UNION ALL SELECT &#x27;Q40&#x27;, count(DISTINCT cid)::varchar FROM s JOIN c ON c.canon=s.cid WHERE c.country=&#x27;GB&#x27; AND rating_type IN (&#x27;LTIDR&#x27;,&#x27;STIDR&#x27;) AND rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q43&#x27;, string_agg(canon,&#x27;,&#x27;) FROM c WHERE country=&#x27;LU&#x27;
+UNION ALL SELECT &#x27;Q37&#x27;, count(*)::varchar FROM c
+UNION ALL SELECT &#x27;groups&#x27;, string_agg(top||&#x27;=&#x27;||n,&#x27;,&#x27;) FROM (SELECT top,count(*) n FROM g GROUP BY top HAVING top IN (&#x27;E09&#x27;,&#x27;E02&#x27;,&#x27;E5001&#x27;,&#x27;E5086&#x27;,&#x27;E5105&#x27;,&#x27;E5132&#x27;,&#x27;E5059&#x27;,&#x27;E5145&#x27;)) 
+UNION ALL SELECT &#x27;Q50&#x27;, string_agg(canon||&#x27;:&#x27;||lvl||&#x27;:&#x27;||top,&#x27;,&#x27;) FROM g WHERE canon IN (&#x27;E5047&#x27;,&#x27;E5011&#x27;,&#x27;E5013&#x27;,&#x27;E5062&#x27;,&#x27;E5086&#x27;)
+UNION ALL SELECT &#x27;Q59&#x27;, string_agg(canon,&#x27;,&#x27;)||&#x27;#&#x27;||count(*) FROM g WHERE top=&#x27;E5001&#x27; AND lvl=3
+UNION ALL SELECT &#x27;Q54&#x27;, string_agg(g.canon,&#x27;,&#x27;) FROM g JOIN c ON c.canon=g.canon WHERE top=&#x27;E5105&#x27; AND c.country=&#x27;VD&#x27;
+UNION ALL SELECT &#x27;Q55&#x27;, count(DISTINCT s.cid)::varchar FROM s JOIN anc ON anc.canon=s.cid JOIN c ON c.canon=anc.a WHERE s.rating_type=&#x27;LTIDR&#x27; AND s.rating&lt;&gt;&#x27;WD&#x27; AND c.country=&#x27;VD&#x27;
+UNION ALL SELECT &#x27;Q56&#x27;, string_agg(cid||&#x27;:&#x27;||s.rating,&#x27;,&#x27; ORDER BY list_position(l,s.rating) DESC) FROM s JOIN g ON g.canon=s.cid, sc WHERE top=&#x27;E5132&#x27; AND rating_type=&#x27;LTIDR&#x27; AND ccy_basis=&#x27;FC&#x27; AND s.rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q61&#x27;, string_agg(cid||&#x27;:&#x27;||s.rating,&#x27;,&#x27;)||&#x27;#&#x27;||count(*) FROM s JOIN g ON g.canon=s.cid, sc WHERE top=&#x27;E5001&#x27; AND rating_type=&#x27;LTIDR&#x27; AND ccy_basis=&#x27;FC&#x27; AND list_position(l,s.rating)&gt;10
+UNION ALL SELECT &#x27;Q58&#x27;, string_agg(i.instrument_id||&#x27;:&#x27;||i.guarantor_id||&#x27;&gt;&#x27;||i.issuer_id,&#x27;,&#x27;) FROM instruments i JOIN m mi ON mi.entity_id=i.issuer_id JOIN m mg ON mg.entity_id=i.guarantor_id JOIN g gi ON gi.canon=mi.canon JOIN g gg ON gg.canon=mg.canon WHERE gi.top&lt;&gt;gg.top
+UNION ALL SELECT &#x27;Q58n&#x27;, count(*)::varchar FROM instruments WHERE guarantor_id&lt;&gt;&#x27;&#x27;
+UNION ALL SELECT &#x27;Q26etc&#x27;, string_agg(cid||rating_type||coalesce(ccy_basis,&#x27;&#x27;)||rating,&#x27;,&#x27;) FROM s WHERE cid IN (&#x27;E15&#x27;,&#x27;E05&#x27;,&#x27;CV&#x27;,&#x27;VD&#x27;,&#x27;E02&#x27;,&#x27;E14&#x27;,&#x27;E16&#x27;,&#x27;I06&#x27;,&#x27;I08&#x27;,&#x27;I02&#x27;)
+;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1 failed: Binder Error: Referenced column &quot;ccr&quot; not found in FROM clause!
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;sql&quot;&gt;
+&lt;/invoke&gt;
+```sql
+WITH RECURSIVE m AS (SELECT entity_id, source_system, country, coalesce(min(CASE WHEN source_system=&#x27;RATINGS&#x27; THEN entity_id END) OVER (PARTITION BY coalesce(nullif(lei,&#x27;&#x27;),entity_id)), entity_id) canon FROM entities WHERE source_system&lt;&gt;&#x27;QA&#x27;),
+c AS (SELECT canon, coalesce(max(CASE WHEN source_system=&#x27;RESEARCH&#x27; THEN country END), max(CASE WHEN source_system=&#x27;RATINGS&#x27; THEN country END)) country FROM m GROUP BY canon),
+p AS (SELECT m.canon, mp.canon parent FROM entities e JOIN m ON m.entity_id=e.entity_id AND e.source_system=&#x27;RATINGS&#x27; LEFT JOIN m mp ON mp.entity_id=e.parent_id),
+g(canon,top,lvl) AS (SELECT canon,canon,0 FROM p WHERE parent IS NULL UNION ALL SELECT p.canon,g.top,g.lvl+1 FROM p JOIN g ON p.parent=g.canon),
+anc(canon,a) AS (SELECT canon,parent FROM p WHERE parent IS NOT NULL UNION ALL SELECT anc.canon,p.parent FROM anc JOIN p ON p.canon=anc.a WHERE p.parent IS NOT NULL),
+a AS (SELECT ra.*, coalesce(m.canon, ra.rated_id) cid FROM rating_actions ra LEFT JOIN m ON m.entity_id=ra.rated_id WHERE ra.rated_id NOT IN (SELECT entity_id FROM entities WHERE source_system=&#x27;QA&#x27;) AND ra.action&lt;&gt;&#x27;EX&#x27;),
+s AS (SELECT * FROM (SELECT a.*, row_number() OVER (PARTITION BY cid,rating_type,coalesce(ccy_basis,&#x27;&#x27;) ORDER BY date DESC, action_id DESC) rn FROM a WHERE date&lt;=&#x27;2026-10-01&#x27;) WHERE rn=1),
+sc AS (SELECT [&#x27;AAA&#x27;,&#x27;AA+&#x27;,&#x27;AA&#x27;,&#x27;AA-&#x27;,&#x27;A+&#x27;,&#x27;A&#x27;,&#x27;A-&#x27;,&#x27;BBB+&#x27;,&#x27;BBB&#x27;,&#x27;BBB-&#x27;,&#x27;BB+&#x27;,&#x27;BB&#x27;,&#x27;BB-&#x27;,&#x27;B+&#x27;,&#x27;B&#x27;,&#x27;B-&#x27;,&#x27;CCC&#x27;,&#x27;CC&#x27;,&#x27;C&#x27;,&#x27;RD&#x27;,&#x27;D&#x27;] l),
+cc AS (SELECT c.country, s.rating ccr FROM s JOIN c ON c.canon=s.cid WHERE rating_type=&#x27;CC&#x27;)
+SELECT &#x27;Q7&#x27; k, string_agg(DISTINCT cid||&#x27;:&#x27;||ccy_basis,&#x27;,&#x27;) v FROM a WHERE action=&#x27;DG&#x27; AND date LIKE &#x27;2026%&#x27; AND rating_type=&#x27;LTIDR&#x27;
+UNION ALL SELECT &#x27;Q8&#x27;, string_agg(cid||ccy_basis||rating,&#x27;,&#x27;) FROM s WHERE rating_type IN (&#x27;LTIDR&#x27;,&#x27;STIDR&#x27;) AND rating IN (&#x27;RD&#x27;,&#x27;D&#x27;)
+UNION ALL SELECT &#x27;Q9&#x27;, count(DISTINCT cid)::varchar FROM s WHERE rating_type IN (&#x27;LTIDR&#x27;,&#x27;STIDR&#x27;) AND rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q18&#x27;, string_agg(cid||ccy_basis,&#x27;,&#x27;) FROM s WHERE watch=&#x27;RWN&#x27; AND rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q19&#x27;, string_agg(cid||ccy_basis,&#x27;,&#x27;) FROM s WHERE outlook=&#x27;NEG&#x27; AND rating_type=&#x27;LTIDR&#x27; AND rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q21&#x27;, string_agg(DISTINCT cid,&#x27;,&#x27;) FROM a WHERE rating_type IN (&#x27;LTIDR&#x27;,&#x27;STIDR&#x27;) AND cid NOT IN (SELECT cid FROM s WHERE rating_type IN (&#x27;LTIDR&#x27;,&#x27;STIDR&#x27;) AND rating&lt;&gt;&#x27;WD&#x27;)
+UNION ALL SELECT &#x27;Q22&#x27;, string_agg(DISTINCT cid,&#x27;,&#x27;) FROM a WHERE rating IN (&#x27;RD&#x27;,&#x27;D&#x27;) AND rating_type IN (&#x27;LTIDR&#x27;,&#x27;STIDR&#x27;)
+UNION ALL SELECT &#x27;Q25&#x27;, count(*)::varchar FROM s,sc WHERE rating_type=&#x27;INST&#x27; AND list_position(l,rating) BETWEEN 1 AND 10
+UNION ALL SELECT &#x27;Q48&#x27;, count(*)::varchar FROM s WHERE rating_type=&#x27;INST&#x27; AND rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q30&#x27;, string_agg(cid,&#x27;,&#x27;) FROM s JOIN c ON c.canon=s.cid JOIN cc ON cc.country=c.country WHERE rating_type=&#x27;LTIDR&#x27; AND ccy_basis=&#x27;FC&#x27; AND rating=ccr
+UNION ALL SELECT &#x27;Q31b&#x27;, string_agg(cid||&#x27;:&#x27;||s.rating||&#x27;/&#x27;||ccr,&#x27;,&#x27;) FROM s JOIN c ON c.canon=s.cid JOIN cc ON cc.country=c.country, sc WHERE rating_type=&#x27;LTIDR&#x27; AND ccy_basis=&#x27;FC&#x27; AND s.rating&lt;&gt;&#x27;WD&#x27; AND list_position(l,s.rating)&lt;list_position(l,ccr)
+UNION ALL SELECT &#x27;Q40&#x27;, count(DISTINCT cid)::varchar FROM s JOIN c ON c.canon=s.cid WHERE c.country=&#x27;GB&#x27; AND rating_type IN (&#x27;LTIDR&#x27;,&#x27;STIDR&#x27;) AND rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q43&#x27;, string_agg(canon,&#x27;,&#x27;) FROM c WHERE country=&#x27;LU&#x27;
+UNION ALL SELECT &#x27;Q37&#x27;, count(*)::varchar FROM c
+UNION ALL SELECT &#x27;groups&#x27;, string_agg(top||&#x27;=&#x27;||n,&#x27;,&#x27;) FROM (SELECT top,count(*) n FROM g GROUP BY top HAVING top IN (&#x27;E09&#x27;,&#x27;E02&#x27;,&#x27;E5001&#x27;,&#x27;E5086&#x27;,&#x27;E5105&#x27;,&#x27;E5132&#x27;,&#x27;E5059&#x27;,&#x27;E5145&#x27;))
+UNION ALL SELECT &#x27;Q50&#x27;, string_agg(canon||&#x27;:&#x27;||lvl||&#x27;:&#x27;||top,&#x27;,&#x27;) FROM g WHERE canon IN (&#x27;E5047&#x27;,&#x27;E5011&#x27;,&#x27;E5013&#x27;,&#x27;E5062&#x27;,&#x27;E5086&#x27;)
+UNION ALL SELECT &#x27;Q59&#x27;, string_agg(canon,&#x27;,&#x27;)||&#x27;#&#x27;||count(*) FROM g WHERE top=&#x27;E5001&#x27; AND lvl=3
+UNION ALL SELECT &#x27;Q54&#x27;, string_agg(g.canon,&#x27;,&#x27;) FROM g JOIN c ON c.canon=g.canon WHERE top=&#x27;E5105&#x27; AND c.country=&#x27;VD&#x27;
+UNION ALL SELECT &#x27;Q55&#x27;, count(DISTINCT s.cid)::varchar FROM s JOIN anc ON anc.canon=s.cid JOIN c ON c.canon=anc.a WHERE s.rating_type=&#x27;LTIDR&#x27; AND s.rating&lt;&gt;&#x27;WD&#x27; AND c.country=&#x27;VD&#x27;
+UNION ALL SELECT &#x27;Q56&#x27;, string_agg(cid||&#x27;:&#x27;||s.rating,&#x27;,&#x27; ORDER BY list_position(l,s.rating) DESC) FROM s JOIN g ON g.canon=s.cid, sc WHERE top=&#x27;E5132&#x27; AND rating_type=&#x27;LTIDR&#x27; AND ccy_basis=&#x27;FC&#x27; AND s.rating&lt;&gt;&#x27;WD&#x27;
+UNION ALL SELECT &#x27;Q61&#x27;, string_agg(cid||&#x27;:&#x27;||s.rating,&#x27;,&#x27;)||&#x27;#&#x27;||count(*) FROM s JOIN g ON g.canon=s.cid, sc WHERE top=&#x27;E5001&#x27; AND rating_type=&#x27;LTIDR&#x27; AND ccy_basis=&#x27;FC&#x27; AND list_position(l,s.rating)&gt;10
+UNION ALL SELECT &#x27;Q58&#x27;, string_agg(i.instrument_id||&#x27;:&#x27;||i.guarantor_id||&#x27;&gt;&#x27;||i.issuer_id,&#x27;,&#x27;) FROM instruments i JOIN m mi ON mi.entity_id=i.issuer_id JOIN m mg ON mg.entity_id=i.guarantor_id JOIN g gi ON gi.canon=mi.canon JOIN g gg ON gg.canon=mg.canon WHERE gi.top&lt;&gt;gg.top
+UNION ALL SELECT &#x27;Q26etc&#x27;, string_agg(cid||rating_type||coalesce(ccy_basis,&#x27;&#x27;)||rating,&#x27;,&#x27;) FROM s WHERE cid IN (&#x27;E15&#x27;,&#x27;E05&#x27;,&#x27;CV&#x27;,&#x27;VD&#x27;,&#x27;E02&#x27;,&#x27;E14&#x27;,&#x27;E16&#x27;,&#x27;I06&#x27;,&#x27;I08&#x27;,&#x27;I02&#x27;)
+;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| k | v |
+|---|---|
+| Q7 | E5097:FC,E1213:FC,E1294:FC,E1051:FC,E5156:FC,E1064:FC,E1186:FC,E1169:FC,E5059:FC,E5033:FC,E1080:FC,E1160:FC,E1144:FC,E5019:FC,E1163:FC,E1263:FC,E1228:FC,E08:FC,E1298:FC,E1290:FC,E1285:FC,E1057:FC,E1300:FC,E1151:FC,E1058:FC,E1112:FC,E1307:FC,E1229:FC,E10:FC,E5116:FC,E1053:FC,E1159:FC,E1093:FC,E1243:FC,E1167:FC,E1034:FC,E5113:FC,E1255:FC |
+| Q8 | E08FCRD |
+| Q9 | 377 |
+| Q18 | E1006FC,E1297FC,E1264FC,E1266FC,E1132FC,E1181FC,E1323FC,E1317FC,E1066FC,E1314FC,E1013FC,E1061FC,E1126FC,E1133FC,E06FC,E1039FC,E1088FC,E1098FC,E1146FC,E1099FC,E1260FC,E1019LC,E1037FC,E1203FC,E1267FC,E1059LC,E1109FC,E1168FC,E1194FC,E1209FC,E1242FC,E1238FC |
+| Q19 | E1228FC,E1282FC,E1300FC,E5099FC,E1263FC,E1055FC,E1079FC,E1158FC,E1261FC,E5013FC,E5156FC,E01FC,E1211FC,E5023FC,E5102FC,E1005FC,E1271FC,E5097FC,E1029FC,E1188FC,E1294FC,E5062FC,E1064FC,E5057FC,E5073FC,E1034FC,E1118FC,E1190FC,E5039FC,E5113FC,E5119FC,E1056FC,E1072FC,E1080FC,E09FC,E1046FC,E1059FC,E5019FC,E5059FC,E5141FC,E1105FC,E1160FC,E5116FC,E1248FC,E5020FC,E5050FC,E5131FC |
+| Q21 | E1048,E1084,E1316,E1244,E1121,E1205,E1277,E1218,E1225,E1200,E1234,E1233,E07,E1021,E1166,E1062,E1172,E1124,E1001,E1253,E1155,E1032,E1007,E1308,E1057,E1159,E1076,E1219,E1206,E1320,E1140,E1041,E1107,E1063,E1138 |
+| Q22 | E08 |
+| Q25 | 72 |
+| Q48 | 113 |
+| Q30 | E1028,E5091,E1039,E5124,E5012,E5047,E1101,E1126,E1194,E15,E05,E1236,E5116 |
+| Q31b |  |
+| Q40 | 79 |
+| Q43 | E10 |
+| Q37 | 497 |
+| groups | E02=2,E5145=22,E5105=27,E5059=27,E5086=19,E5132=13,E09=3,E5001=58 |
+| Q50 | E5086:0:E5086,E5062:2:E5059,E5011:3:E5001,E5013:3:E5001,E5047:6:E5001 |
+| Q59 | E5011,E5015,E5019,E5013,E5017,E5021,E5012,E5016,E5020,E5014,E5018,E5022#12 |
+| Q54 | E5106,E5124,E5130 |
+| Q55 | 31 |
+| Q56 | E5144:BB-,E5141:BB,E5132:BB+,E5133:BBB-,E5136:BBB-,E5143:A,E5140:A+ |
+| Q61 | E5007:B,E5010:BB-,E5013:B-,E5021:B,E5012:BB,E5016:BB,E5022:BB-,E5023:B-,E5025:BB,E5029:BB+,E5024:B-,E5028:B-,E5030:B,E5039:BB-,E5037:B+,E5041:B-,E5042:BB,E5047:BB,E5048:B-#19 |
+| Q58 | I5007:E5145&gt;E5133 |
+| Q26etc | E14LTIDRFCBBB+,I06INSTA-,E05LTIDRLCBBB-,E15LTIDRLCA+,CVLTIDRFCBBB+,VDCCBB,E02LTIDRFCA,E15LTIDRFCA,CVCCA,E05LTIDRFCBB,I02INSTBB+,CVLTIDRLCA- |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>**Q1.** A-. The 2024-03-12 assignment (A01) stood until the downgrade on 2025-06-20 (A02).
+**Q2.** No. The only 2026 action is an affirmation with a Negative outlook (A03), which is not a downgrade.
+**Q3.** No, BB+. The 2031 note I02 is subordinated and was downgraded to BB+ (A07).
+**Q4.** POS. E03 shares E02&#x27;s LEI, so they are one entity, and E03&#x27;s latest action (A09, 2025-09-15) set the outlook to Positive.
+**Q5.** A holder takes the credit risk of E02, rated A. I03 is guaranteed by E02, and its rating (A11) matches E02&#x27;s A.
+**Q6.** The data does not state a reason. It only shows E05 at BB (A14) for foreign currency and BBB- (A13) for local currency, and Valdoria&#x27;s Country Ceiling at BB (A12).
+**Q7.** There are 38 issuers downgraded in 2026, listed in the JSON.
+**Q8.** E08. It went to RD on 2026-07-08 (A22).
+**Q9.** 377 distinct issuers hold an LTIDR or STIDR that was not withdrawn. This merges duplicate records by LEI and excludes QA records.
+**Q10.** Depends. E05 is BB on foreign currency (A14, speculative) and BBB- on local currency (A13, investment grade).
+**Q11.** BBB+ (A36 stood on that date).
+**Q12.** A- (A34).
+**Q13.** 1, the downgrade A36.
+**Q14.** None. Halden Foods&#x27; first rating is dated 2024-02-01 (A30).
+**Q15.** A- (A26; the downgrade A27 came on 2026-04-15).
+**Q16.** No. It was BBB+ on 2025-01-01 and is still BBB+.
+**Q17.** No. E06 only had a Rating Watch placed (A17).
+**Q18.** 32 issuers were on Rating Watch Negative, listed in the JSON.
+**Q19.** 47 issuers had a Negative outlook, listed in the JSON.
+**Q20.** No. E07&#x27;s rating was withdrawn for commercial reasons (A19), which is not a default.
+**Q21.** 35 entities, listed in the JSON.
+**Q22.** E08 only.
+**Q23.** F2 (A04).
+**Q24.** Yes. E01&#x27;s issuer rating is BBB.
+**Q25.** 72.
+**Q26.** A+ (A40).
+**Q27.** A- (A42).
+**Q28.** BBB+ (A38).
+**Q29.** None. VD carries only a Country Ceiling (A12), which is not an issuer rating.
+**Q30.** 13 entities, listed in the JSON.
+**Q31.** No. No foreign-currency issuer rating sits above its country&#x27;s ceiling.
+**Q32.** E09, via E11 → E10 → E09.
+**Q33.** A holder takes the credit risk of E10, rated BBB+. I05 is guaranteed by E10, and both E10 (A27) and I05 (A29) are BBB+.
+**Q34.** Yes. E17 &quot;HALDEN BANK&quot; shares E10&#x27;s LEI, so it is the same entity, and E10 is under E09.
+**Q35.** 3 (E09, E10, E11).
+**Q36.** 2 (E02, E04).
+**Q37.** 497 distinct entities, counting records by LEI and excluding QA.
+**Q38.** No. E06 and E13 have different LEIs.
+**Q39.** A (A08, plus A09 on E03, the same entity).
+**Q40.** 79.
+**Q41.** None. E16 is a QA record and must be ignored.
+**Q42.** LU. E17 (RESEARCH) holds for domicile, overriding E10&#x27;s DE.
+**Q43.** 1 (the Halden Bank entity).
+**Q44.** Yes. I07 pays in XVD, the domestic currency of VD.
+**Q45.** No. It is local-currency debt, so the ceiling does not cap it.
+**Q46.** No. E11 only has a credit opinion (A46), which is not a rating.
+**Q47.** None. I08 has only an Expected rating (A47), so it is unrated.
+**Q48.** 113.
+**Q49.** E5001.
+**Q50.** 6 levels.
+**Q51.** 58.
+**Q52.** 19.
+**Q53.** No. E5062 sits under E5059. The RESEARCH duplicate E5168 pointing to E5086 is overridden by RATINGS, which holds for parent links.
+**Q54.** E5106, E5124 and E5130.
+**Q55.** 31.
+**Q56.** BB- (E5144).
+**Q57.** E5002. E5011 → E5167 (the same entity as E5005) → E5002, and E5013 → E5006 → E5002.
+**Q58.** E5145, which guarantees I5007 issued by E5133 in the Vesol group.
+**Q59.** 12.
+**Q60.** A holder takes the credit risk of E5145, which is not in the same group as the issuer E5133.
+**Q61.** 19.
+
+```json
+{&quot;Q1&quot;:{&quot;rating&quot;:&quot;A-&quot;},&quot;Q2&quot;:{&quot;downgraded&quot;:&quot;no&quot;},&quot;Q3&quot;:{&quot;investment_grade&quot;:&quot;no&quot;,&quot;rating&quot;:&quot;BB+&quot;},&quot;Q4&quot;:{&quot;outlook&quot;:&quot;POS&quot;},&quot;Q5&quot;:{&quot;risk_of&quot;:&quot;E02&quot;,&quot;rating&quot;:&quot;A&quot;},&quot;Q7&quot;:{&quot;issuers&quot;:[&quot;E5097&quot;,&quot;E1213&quot;,&quot;E1294&quot;,&quot;E1051&quot;,&quot;E5156&quot;,&quot;E1064&quot;,&quot;E1186&quot;,&quot;E1169&quot;,&quot;E5059&quot;,&quot;E5033&quot;,&quot;E1080&quot;,&quot;E1160&quot;,&quot;E1144&quot;,&quot;E5019&quot;,&quot;E1163&quot;,&quot;E1263&quot;,&quot;E1228&quot;,&quot;E08&quot;,&quot;E1298&quot;,&quot;E1290&quot;,&quot;E1285&quot;,&quot;E1057&quot;,&quot;E1300&quot;,&quot;E1151&quot;,&quot;E1058&quot;,&quot;E1112&quot;,&quot;E1307&quot;,&quot;E1229&quot;,&quot;E10&quot;,&quot;E5116&quot;,&quot;E1053&quot;,&quot;E1159&quot;,&quot;E1093&quot;,&quot;E1243&quot;,&quot;E1167&quot;,&quot;E1034&quot;,&quot;E5113&quot;,&quot;E1255&quot;]},&quot;Q8&quot;:{&quot;entities&quot;:[&quot;E08&quot;]},&quot;Q9&quot;:{&quot;count&quot;:377},&quot;Q10&quot;:{&quot;investment_grade&quot;:&quot;depends&quot;},&quot;Q11&quot;:{&quot;rating&quot;:&quot;BBB+&quot;},&quot;Q12&quot;:{&quot;rating&quot;:&quot;A-&quot;},&quot;Q13&quot;:{&quot;count&quot;:1},&quot;Q14&quot;:{&quot;rating&quot;:&quot;none&quot;},&quot;Q15&quot;:{&quot;rating&quot;:&quot;A-&quot;},&quot;Q16&quot;:{&quot;changed&quot;:&quot;no&quot;},&quot;Q17&quot;:{&quot;downgraded&quot;:&quot;no&quot;},&quot;Q18&quot;:{&quot;issuers&quot;:[&quot;E1006&quot;,&quot;E1297&quot;,&quot;E1264&quot;,&quot;E1266&quot;,&quot;E1132&quot;,&quot;E1181&quot;,&quot;E1323&quot;,&quot;E1317&quot;,&quot;E1066&quot;,&quot;E1314&quot;,&quot;E1013&quot;,&quot;E1061&quot;,&quot;E1126&quot;,&quot;E1133&quot;,&quot;E06&quot;,&quot;E1039&quot;,&quot;E1088&quot;,&quot;E1098&quot;,&quot;E1146&quot;,&quot;E1099&quot;,&quot;E1260&quot;,&quot;E1019&quot;,&quot;E1037&quot;,&quot;E1203&quot;,&quot;E1267&quot;,&quot;E1059&quot;,&quot;E1109&quot;,&quot;E1168&quot;,&quot;E1194&quot;,&quot;E1209&quot;,&quot;E1242&quot;,&quot;E1238&quot;]},&quot;Q19&quot;:{&quot;issuers&quot;:[&quot;E1228&quot;,&quot;E1282&quot;,&quot;E1300&quot;,&quot;E5099&quot;,&quot;E1263&quot;,&quot;E1055&quot;,&quot;E1079&quot;,&quot;E1158&quot;,&quot;E1261&quot;,&quot;E5013&quot;,&quot;E5156&quot;,&quot;E01&quot;,&quot;E1211&quot;,&quot;E5023&quot;,&quot;E5102&quot;,&quot;E1005&quot;,&quot;E1271&quot;,&quot;E5097&quot;,&quot;E1029&quot;,&quot;E1188&quot;,&quot;E1294&quot;,&quot;E5062&quot;,&quot;E1064&quot;,&quot;E5057&quot;,&quot;E5073&quot;,&quot;E1034&quot;,&quot;E1118&quot;,&quot;E1190&quot;,&quot;E5039&quot;,&quot;E5113&quot;,&quot;E5119&quot;,&quot;E1056&quot;,&quot;E1072&quot;,&quot;E1080&quot;,&quot;E09&quot;,&quot;E1046&quot;,&quot;E1059&quot;,&quot;E5019&quot;,&quot;E5059&quot;,&quot;E5141&quot;,&quot;E1105&quot;,&quot;E1160&quot;,&quot;E5116&quot;,&quot;E1248&quot;,&quot;E5020&quot;,&quot;E5050&quot;,&quot;E5131&quot;]},&quot;Q20&quot;:{&quot;in_default&quot;:&quot;no&quot;},&quot;Q21&quot;:{&quot;entities&quot;:[&quot;E1048&quot;,&quot;E1084&quot;,&quot;E1316&quot;,&quot;E1244&quot;,&quot;E1121&quot;,&quot;E1205&quot;,&quot;E1277&quot;,&quot;E1218&quot;,&quot;E1225&quot;,&quot;E1200&quot;,&quot;E1234&quot;,&quot;E1233&quot;,&quot;E07&quot;,&quot;E1021&quot;,&quot;E1166&quot;,&quot;E1062&quot;,&quot;E1172&quot;,&quot;E1124&quot;,&quot;E1001&quot;,&quot;E1253&quot;,&quot;E1155&quot;,&quot;E1032&quot;,&quot;E1007&quot;,&quot;E1308&quot;,&quot;E1057&quot;,&quot;E1159&quot;,&quot;E1076&quot;,&quot;E1219&quot;,&quot;E1206&quot;,&quot;E1320&quot;,&quot;E1140&quot;,&quot;E1041&quot;,&quot;E1107&quot;,&quot;E1063&quot;,&quot;E1138&quot;]},&quot;Q22&quot;:{&quot;entities&quot;:[&quot;E08&quot;]},&quot;Q23&quot;:{&quot;rating&quot;:&quot;F2&quot;},&quot;Q24&quot;:{&quot;investment_grade&quot;:&quot;yes&quot;},&quot;Q25&quot;:{&quot;count&quot;:72},&quot;Q26&quot;:{&quot;rating&quot;:&quot;A+&quot;},&quot;Q27&quot;:{&quot;rating&quot;:&quot;A-&quot;},&quot;Q28&quot;:{&quot;rating&quot;:&quot;BBB+&quot;},&quot;Q29&quot;:{&quot;rating&quot;:&quot;none&quot;},&quot;Q30&quot;:{&quot;entities&quot;:[&quot;E1028&quot;,&quot;E5091&quot;,&quot;E1039&quot;,&quot;E5124&quot;,&quot;E5012&quot;,&quot;E5047&quot;,&quot;E1101&quot;,&quot;E1126&quot;,&quot;E1194&quot;,&quot;E15&quot;,&quot;E05&quot;,&quot;E1236&quot;,&quot;E5116&quot;]},&quot;Q31&quot;:{&quot;any&quot;:&quot;no&quot;},&quot;Q32&quot;:{&quot;parent&quot;:&quot;E09&quot;},&quot;Q33&quot;:{&quot;risk_of&quot;:&quot;E10&quot;,&quot;rating&quot;:&quot;BBB+&quot;},&quot;Q34&quot;:{&quot;same_group&quot;:&quot;yes&quot;},&quot;Q35&quot;:{&quot;count&quot;:3},&quot;Q36&quot;:{&quot;count&quot;:2},&quot;Q37&quot;:{&quot;count&quot;:497},&quot;Q38&quot;:{&quot;same&quot;:&quot;no&quot;},&quot;Q39&quot;:{&quot;rating&quot;:&quot;A&quot;},&quot;Q40&quot;:{&quot;count&quot;:79},&quot;Q41&quot;:{&quot;rating&quot;:&quot;none&quot;},&quot;Q42&quot;:{&quot;country&quot;:&quot;LU&quot;},&quot;Q43&quot;:{&quot;count&quot;:1},&quot;Q44&quot;:{&quot;local_currency&quot;:&quot;yes&quot;},&quot;Q45&quot;:{&quot;above_ceiling&quot;:&quot;no&quot;},&quot;Q46&quot;:{&quot;issuer_rating&quot;:&quot;no&quot;},&quot;Q47&quot;:{&quot;rating&quot;:&quot;none&quot;},&quot;Q48&quot;:{&quot;count&quot;:113},&quot;Q49&quot;:{&quot;parent&quot;:&quot;E5001&quot;},&quot;Q50&quot;:{&quot;count&quot;:6},&quot;Q51&quot;:{&quot;count&quot;:58},&quot;Q52&quot;:{&quot;count&quot;:19},&quot;Q53&quot;:{&quot;same_group&quot;:&quot;no&quot;},&quot;Q54&quot;:{&quot;entities&quot;:[&quot;E5106&quot;,&quot;E5124&quot;,&quot;E5130&quot;]},&quot;Q55&quot;:{&quot;count&quot;:31},&quot;Q56&quot;:{&quot;rating&quot;:&quot;BB-&quot;},&quot;Q57&quot;:{&quot;entity&quot;:&quot;E5002&quot;},&quot;Q58&quot;:{&quot;entities&quot;:[&quot;E5145&quot;]},&quot;Q59&quot;:{&quot;count&quot;:12},&quot;Q60&quot;:{&quot;risk_of&quot;:&quot;E5145&quot;,&quot;same_group&quot;:&quot;no&quot;},&quot;Q61&quot;:{&quot;count&quot;:19}}
+```</code></pre></div></details>
+
+
+  </main>
+</div>
+</body>
+</html>

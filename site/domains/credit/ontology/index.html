@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Credit ratings: the ontology · Semantics ladder</title>
+  <link rel="stylesheet" href="../../../static/css/site.css">
+  <script src="../../../static/js/site.js" defer></script>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <a class="brand" href="../../../index.html">Semantics ladder</a>
+    <p class="brand-sub">How much does an LLM gain from being told what data means?</p>
+    <div class="nav-group">The experiment</div>
+    <ul>
+      <li><a class="" href="../../../index.html">Goals</a></li>
+      <li><a class="" href="../../../method/index.html">Method</a></li>
+    </ul>
+    
+    <div class="nav-group">Credit ratings</div>
+    <ul>
+      <li><a class="" href="../../credit_paths/index.html">Introduction</a></li><li><a class="" href="../data/index.html">Data</a></li><li><a class="" href="../questions/index.html">Questions and traps</a></li><li><a class="active" href="index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">Research analytics</div>
+    <ul>
+      <li><a class="" href="../../research_850/index.html">Introduction</a></li><li><a class="" href="../../research/data/index.html">Data</a></li><li><a class="" href="../../research/questions/index.html">Questions and traps</a></li><li><a class="" href="../../research/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">The results</div>
+    <ul>
+      <li><a class="" href="../../../scores/index.html">Scores</a></li>
+      <li><a class="" href="../../../conclusions/index.html">Conclusions</a></li>
+      <li><a class="" href="../../../runs/index.html">Run archive</a></li>
+    </ul>
+    <p class="nav-foot">All data is invented: the companies, LEIs, ratings, works, people and institutions. Nothing here is any rating agency's or bibliographic database's data or definitions.</p>
+  </nav>
+  <main class="content">
+    <h1>Credit ratings: the ontology</h1>
+    
+<div class="prose"><p>The meaning comes in three forms, so that the experiment can tell the form apart from the content, and a decoy that carries none of it. Each file links to its source on GitHub.</p>
+<ul>
+<li><strong><a href="https://github.com/lambdamusic/semantic-ladder-demo/blob/main/domains/credit/ontology/ontology.ttl" target="_blank" rel="noopener"><code>ontology.ttl</code></a></strong>: three classes, the properties each CSV column names, and every code as a SKOS concept, with its <code>skos:notation</code> as it appears in the data. The meaning is in plain-English <code>skos:definition</code>s.</li>
+<li><strong><a href="https://github.com/lambdamusic/semantic-ladder-demo/blob/main/domains/credit/ontology/ontology.md" target="_blank" rel="noopener"><code>ontology.md</code></a></strong>: the same definitions as Markdown, generated from the Turtle by <a href="https://github.com/lambdamusic/semantic-ladder-demo/blob/main/src/ontology_to_md.py" target="_blank" rel="noopener"><code>ontology_to_md.py</code></a> so that the two never drift. This is what the <span class="lbl">R4</span> <code>csv+markdown</code> and query conditions get, and it's shown below.</li>
+<li><strong><a href="https://github.com/lambdamusic/semantic-ladder-demo/blob/main/domains/credit/ontology/axioms.ttl" target="_blank" rel="noopener"><code>axioms.ttl</code></a></strong>: the meaning as logic, with no prose. OWL keys, functional properties, disjoint classes and code lists as classes, plus SHACL-AF rules that derive what the definitions say: identity by LEI, domicile, parent chains entity by entity, rating periods, ratings in force, credit risk, and a constraint that catches a rating above its ceiling. The <span class="lbl">R8</span> <code>csv+axioms</code> condition gets these plus the ontology with its definitions removed. <span class="lbl">D6</span> <code>sparql+axioms</code> queries the data after the rules have run.</li>
+<li><strong><a href="https://github.com/lambdamusic/semantic-ladder-demo/blob/main/domains/credit/ontology/padding.md" target="_blank" rel="noopener"><code>padding.md</code></a></strong>: the decoy glossary for <span class="lbl">R3</span> <code>csv+padding</code>. It's on the same subject, bond markets, and as long as <code>ontology.md</code>, but defines none of the terms the questions depend on.</li>
+</ul>
+<p><a href="https://github.com/lambdamusic/semantic-ladder-demo/blob/main/domains/credit/check_axioms.py" target="_blank" rel="noopener"><code>check_axioms.py</code></a> runs the rules over the data and checks their output against the keys, so the logic is tested as well as read.</p></div>
+
+<h2>The ontology at a glance</h2>
+<div class="prose"><a href="../../../static/img/credit-ontology.svg" target="_blank"><img src="../../../static/img/credit-ontology.svg" alt="Three classes. An instrument has an issuer and a guarantor, both entities, and an entity has a parent. A rating action is about an entity or an instrument. Code lists hang off each class: seniorities, entity types, and rating types, currency bases, action types, outlooks and rating watches." class="diagram"></a></div>
+<p class="note">A sketch, drawn by hand from the definitions: the classes, the links between them, and the code lists they use.</p>
+<h2>The definitions, as the <span class="lbl">R4</span> <code>csv+markdown</code> condition gets them</h2><div class="prose"><h1 id="credit-ratings-a-teaching-ontology">Credit ratings: a teaching ontology</h1>
+<p>Entities, instruments, rating actions and the codes the data uses, each with a definition that states what it means and how to read it. Invented for an experiment; not a model of any real rating agency.</p>
+<h2 id="classes">Classes</h2>
+<h3 id="entity">Entity</h3>
+<p>A legal entity: a company, bank, finance subsidiary or sovereign. An entity is identified by its LEI (LEI), not by its name or record ID. The data holds records from more than one source system (source system), so the same entity can appear as several records with different IDs and differently spelled names: two records with the same LEI are the same entity, and every fact recorded against either record is a fact about that one entity.</p>
+<h3 id="instrument">Instrument</h3>
+<p>A debt instrument, such as a bond or note, issued by an entity (issuer). An instrument's rating is not the issuer's rating: it can sit above or below it depending on seniority (seniority) and on any guarantee (guarantor).</p>
+<h3 id="rating-action">Rating action</h3>
+<p>Something a rating agency did to a rating on a date (date): assigned, affirmed, upgraded, downgraded, placed on Watch or withdrawn it. Each action applies to one rated thing (rated thing), one rating type (rating type) and, for issuer ratings, one currency basis (currency basis). A rating holds from its action date until the next action on the same thing, type and basis: so the rating on a date D is the one set by the latest action on or before D, and the current rating is the latest action overall. rating always holds the rating as it stands after the action, including when it did not change.</p>
+<h2 id="properties">Properties</h2>
+<h3 id="name-csv-column-name">name (CSV column <code>name</code>)</h3>
+<p>The name as the source system spells it. Names are not identifiers: the same entity can be spelled differently in different systems.</p>
+<h3 id="lei-csv-column-lei">LEI (CSV column <code>lei</code>)</h3>
+<p>Legal Entity Identifier: the identifier that says which legal entity a record describes. Same LEI, same entity. Sovereigns have none.</p>
+<h3 id="country-csv-column-country">country (CSV column <code>country</code>)</h3>
+<p>ISO-style code of the country where the entity is domiciled. Where an entity's records disagree, see source system for which holds. It decides which Country Ceiling, if any, applies to the entity's foreign-currency ratings. VD is the Republic of Valdoria and CV the Republic of Corvenia (both invented).</p>
+<h3 id="entity-type-csv-column-entity_type">entity type (CSV column <code>entity_type</code>)</h3>
+<p>What kind of entity it is: a concept of the scheme Entity types.</p>
+<h3 id="parent-csv-column-parent_id">parent (CSV column <code>parent_id</code>)</h3>
+<p>The entity that owns and controls this one. A parent link names a record, but points at the entity that record describes, so the chain continues from any of that entity's records. Following parents up to an entity with no parent gives the ultimate parent; a group is an ultimate parent and every entity whose chain of parents ends at it.</p>
+<h3 id="source-system-csv-column-source_system">source system (CSV column <code>source_system</code>)</h3>
+<p>The internal system the record comes from (RATINGS, RESEARCH, QA). Each system keeps its own records of the same entities; see Entity. Where records of the same entity disagree, which one holds depends on the field. RATINGS is the system of record for names and parent links. Domicile is the exception: the RESEARCH team checks each entity's registered office against its filings, so where records disagree on country, the RESEARCH record holds. QA records are test data, created to check the systems: they describe no real entity, so a QA record, and every action recorded against it, must be ignored.</p>
+<h3 id="description-csv-column-description">description (CSV column <code>description</code>)</h3>
+<p>The instrument's name: issuer, coupon and maturity year.</p>
+<h3 id="issuer-csv-column-issuer_id">issuer (CSV column <code>issuer_id</code>)</h3>
+<p>The entity that issued the instrument and owes the payments. Not necessarily the entity whose credit risk the investor takes: see guarantor.</p>
+<h3 id="guarantor-csv-column-guarantor_id">guarantor (CSV column <code>guarantor_id</code>)</h3>
+<p>An entity that guarantees the instrument's payments if the issuer does not pay. A guaranteed instrument carries the guarantor's credit risk, so it is rated in line with the guarantor's issuer rating, not the issuer's.</p>
+<h3 id="seniority-csv-column-seniority">seniority (CSV column <code>seniority</code>)</h3>
+<p>Where the instrument ranks in repayment if the issuer fails: a concept of the scheme Seniorities.</p>
+<h3 id="currency-csv-column-currency">currency (CSV column <code>currency</code>)</h3>
+<p>The currency the instrument pays in, as an ISO 4217 code, or one of two local codes: XVD, the Valdorian dollar, the domestic currency of VD; and CVK, the Corvenian krone, the domestic currency of CV. Debt in a currency other than the domestic one of the issuer's country is exposed to that country's transfer and convertibility risk: see Country Ceiling (CC). Debt in the domestic currency is local-currency debt and is not capped by the ceiling.</p>
+<h3 id="maturity-csv-column-maturity">maturity (CSV column <code>maturity</code>)</h3>
+<p>The date the instrument is due to be repaid.</p>
+<h3 id="date-csv-column-date">date (CSV column <code>date</code>)</h3>
+<p>The date the action took effect.</p>
+<h3 id="rated-thing-csv-column-rated_id">rated thing (CSV column <code>rated_id</code>)</h3>
+<p>What the action is about: an entity (for issuer ratings and Country Ceilings) or an instrument (for instrument ratings).</p>
+<h3 id="rating-type-csv-column-rating_type">rating type (CSV column <code>rating_type</code>)</h3>
+<p>Which kind of rating the action concerns: a concept of the scheme Rating types. Different types are different ratings and are never compared or combined with each other.</p>
+<h3 id="currency-basis-csv-column-ccy_basis">currency basis (CSV column <code>ccy_basis</code>)</h3>
+<p>For issuer ratings, whether the rating covers foreign-currency (FC) or local-currency (LC) obligations: a concept of the scheme Currency bases. An entity can have both, with different values.</p>
+<h3 id="action-csv-column-action">action (CSV column <code>action</code>)</h3>
+<p>What was done: a concept of the scheme Action types. Only upgrades and downgrades change a rating.</p>
+<h3 id="rating-csv-column-rating">rating (CSV column <code>rating</code>)</h3>
+<p>The rating after the action, on the scale of its rating type. Long-term scale, strongest to weakest: AAA, AA+, AA, AA-, A+, A, A-, BBB+, BBB, BBB-, BB+, BB, BB-, B+, B, B-, CCC, CC, C, RD, D. Investment grade means BBB- or higher; BB+ and below is speculative grade (high yield). RD (restricted default) means the issuer has defaulted on some material obligations, for instance by completing a distressed debt exchange, without being wound up: RD is a default. D means a general default. Short-term scale, strongest to weakest: F1+, F1, F2, F3, B, C, RD, D. WD means the rating was withdrawn (see Withdrawn (WD)): it is not a point on either scale.</p>
+<h3 id="outlook-csv-column-outlook">outlook (CSV column <code>outlook</code>)</h3>
+<p>The likely direction of a long-term rating over the next one to two years: a concept of the scheme Outlooks. An outlook is not a rating: revising it does not change the rating.</p>
+<h3 id="rating-watch-csv-column-watch">rating watch (CSV column <code>watch</code>)</h3>
+<p>Set when the rating is on Rating Watch: a concept of the scheme Rating Watches. A Watch is not a rating change.</p>
+<h3 id="comment-csv-column-comment">comment (CSV column <code>comment</code>)</h3>
+<p>The analyst's note on the action, such as the reason for a withdrawal.</p>
+<h2 id="codes">Codes</h2>
+<p>The codes as they appear in the data, grouped by list.</p>
+<h3 id="rating-types">Rating types</h3>
+<ul>
+<li><strong>LTIDR</strong>, Long-term Issuer Default Rating: The issuer's own creditworthiness: how likely it is to default on its obligations, on the long-term scale. This is what people usually mean by an entity's rating. The foreign-currency (FC) one is the headline rating; there may also be a local-currency (LC) one.</li>
+<li><strong>STIDR</strong>, Short-term Issuer Default Rating: The issuer's ability to meet obligations falling due within about a year, on the short-term scale (F1+ to D). Not comparable with long-term ratings.</li>
+<li><strong>INST</strong>, Instrument rating: The rating of one specific instrument. It starts from the issuer's long-term rating and is notched for the instrument's seniority and expected recovery: subordinated debt is usually rated below the issuer, and guaranteed debt is rated on the guarantor. An instrument rating is never the rating of the issuer.</li>
+<li><strong>CC</strong>, Country Ceiling: Not a rating of anyone. A cap, set for a country, on the foreign-currency ratings of entities domiciled there and of their foreign-currency debt. It reflects transfer and convertibility risk: the risk that the government stops money being converted or sent abroad, so even a sound company could not pay foreign-currency debt. Foreign-currency ratings of entities in the country are generally no higher than the ceiling; local-currency ratings are not capped. A Country Ceiling is not the sovereign's own issuer rating.</li>
+<li><strong>CO</strong>, Credit opinion: A private, point-in-time view of an entity's credit, given to one client. It is not a published rating and not an issuer rating: never count it as a rating, and never report its value as the entity's rating.</li>
+</ul>
+<h3 id="currency-bases">Currency bases</h3>
+<ul>
+<li><strong>FC</strong>, Foreign currency: Covers obligations in foreign currency, so it is subject to the Country Ceiling.</li>
+<li><strong>LC</strong>, Local currency: Covers obligations in the currency of the entity's own country; not subject to the Country Ceiling.</li>
+</ul>
+<h3 id="action-types">Action types</h3>
+<ul>
+<li><strong>AS</strong>, Assigned: A first rating is given.</li>
+<li><strong>AF</strong>, Affirmed: The rating is reviewed and kept the same. The outlook may be revised in the same action; that does not make it an upgrade or a downgrade.</li>
+<li><strong>UG</strong>, Upgraded: The rating is raised.</li>
+<li><strong>DG</strong>, Downgraded: The rating is lowered. The only action that counts as a downgrade.</li>
+<li><strong>RW</strong>, Placed on Rating Watch: The rating is flagged as likely to change soon, usually within about six months, in the direction rating watch gives. The rating itself is unchanged: not a downgrade.</li>
+<li><strong>WD</strong>, Withdrawn: The agency stops maintaining the rating, often for commercial reasons (the issuer no longer pays for it, or the debt is repaid). After a withdrawal the entity has no rating of that type. A withdrawal is not a credit event: it says nothing about default, and is not a downgrade.</li>
+<li><strong>EX</strong>, Expected rating: A rating signalled before an instrument's final documents are signed. It is not yet a rating: the instrument stays unrated until an Assigned (AS) action confirms it.</li>
+</ul>
+<h3 id="outlooks">Outlooks</h3>
+<ul>
+<li><strong>STA</strong>, Stable: No direction expected.</li>
+<li><strong>POS</strong>, Positive: The rating may go up over one to two years.</li>
+<li><strong>NEG</strong>, Negative: The rating may go down over one to two years. Not a downgrade.</li>
+</ul>
+<h3 id="rating-watches">Rating Watches</h3>
+<ul>
+<li><strong>RWN</strong>, Rating Watch Negative: A downgrade is likely in the near term. Not a downgrade yet.</li>
+</ul>
+<h3 id="seniorities">Seniorities</h3>
+<ul>
+<li><strong>SU</strong>, Senior unsecured: Ranks with the issuer's ordinary debts; usually rated at the level of the issuer's long-term rating.</li>
+<li><strong>SUB</strong>, Subordinated: Repaid only after senior debt, so investors recover less in a default; usually rated one or more notches below the issuer's long-term rating.</li>
+</ul>
+<h3 id="entity-types">Entity types</h3>
+<ul>
+<li><strong>CORP</strong>, Corporate: A non-financial company.</li>
+<li><strong>BANK</strong>, Bank: A bank.</li>
+<li><strong>FINSUB</strong>, Finance subsidiary: A subsidiary that exists to raise debt for its parent group. It usually has no issuer rating of its own; its debt is guaranteed by the parent, so investors take the parent's credit risk.</li>
+<li><strong>SOV</strong>, Sovereign: A national government. A sovereign record can carry a Country Ceiling, issuer ratings, or both: they are different things, and the ceiling is not the sovereign's rating.</li>
+</ul></div>
+
+  </main>
+</div>
+</body>
+</html>

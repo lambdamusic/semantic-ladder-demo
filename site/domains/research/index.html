@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research analytics · Semantics ladder</title>
+  <link rel="stylesheet" href="../../static/css/site.css">
+  <script src="../../static/js/site.js" defer></script>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <a class="brand" href="../../index.html">Semantics ladder</a>
+    <p class="brand-sub">How much does an LLM gain from being told what data means?</p>
+    <div class="nav-group">The experiment</div>
+    <ul>
+      <li><a class="" href="../../index.html">Goals</a></li>
+      <li><a class="" href="../../method/index.html">Method</a></li>
+    </ul>
+    
+    <div class="nav-group">Credit ratings</div>
+    <ul>
+      <li><a class="" href="../credit_paths/index.html">Introduction</a></li><li><a class="" href="../credit/data/index.html">Data</a></li><li><a class="" href="../credit/questions/index.html">Questions and traps</a></li><li><a class="" href="../credit/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">Research analytics</div>
+    <ul>
+      <li><a class="active" href="../research_850/index.html">Introduction</a></li><li><a class="" href="data/index.html">Data</a></li><li><a class="" href="questions/index.html">Questions and traps</a></li><li><a class="" href="ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">The results</div>
+    <ul>
+      <li><a class="" href="../../scores/index.html">Scores</a></li>
+      <li><a class="" href="../../conclusions/index.html">Conclusions</a></li>
+      <li><a class="" href="../../runs/index.html">Run archive</a></li>
+    </ul>
+    <p class="nav-foot">All data is invented: the companies, LEIs, ratings, works, people and institutions. Nothing here is any rating agency's or bibliographic database's data or definitions.</p>
+  </nav>
+  <main class="content">
+    <h1>Research analytics</h1>
+    
+<p class="flag">Synthetic: every record in this domain is invented.</p>
+<div class="prose"><p>An invented research-analytics world, shaped like OpenAlex: works, the authors who wrote them, their institutions, the journals and repositories they appeared in, and the citations between them, as an analyst's extract from a bibliographic feed and an institution's own system would come. <strong>Everything is invented</strong>: the works, people, institutions, journals, ORCIDs, RORs, ISSNs and DOIs. Nothing comes from OpenAlex, so no answer can come from a model's memory. The codes (<code>SUP</code>, <code>AFF</code>, <code>K0</code>) are left cryptic, and nothing in the files says what they stand for.</p>
+<p>The 48 questions are of two kinds:</p>
+<ul>
+<li><strong>Implicit meanings</strong> (Q1 to Q32, and Q47): what any research analyst knows without saying. One author can have several records, and two people can share a name. A lab belongs to its centre, its university and its university system. Full and fractional counting can rank institutions differently. An editorial or an erratum isn't a research article. A preprint and its published version are one work. Citations count within a time window, and a retracted work's don't count. Self-citation means something different for an author, an institution and a country.</li>
+<li><strong>Local meanings</strong> (Q33 to Q46, and Q48): rules this dataset sets for itself, stated only in the ontology. <code>STG</code> records are test data. <code>SUP</code> is a supplement article, not supplementary material. When an author lists several affiliations, only the one listed last is credited. The journal tiers count upwards, and <code>K0</code> is a delisting. An affiliated institute (<code>AFF</code>) is not a unit of its parent. No model can know these without being told.</li>
+</ul>
+<p>One ontology and one question bank are asked of both datasets. Each computes its own answer keys from its own data.</p>
+<h2 id="the-datasets">The datasets</h2>
+<h3 id="the-base-data">The base data</h3>
+<p>85 works, 38 author records, 18 institutions, 8 sources, 138 authorships and 71 citations. 52 of the works are designed by hand so that each question has its point, and the other 33 are background. Small enough to read in full.</p>
+<h3 id="at-850-works">At 850 works</h3>
+<p>The base works plus 765 invented ones, 515 of which repeat the same traps many times over: more author records for the same people, more labs and affiliated institutes, more works with several affiliations, preprints, test records, retractions and delisted sources, and about 1,000 citations. That makes 850 works, 167 author records, 31 institutions, 14 sources, 1,532 authorships and 1,067 citations. The same 48 questions now need counting and joining across many records. <code>scale.py</code> builds it from a fixed seed.</p></div>
+<p class="note">How the models score on this domain: <a href="../../scores/index.html#research">scores</a>.</p>
+<details class="source"><summary>The base data: <code>NOTES.md</code></summary><div class="prose"><h1 id="research-domain-notes">Research domain: notes</h1>
+<p>The second domain for Phase 4: research analytics shaped like OpenAlex (works, authors,
+institutions, sources, authorships, citations). Same interface and files as
+<code>domains/credit/</code>, plus <code>generate_data.py</code>, which writes the CSV files.</p>
+<p><strong>Everything is invented:</strong> the works, people, institutions, journals, ORCIDs, RORs, ISSNs and
+DOIs. Nothing was downloaded from OpenAlex. The ORCIDs aren't checksummed, and the DOIs use
+the prefix 10.55555 (I haven't checked that the prefix is unassigned).</p>
+<h2 id="rebuilding">Rebuilding</h2>
+<pre><code class="language-bash">python domains/research/generate_data.py      # data/*.csv (seeded, deterministic)
+python domains/research/csv_to_rdf.py         # data/facts.ttl
+python src/ontology_to_md.py research         # ontology.md
+python domains/research/build_questions.py    # questions.json, checking every key against the data
+python src/run.py --domain research --only csv rdf rdf+ontology csv+ontology csv+markdown csv+padding
+</code></pre>
+<p><code>--only</code> is needed for now: see "Shared-file changes" below.</p>
+<h2 id="what-the-data-contains">What the data contains</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Rows</th>
+<th>What</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>institutions.csv</code></td>
+<td>18</td>
+<td>14 designed institutions in GB, DE, NL and FR (a system, universities, labs, an affiliated institute, a company, a government body), and 4 background ones in US, JP, CA and ES</td>
+</tr>
+<tr>
+<td><code>authors.csv</code></td>
+<td>38</td>
+<td>22 designed author records for 20 people (Mara Ellison under 3 records, one ORCID; a different "M. Ellison"; two Jonas Brandts; one record with no ORCID), and 16 background authors</td>
+</tr>
+<tr>
+<td><code>sources.csv</code></td>
+<td>8</td>
+<td>journals in tiers K3, K2 and K1, a delisted (K0) journal, a repository, a proceedings journal, and 2 background journals</td>
+</tr>
+<tr>
+<td><code>works.csv</code></td>
+<td>85</td>
+<td>52 designed works (W01 to W92, with gaps), 8 designed background citers (W60 to W67) and 25 seeded background works (W101 to W125)</td>
+</tr>
+<tr>
+<td><code>authorships.csv</code></td>
+<td>138</td>
+<td>one row per work, author and affiliation; <code>affil_seq</code> orders an author's affiliations on a work</td>
+</tr>
+<tr>
+<td><code>citations.csv</code></td>
+<td>71</td>
+<td>citing work, cited work</td>
+</tr>
+</tbody>
+</table>
+<p>The background works are only noise. Their authors are at the four background institutions,
+they appear in the two background journals, and they cite only each other. The exceptions
+are W60 to W67, which cite W30, W31 and W42 for the citation-window questions. So no
+background work changes a key.</p>
+<p>The hierarchy: Tessel Laboratory (I04, LAB) sits under the Albury Centre for Marine Robotics
+(I03, LAB), under the University of Albury (I02, UNI), under the Albury University System
+(I01, SYS), which also holds Albury Metropolitan University (I05). Halloran Institute (I06, AFF)
+has I02 as its parent but is not a unit of it. Kesting Institute of Hydrodynamics (I08, LAB)
+sits under Kesting University (I07).</p>
+<h2 id="the-traps-and-the-questions-that-test-each">The traps, and the questions that test each</h2>
+<p>48 questions: 46 typed (graded by code) and 2 checklists (Q47, Q48).</p>
+<table>
+<thead>
+<tr>
+<th>Trap</th>
+<th>Questions</th>
+<th>How the data sets it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Who is who</td>
+<td>Q1 to Q7</td>
+<td>A01, A02 and A03 are Mara Ellison (one ORCID); A04, also "M. Ellison", is someone else at Kesting; A05 and A06 are two Jonas Brandts. By record, Priya Ramanathan (A07, 4 works) beats each Mara record; merged, Mara has 5 (Q6). Q7 combines identity, versions, document types and the delisted source</td>
+</tr>
+<tr>
+<td>Institution hierarchy</td>
+<td>Q8 to Q11 (also Q38, Q44, Q46)</td>
+<td>Ultimate parent three levels up (Q8); a university's count includes its labs (Q9); a system's count includes both universities, with W12 shared between them counted once (Q10)</td>
+</tr>
+<tr>
+<td>Counting method</td>
+<td>Q12 to Q14, Q47</td>
+<td>Kesting 2024: full 3, fractional 2. Rostval 2024: full 4, fractional 1 (four works, one author of four from Rostval on each), so the ranking flips (Q13). GB 2024: full 7, fractional 6. All fractional answers are whole numbers by design</td>
+</tr>
+<tr>
+<td>Document types</td>
+<td>Q15 to Q17</td>
+<td>Editorials (W04, W76), an erratum (W05), paratext (W09, W10)</td>
+</tr>
+<tr>
+<td>Versions</td>
+<td>Q18 to Q21</td>
+<td>W02 is the preprint of W03 and W42 of W31 (<code>version_of</code>); W18 is a preprint with no published version; W15 cites both W02 and W03</td>
+</tr>
+<tr>
+<td>Citation windows</td>
+<td>Q22, Q23</td>
+<td>W30 (2019) has 5 citations in all but 1 within its year plus two; W31 (2023) has 4 in all, all within the window</td>
+</tr>
+<tr>
+<td>Retractions</td>
+<td>Q24 to Q26</td>
+<td>W23 (Lena Vossberg, Kesting) is retracted and cited once (W39)</td>
+</tr>
+<tr>
+<td>Citations at several levels</td>
+<td>Q27 to Q32</td>
+<td>Kesting is cited by three single-author Lorvain works and by one Rostval work with four Rostval authors (counted per author, Rostval would win: Q27, Q28). The sonar paper (W02/W03) is cited by 7 works: author self-citations 2, University of Albury 2, the system 3, GB 4 (Q29, Q30). Two hops from W01: W40 and W41, then W50, W51 and W52, with W51 citing both and a test record W90 left out (Q31, Q32)</td>
+</tr>
+<tr>
+<td>Local rules</td>
+<td>Q33 to Q46, Q48</td>
+<td>see below</td>
+</tr>
+</tbody>
+</table>
+<p>Q7, Q9, Q11, Q16 and Q25 also depend on local rules: they combine several traps, as the
+credit domain's Q9 did.</p>
+<h2 id="the-local-rules-and-where-the-ontology-states-them">The local rules, and where the ontology states them</h2>
+<p>Each is stated only in the ontology, and none can be guessed from a code's name or from
+general conventions.</p>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Where it's stated</th>
+<th>Questions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>STG records are test data.</strong> Works with <code>record_source</code> STG (W90 to W92, at Kesting, by A21) describe no real work: they're ignored, with their authorships and the citations they make. With them, W22 would be Kesting's most-cited work (4 citations against W20's 3)</td>
+<td><code>res:origin-STG</code>; <code>res:Work</code> (condition 1); <code>res:Citation</code></td>
+<td>Q33, Q34 (also Q11, Q16, Q25, Q31)</td>
+</tr>
+<tr>
+<td><strong>SUP means supplement article, not supplementary material.</strong> A peer-reviewed article in a supplement issue, counted like an article (W17, W24)</td>
+<td><code>res:wtype-SUP</code>; <code>res:Work</code> (condition 2)</td>
+<td>Q34, Q35, Q36</td>
+</tr>
+<tr>
+<td><strong>Only the affiliation listed last counts.</strong> When an author gives several affiliations on one work, only the one with the highest <code>affil_seq</code> is credited. W70 lists Tessel and then Halloran, so it goes to Halloran; W71 lists Halloran and then Tessel, so it goes to Tessel</td>
+<td><code>res:affiliationSeq</code> (also <code>res:Authorship</code>, <code>res:country</code>)</td>
+<td>Q37, Q38, Q45 (also Q9, Q48)</td>
+</tr>
+<tr>
+<td><strong>Journal tiers count upwards, and K0 is a delisting.</strong> K3 is the highest tier and K1 the lowest, the reverse of the natural guess. Works in a K0 source (W07, W75) aren't research output</td>
+<td><code>res:tier</code>, <code>res:tier-K3</code> to <code>res:tier-K0</code>; <code>res:Work</code> (condition 4)</td>
+<td>Q39, Q40, Q41 (tiers); Q42, Q43 (K0; also Q7)</td>
+</tr>
+<tr>
+<td><strong>An affiliated institute (AFF) is not a unit of its parent.</strong> Halloran's parent link records an agreement, so its works are never credited to the University of Albury or the system, and its ultimate parent is itself</td>
+<td><code>res:itype-AFF</code>; <code>res:Institution</code>; <code>res:parent</code></td>
+<td>Q44, Q45, Q46 (also Q9, Q48)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="things-i-wasnt-sure-about">Things I wasn't sure about</h2>
+<ul>
+<li><strong>"Research work" is the dataset's own term.</strong> Most count questions ask for research works.
+  Without the ontology, the model has to decide for itself what counts: that's the
+  document-type trap. But it also means some <span class="lbl">R1</span> <code>csv</code> answers that count editorials could be
+  called a reasonable reading rather than an error. Credit's "issuer rating" was the same.</li>
+<li><strong>Author self-citation is defined broadly:</strong> the citing and cited works share any author.
+  So Q29's author count is 2 (Mara Ellison, and her co-author Priya Ramanathan, on W13). A
+  model that counts only Mara's own citations says 1, which is a defensible reading without
+  the ontology. Q29's institution count is also 2, by coincidence.</li>
+<li><strong>Citation windows</strong> have only two questions, and each question states the window ("its
+  publication year and the two years after"), so the trap is only raw counts against windowed
+  ones. No question sets a house window length. That could be a sixth local rule.</li>
+<li><strong>Citations from any type of work count</strong> (an editorial citing a paper is a citation), apart
+  from test records and retracted works. No question depends on this choice.</li>
+<li><strong>Versions:</strong> a merged pair takes the published version's year, source and byline. The
+  build checks that each preprint's credited authors match its published version's.
+  <code>canonical()</code> merges author records by ORCID only. It doesn't merge a preprint with its
+  published version, because Q20 asks which records are preprints, and merging would accept
+  the wrong record of the pair.</li>
+<li><strong>Field-normalised citations,</strong> the "normalisation" trap planned for this domain, aren't covered: the data has
+  no fields, and the trap needs a decimal answer.</li>
+<li><strong>The names are invented, but could collide with real ones.</strong> Some person names (Pieter Maas,
+  Jonas Brandt) are common enough to belong to real people, and some place-based names
+  (Albury, Dunmore) use real towns. Before publishing, check that no journal or institution
+  name belongs to a real one.</li>
+<li><strong>Size:</strong> the RDF is about 75 KB, against 19 KB for credit, because authorships and
+  citations are one resource per row. So <span class="lbl">R2</span> <code>rdf</code> and <span class="lbl">R6</span> <code>rdf+ontology</code> are the largest prompts
+  (82 KB and 100 KB, about 20,000 to 25,000 tokens). To shrink them, citations could become
+  a direct <code>res:cites</code> triple, but the conversion would then no longer be strictly
+  one-resource-per-row.</li>
+</ul>
+<h2 id="dry-run-prompt-sizes-runpy-dry-run">Dry-run prompt sizes (<code>run.py --dry-run</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Condition</th>
+<th>Bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="lbl">R1</span> <code>csv</code></td>
+<td>20,780</td>
+</tr>
+<tr>
+<td><span class="lbl">R3</span> <code>csv+padding</code></td>
+<td>31,851</td>
+</tr>
+<tr>
+<td><span class="lbl">R4</span> <code>csv+markdown</code></td>
+<td>32,281</td>
+</tr>
+<tr>
+<td><span class="lbl">R5</span> <code>csv+ontology</code></td>
+<td>38,967</td>
+</tr>
+<tr>
+<td><span class="lbl">R2</span> <code>rdf</code></td>
+<td>82,085</td>
+</tr>
+<tr>
+<td><span class="lbl">R6</span> <code>rdf+ontology</code></td>
+<td>100,193</td>
+</tr>
+</tbody>
+</table>
+<p><code>ontology.md</code> is 11,452 characters and <code>padding.md</code> 11,051 (3.5% shorter).</p>
+<h2 id="shared-file-changes-needed-not-made-as-asked">Shared-file changes needed (not made, as asked)</h2>
+<ol>
+<li><strong><code>run.py</code>: conditions per domain.</strong> <code>CONDITIONS</code> includes <span class="lbl">R10</span> <code>executed</code> and <span class="lbl">R7</span> <code>csv+neutral</code>,
+   which this domain doesn't have, so a run without <code>--only</code> stops at once, with a
+   <code>ValueError</code> naming the conditions it does have. Suggestion: <code>domain.py</code> here defines
+   <code>CONDITIONS</code>, and <code>run.py</code> could default to <code>getattr(domain, "CONDITIONS", CONDITIONS)</code>.
+   The same applies to <code>--only</code>'s <code>choices</code>.</li>
+<li><strong><code>ontology_to_md.py</code>: column names.</strong> It reads <code>conv.ENTITY_COLS</code>, <code>conv.INSTRUMENT_COLS</code>
+   and <code>conv.ACTION_COLS</code>, which are the credit domain's tables, and catches only <code>ImportError</code>
+   (a converter without these names would raise <code>AttributeError</code>). Here, <code>csv_to_rdf.py</code> defines
+   its six tables' dicts and groups them onto those three names, so that no column name occurs
+   twice with different properties in one group: three tables have a <code>type</code> column. Suggestion:
+   a converter exposes <code>COLUMNS = [dict, ...]</code>, and <code>ontology_to_md.py</code> uses it when present.</li>
+<li><strong><code>ontology_to_md.py</code> drops <code>skos:definition</code> on a <code>skos:ConceptScheme</code>.</strong> I moved the one
+   sentence that was there (the tier order) onto the <code>res:tier</code> property, so the Markdown and
+   the Turtle say the same thing.</li>
+<li><strong><code>grade.py</code>: a decimal kind</strong> for fractional counts and field-normalised scores, such as
+   <code>number</code>, normalised with <code>float()</code> and compared within a tolerance (<code>abs(got - want) &lt;= 0.01</code>).
+   Until then, every fractional answer here is a whole number.</li>
+<li><strong><code>README.md</code></strong> lists only <code>domains/credit/</code> in its layout table.</li>
+<li><strong>Phase 2 (<code>query.py</code>)</strong> loads <code>CSV_FILES</code> into DuckDB as tables named after the files
+   (<code>works</code>, <code>authorships</code>, ...), so it should work here as it is. I haven't run it.</li>
+</ol></div></details>
+
+  </main>
+</div>
+</body>
+</html>

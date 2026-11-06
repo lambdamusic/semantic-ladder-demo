@@ -1,0 +1,1164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>D4 sparql, run 1: the query session · Semantics ladder</title>
+  <link rel="stylesheet" href="../../../../../../static/css/site.css">
+  <script src="../../../../../../static/js/site.js" defer></script>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <a class="brand" href="../../../../../../index.html">Semantics ladder</a>
+    <p class="brand-sub">How much does an LLM gain from being told what data means?</p>
+    <div class="nav-group">The experiment</div>
+    <ul>
+      <li><a class="" href="../../../../../../index.html">Goals</a></li>
+      <li><a class="" href="../../../../../../method/index.html">Method</a></li>
+    </ul>
+    
+    <div class="nav-group">Credit ratings</div>
+    <ul>
+      <li><a class="" href="../../../../../../domains/credit_paths/index.html">Introduction</a></li><li><a class="" href="../../../../../../domains/credit/data/index.html">Data</a></li><li><a class="" href="../../../../../../domains/credit/questions/index.html">Questions and traps</a></li><li><a class="" href="../../../../../../domains/credit/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">Research analytics</div>
+    <ul>
+      <li><a class="" href="../../../../../../domains/research_850/index.html">Introduction</a></li><li><a class="" href="../../../../../../domains/research/data/index.html">Data</a></li><li><a class="" href="../../../../../../domains/research/questions/index.html">Questions and traps</a></li><li><a class="" href="../../../../../../domains/research/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">The results</div>
+    <ul>
+      <li><a class="" href="../../../../../../scores/index.html">Scores</a></li>
+      <li><a class="" href="../../../../../../conclusions/index.html">Conclusions</a></li>
+      <li><a class="" href="../../../../../index.html">Run archive</a></li>
+    </ul>
+    <p class="nav-foot">All data is invented: the companies, LEIs, ratings, works, people and institutions. Nothing here is any rating agency's or bibliographic database's data or definitions.</p>
+  </nav>
+  <main class="content">
+    <h1>D4 sparql, run 1: the query session</h1>
+    
+<p><a href="../../../index.html">← back to the run</a></p>
+<div class="status"><span class="pill ok">31 queries</span><span class="pill warn">4 failed</span><span class="pill ok">7 rounds</span></div>
+
+<details class="source" ><summary>The opening prompt</summary>
+  <div class="code"><pre><code>## The data
+
+You can&#x27;t see the data, but you can query it. It is in an RDF store, described below. Write SPARQL 1.1 SELECT or ASK queries.
+
+To run queries, reply with one or more fenced blocks (```sparql), and nothing else is needed:
+each is run and its results sent back to you. You have up to 8 rounds of queries.
+When you have what you need, reply with the final answers and no queries.
+
+Prefixes:
+```
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+```
+
+Classes and the properties their resources use:
+
+- `lad:Entity`: `rdf:type`, `rdfs:label`, `lad:country`, `lad:entityType`, `lad:lei`, `lad:name`, `lad:parent`, `lad:sourceSystem`
+- `lad:Instrument`: `rdf:type`, `rdfs:label`, `lad:currency`, `lad:description`, `lad:guarantor`, `lad:issuer`, `lad:maturity`, `lad:seniority`
+- `lad:RatingAction`: `rdf:type`, `rdfs:label`, `lad:action`, `lad:ccyBasis`, `lad:comment`, `lad:date`, `lad:outlook`, `lad:ratedThing`, `lad:rating`, `lad:ratingType`, `lad:watch`
+
+## Questions
+
+Answer each question below from the data above. Start each answer on a new line with its
+number in bold, like **Q1.**, give the direct answer first, then at most two sentences of
+reasoning that cite the records (IDs) you relied on.
+
+Then end with one JSON block (```json) holding the structured answer to each question listed
+here, with exactly these fields, shaped like {&quot;Q1&quot;: {&quot;field&quot;: value}, ...}. Name entities by their record ID: the entity_id in the CSV files, or the part of the IRI after lad: in the RDF (E01, not Kestrel Energy plc).
+
+- Q1: rating (a rating, or &quot;none&quot;)
+- Q2: downgraded (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q3: investment_grade (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;), rating (a rating, or &quot;none&quot;)
+- Q4: outlook (an outlook)
+- Q5: risk_of (a record ID), rating (a rating, or &quot;none&quot;)
+- Q7: issuers (a list of record IDs)
+- Q8: entities (a list of record IDs)
+- Q9: count (a number)
+- Q10: investment_grade (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q11: rating (a rating, or &quot;none&quot;)
+- Q12: rating (a rating, or &quot;none&quot;)
+- Q13: count (a number)
+- Q14: rating (a rating, or &quot;none&quot;)
+- Q15: rating (a rating, or &quot;none&quot;)
+- Q16: changed (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q17: downgraded (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q18: issuers (a list of record IDs)
+- Q19: issuers (a list of record IDs)
+- Q20: in_default (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q21: entities (a list of record IDs)
+- Q22: entities (a list of record IDs)
+- Q23: rating (a rating, or &quot;none&quot;)
+- Q24: investment_grade (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q25: count (a number)
+- Q26: rating (a rating, or &quot;none&quot;)
+- Q27: rating (a rating, or &quot;none&quot;)
+- Q28: rating (a rating, or &quot;none&quot;)
+- Q29: rating (a rating, or &quot;none&quot;)
+- Q30: entities (a list of record IDs)
+- Q31: any (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q32: parent (a record ID)
+- Q33: risk_of (a record ID), rating (a rating, or &quot;none&quot;)
+- Q34: same_group (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q35: count (a number)
+- Q36: count (a number)
+- Q37: count (a number)
+- Q38: same (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q39: rating (a rating, or &quot;none&quot;)
+- Q40: count (a number)
+- Q41: rating (a rating, or &quot;none&quot;)
+- Q42: country (a country code)
+- Q43: count (a number)
+- Q44: local_currency (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q45: above_ceiling (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q46: issuer_rating (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q47: rating (a rating, or &quot;none&quot;)
+- Q48: count (a number)
+- Q49: parent (a record ID)
+- Q50: count (a number)
+- Q51: count (a number)
+- Q52: count (a number)
+- Q53: same_group (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q54: entities (a list of record IDs)
+- Q55: count (a number)
+- Q56: rating (a rating, or &quot;none&quot;)
+- Q57: entity (a record ID)
+- Q58: entities (a list of record IDs)
+- Q59: count (a number)
+- Q60: risk_of (a record ID), same_group (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q61: count (a number)
+
+Q1. What was Kestrel Energy&#x27;s rating on 1 January 2025?
+Q2. Has Kestrel Energy been downgraded in 2026?
+Q3. Is Kestrel Energy&#x27;s 2031 note investment grade?
+Q4. What is Northwind Holdings&#x27; current outlook?
+Q5. Whose credit risk does a holder of the Northwind Finance 2030 notes take, and how is it rated?
+Q6. Why is Valdoria Telecom&#x27;s foreign-currency rating lower than its local-currency rating?
+Q7. Which issuers were downgraded in 2026?
+Q8. Which entities were in default on 1 October 2026?
+Q9. As of 1 October 2026, how many distinct issuers hold an issuer rating?
+Q10. Is Valdoria Telecom investment grade?
+Q11. What was Marlow Utilities&#x27; rating on 1 June 2025?
+Q12. What was Marlow Utilities&#x27; rating on 1 January 2024?
+Q13. How many times has Marlow Utilities been downgraded?
+Q14. What was Halden Foods&#x27; rating on 1 January 2024?
+Q15. What was Halden Bank&#x27;s rating on 1 January 2026?
+Q16. Has Marlow Utilities&#x27; rating changed since 1 January 2025?
+Q17. Was Orrin Bank downgraded in 2026?
+Q18. Which issuers were on Rating Watch Negative on 1 October 2026?
+Q19. Which issuers had a Negative outlook on 1 October 2026?
+Q20. Is Pellam Retail in default?
+Q21. Which entities had an issuer rating at some point but no longer had one on 1 October 2026?
+Q22. Which entities have ever been in default?
+Q23. What is Kestrel Energy&#x27;s short-term rating?
+Q24. Is Kestrel Energy&#x27;s issuer rating investment grade?
+Q25. How many instruments held an investment-grade rating on 1 October 2026?
+Q26. What is Corvenia Power&#x27;s local-currency rating?
+Q27. How is Corvenia Power&#x27;s 2032 note rated?
+Q28. What is the Republic of Corvenia&#x27;s foreign-currency issuer rating?
+Q29. What is the Republic of Valdoria&#x27;s issuer rating?
+Q30. Which entities had a foreign-currency issuer rating exactly at their country&#x27;s ceiling on 1 October 2026?
+Q31. Did any company have a foreign-currency issuer rating above its country&#x27;s ceiling on 1 October 2026?
+Q32. Who is Halden Leasing&#x27;s ultimate parent?
+Q33. Whose credit risk does a holder of the Halden Leasing 2028 notes take, and how is it rated?
+Q34. Is Halden Foods part of the same group as Halden Bank?
+Q35. How many entities are in the Halden group, the parent included?
+Q36. How many entities are in the Northwind group, the parent included?
+Q37. How many distinct legal entities does the data describe?
+Q38. Are Orrin Bank AG and Orrin Bancorp Inc the same entity?
+Q39. What is Northwind Holdings&#x27; current rating?
+Q40. How many distinct issuers domiciled in GB held an issuer rating on 1 October 2026?
+Q41. What is Brindle Capital&#x27;s current rating?
+Q42. In which country is Halden Bank domiciled?
+Q43. How many distinct entities are domiciled in Luxembourg (LU)?
+Q44. Is Valdoria Telecom&#x27;s 2027 note a local-currency obligation?
+Q45. Is Valdoria Telecom&#x27;s 2027 note rated above what Valdoria&#x27;s Country Ceiling allows?
+Q46. Does Halden Leasing have an issuer rating?
+Q47. How is Corvenia Power&#x27;s 2034 note rated?
+Q48. How many instruments held a rating on 1 October 2026?
+Q49. Who is Cerid Rosor Holdings SA&#x27;s ultimate parent?
+Q50. How many levels of ownership separate Cerid Rosor Holdings SA from its ultimate parent?
+Q51. How many entities are in the Cerid Group plc group, the parent included?
+Q52. How many entities are in the Rotam Group Inc group, the parent included?
+Q53. Are Belir Mining SA and Rotam Group Inc in the same group?
+Q54. Which members of the Wonod Group SA group are domiciled in Valdoria (VD)?
+Q55. If Valdoria (VD) came under stress, how many entities with an issuer rating in force have an entity domiciled in VD somewhere above them in their chain of parents?
+Q56. What is the lowest current foreign-currency issuer rating held by any member of the Vesol Group BV group?
+Q57. Which is the nearest entity that Cerid Guven Energy SA and Cerid Telecom SA both have in their chains of parents?
+Q58. Which entities guarantee a note issued by an entity outside their own group?
+Q59. How many entities in the Cerid Group plc group sit exactly three levels below the top?
+Q60. Whose credit risk does a holder of the Cross-group 4.75% notes due 2031 take, and is that entity in the same group as the issuer?
+Q61. How many members of the Cerid Group plc group, the top included, hold a foreign-currency issuer rating below investment grade?</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>I&#x27;ll start by exploring the data&#x27;s structure.
+
+```sparql
+SELECT ?s ?p ?o WHERE { ?s ?p ?o . ?s a lad:Entity } ORDER BY ?s ?p
+```
+
+```sparql
+SELECT ?s ?p ?o WHERE { ?s ?p ?o . ?s a lad:Instrument } ORDER BY ?s ?p
+```
+
+```sparql
+SELECT ?s ?p ?o WHERE { ?s ?p ?o . ?s a lad:RatingAction } ORDER BY ?s ?p
+```
+
+```sparql
+SELECT ?s ?p ?o WHERE { ?s ?p ?o . FILTER NOT EXISTS { ?s a ?t . FILTER(?t IN (lad:Entity, lad:Instrument, lad:RatingAction)) } } LIMIT 200
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1 failed: MALFORMED QUERY: QName &#x27;lad:Entity&#x27; uses an undefined prefix
+
+Query 2 failed: MALFORMED QUERY: QName &#x27;lad:Instrument&#x27; uses an undefined prefix
+
+Query 3 failed: MALFORMED QUERY: QName &#x27;lad:RatingAction&#x27; uses an undefined prefix
+
+Query 4 failed: MALFORMED QUERY: QName &#x27;lad:Entity&#x27; uses an undefined prefix
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>I&#x27;ll include the prefixes explicitly in each query.
+
+```sparql
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?s ?p ?o WHERE { ?s ?p ?o . ?s a lad:Entity } ORDER BY ?s ?p
+```
+
+```sparql
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?s ?p ?o WHERE { ?s ?p ?o . ?s a lad:Instrument } ORDER BY ?s ?p
+```
+
+```sparql
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?s ?p ?o WHERE { ?s ?p ?o . ?s a lad:RatingAction } ORDER BY ?s ?p
+```
+
+```sparql
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?s ?p ?o WHERE { ?s ?p ?o . FILTER NOT EXISTS { ?s a ?t . FILTER(?t IN (lad:Entity, lad:Instrument, lad:RatingAction)) } } LIMIT 200
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| s | p | o |
+|---|---|---|
+| lad:CV | rdf:type | lad:Entity |
+| lad:CV | rdfs:label | Republic of Corvenia |
+| lad:CV | lad:country | CV |
+| lad:CV | lad:entityType | lad:etype-SOV |
+| lad:CV | lad:name | Republic of Corvenia |
+| lad:CV | lad:sourceSystem | RATINGS |
+| lad:E01 | rdf:type | lad:Entity |
+| lad:E01 | rdfs:label | Kestrel Energy plc |
+| lad:E01 | lad:country | GB |
+| lad:E01 | lad:entityType | lad:etype-CORP |
+| lad:E01 | lad:lei | 7245002OOPBG04092E43 |
+| lad:E01 | lad:name | Kestrel Energy plc |
+| lad:E01 | lad:sourceSystem | RATINGS |
+| lad:E02 | rdf:type | lad:Entity |
+| lad:E02 | rdfs:label | Northwind Holdings plc |
+| lad:E02 | lad:country | GB |
+| lad:E02 | lad:entityType | lad:etype-CORP |
+| lad:E02 | lad:lei | 213800PHEIYNJMHTDV74 |
+| lad:E02 | lad:name | Northwind Holdings plc |
+| lad:E02 | lad:sourceSystem | RATINGS |
+| lad:E03 | rdf:type | lad:Entity |
+| lad:E03 | rdfs:label | NORTHWIND HLDGS |
+| lad:E03 | lad:country | GB |
+| lad:E03 | lad:entityType | lad:etype-CORP |
+| lad:E03 | lad:lei | 213800PHEIYNJMHTDV74 |
+| lad:E03 | lad:name | NORTHWIND HLDGS |
+| lad:E03 | lad:sourceSystem | RESEARCH |
+| lad:E04 | rdf:type | lad:Entity |
+| lad:E04 | rdfs:label | Northwind Finance BV |
+| lad:E04 | lad:country | NL |
+| lad:E04 | lad:entityType | lad:etype-FINSUB |
+| lad:E04 | lad:lei | 213800LA5RYJLGXV2T85 |
+| lad:E04 | lad:name | Northwind Finance BV |
+| lad:E04 | lad:parent | lad:E02 |
+| lad:E04 | lad:sourceSystem | RATINGS |
+| lad:E05 | rdf:type | lad:Entity |
+| lad:E05 | rdfs:label | Valdoria Telecom SA |
+| lad:E05 | lad:country | VD |
+| lad:E05 | lad:entityType | lad:etype-CORP |
+| lad:E05 | lad:lei | 391200LESH03LMOY2U61 |
+| lad:E05 | lad:name | Valdoria Telecom SA |
+| lad:E05 | lad:sourceSystem | RATINGS |
+| lad:E06 | rdf:type | lad:Entity |
+| lad:E06 | rdfs:label | Orrin Bank AG |
+| lad:E06 | lad:country | DE |
+| lad:E06 | lad:entityType | lad:etype-BANK |
+| lad:E06 | lad:lei | 549300AMVE3VRVG7HK43 |
+| lad:E06 | lad:name | Orrin Bank AG |
+| lad:E06 | lad:sourceSystem | RATINGS |
+| lad:E07 | rdf:type | lad:Entity |
+| lad:E07 | rdfs:label | Pellam Retail Ltd |
+| lad:E07 | lad:country | GB |
+| lad:E07 | lad:entityType | lad:etype-CORP |
+| lad:E07 | lad:lei | 969500B6IUACELPI2291 |
+| lad:E07 | lad:name | Pellam Retail Ltd |
+| lad:E07 | lad:sourceSystem | RATINGS |
+| lad:E08 | rdf:type | lad:Entity |
+| lad:E08 | rdfs:label | Saxby Shipping SA |
+| lad:E08 | lad:country | GR |
+| lad:E08 | lad:entityType | lad:etype-CORP |
+(3930 more rows not shown)
+
+Query 2:
+
+| s | p | o |
+|---|---|---|
+| lad:I01 | rdf:type | lad:Instrument |
+| lad:I01 | rdfs:label | Kestrel Energy 4.50% 2030 |
+| lad:I01 | lad:currency | GBP |
+| lad:I01 | lad:description | Kestrel Energy 4.50% notes due 2030 |
+| lad:I01 | lad:issuer | lad:E01 |
+| lad:I01 | lad:maturity | 2030-03-15 |
+| lad:I01 | lad:seniority | lad:seniority-SU |
+| lad:I02 | rdf:type | lad:Instrument |
+| lad:I02 | rdfs:label | Kestrel Energy 6.25% 2031 |
+| lad:I02 | lad:currency | GBP |
+| lad:I02 | lad:description | Kestrel Energy 6.25% notes due 2031 |
+| lad:I02 | lad:issuer | lad:E01 |
+| lad:I02 | lad:maturity | 2031-09-30 |
+| lad:I02 | lad:seniority | lad:seniority-SUB |
+| lad:I03 | rdf:type | lad:Instrument |
+| lad:I03 | rdfs:label | Northwind Finance 3.75% 2030 |
+| lad:I03 | lad:currency | EUR |
+| lad:I03 | lad:description | Northwind Finance 3.75% notes due 2030 |
+| lad:I03 | lad:guarantor | lad:E02 |
+| lad:I03 | lad:issuer | lad:E04 |
+| lad:I03 | lad:maturity | 2030-05-01 |
+| lad:I03 | lad:seniority | lad:seniority-SU |
+| lad:I04 | rdf:type | lad:Instrument |
+| lad:I04 | rdfs:label | Valdoria Telecom 5.00% 2029 |
+| lad:I04 | lad:currency | USD |
+| lad:I04 | lad:description | Valdoria Telecom 5.00% notes due 2029 |
+| lad:I04 | lad:issuer | lad:E05 |
+| lad:I04 | lad:maturity | 2029-11-20 |
+| lad:I04 | lad:seniority | lad:seniority-SU |
+| lad:I05 | rdf:type | lad:Instrument |
+| lad:I05 | rdfs:label | Halden Leasing 2.90% 2028 |
+| lad:I05 | lad:currency | EUR |
+| lad:I05 | lad:description | Halden Leasing 2.90% notes due 2028 |
+| lad:I05 | lad:guarantor | lad:E10 |
+| lad:I05 | lad:issuer | lad:E11 |
+| lad:I05 | lad:maturity | 2028-06-30 |
+| lad:I05 | lad:seniority | lad:seniority-SU |
+| lad:I06 | rdf:type | lad:Instrument |
+| lad:I06 | rdfs:label | Corvenia Power 7.10% 2032 |
+| lad:I06 | lad:currency | USD |
+| lad:I06 | lad:description | Corvenia Power 7.10% notes due 2032 |
+| lad:I06 | lad:issuer | lad:E15 |
+| lad:I06 | lad:maturity | 2032-02-15 |
+| lad:I06 | lad:seniority | lad:seniority-SUB |
+| lad:I07 | rdf:type | lad:Instrument |
+| lad:I07 | rdfs:label | Valdoria Telecom 4.25% 2027 |
+| lad:I07 | lad:currency | XVD |
+| lad:I07 | lad:description | Valdoria Telecom 4.25% notes due 2027 |
+| lad:I07 | lad:issuer | lad:E05 |
+| lad:I07 | lad:maturity | 2027-08-31 |
+| lad:I07 | lad:seniority | lad:seniority-SU |
+| lad:I08 | rdf:type | lad:Instrument |
+| lad:I08 | rdfs:label | Corvenia Power 6.00% 2034 |
+| lad:I08 | lad:currency | USD |
+| lad:I08 | lad:description | Corvenia Power 6.00% notes due 2034 |
+| lad:I08 | lad:issuer | lad:E15 |
+| lad:I08 | lad:maturity | 2034-09-01 |
+| lad:I08 | lad:seniority | lad:seniority-SU |
+| lad:I1001 | rdf:type | lad:Instrument |
+| lad:I1001 | rdfs:label | Soson Airlines 5.50% 2031 |
+(818 more rows not shown)
+
+Query 3:
+
+| s | p | o |
+|---|---|---|
+| lad:A01 | rdf:type | lad:RatingAction |
+| lad:A01 | rdfs:label | E01 AS A- 2024-03-12 |
+| lad:A01 | lad:action | lad:action-AS |
+| lad:A01 | lad:ccyBasis | lad:basis-FC |
+| lad:A01 | lad:date | 2024-03-12 |
+| lad:A01 | lad:outlook | lad:outlook-STA |
+| lad:A01 | lad:ratedThing | lad:E01 |
+| lad:A01 | lad:rating | A- |
+| lad:A01 | lad:ratingType | lad:type-LTIDR |
+| lad:A02 | rdf:type | lad:RatingAction |
+| lad:A02 | rdfs:label | E01 DG BBB 2025-06-20 |
+| lad:A02 | lad:action | lad:action-DG |
+| lad:A02 | lad:ccyBasis | lad:basis-FC |
+| lad:A02 | lad:comment | weaker cash flow after asset sale |
+| lad:A02 | lad:date | 2025-06-20 |
+| lad:A02 | lad:outlook | lad:outlook-STA |
+| lad:A02 | lad:ratedThing | lad:E01 |
+| lad:A02 | lad:rating | BBB |
+| lad:A02 | lad:ratingType | lad:type-LTIDR |
+| lad:A03 | rdf:type | lad:RatingAction |
+| lad:A03 | rdfs:label | E01 AF BBB 2026-02-10 |
+| lad:A03 | lad:action | lad:action-AF |
+| lad:A03 | lad:ccyBasis | lad:basis-FC |
+| lad:A03 | lad:date | 2026-02-10 |
+| lad:A03 | lad:outlook | lad:outlook-NEG |
+| lad:A03 | lad:ratedThing | lad:E01 |
+| lad:A03 | lad:rating | BBB |
+| lad:A03 | lad:ratingType | lad:type-LTIDR |
+| lad:A04 | rdf:type | lad:RatingAction |
+| lad:A04 | rdfs:label | E01 AF F2 2026-02-10 |
+| lad:A04 | lad:action | lad:action-AF |
+| lad:A04 | lad:ccyBasis | lad:basis-FC |
+| lad:A04 | lad:date | 2026-02-10 |
+| lad:A04 | lad:ratedThing | lad:E01 |
+| lad:A04 | lad:rating | F2 |
+| lad:A04 | lad:ratingType | lad:type-STIDR |
+| lad:A05 | rdf:type | lad:RatingAction |
+| lad:A05 | rdfs:label | I01 AS A- 2024-03-12 |
+| lad:A05 | lad:action | lad:action-AS |
+| lad:A05 | lad:date | 2024-03-12 |
+| lad:A05 | lad:ratedThing | lad:I01 |
+| lad:A05 | lad:rating | A- |
+| lad:A05 | lad:ratingType | lad:type-INST |
+| lad:A06 | rdf:type | lad:RatingAction |
+| lad:A06 | rdfs:label | I01 DG BBB 2025-06-20 |
+| lad:A06 | lad:action | lad:action-DG |
+| lad:A06 | lad:date | 2025-06-20 |
+| lad:A06 | lad:ratedThing | lad:I01 |
+| lad:A06 | lad:rating | BBB |
+| lad:A06 | lad:ratingType | lad:type-INST |
+| lad:A07 | rdf:type | lad:RatingAction |
+| lad:A07 | rdfs:label | I02 DG BB+ 2025-06-20 |
+| lad:A07 | lad:action | lad:action-DG |
+| lad:A07 | lad:date | 2025-06-20 |
+| lad:A07 | lad:ratedThing | lad:I02 |
+| lad:A07 | lad:rating | BB+ |
+| lad:A07 | lad:ratingType | lad:type-INST |
+| lad:A08 | rdf:type | lad:RatingAction |
+| lad:A08 | rdfs:label | E02 AS A 2023-11-01 |
+| lad:A08 | lad:action | lad:action-AS |
+(7896 more rows not shown)
+
+Query 4:
+
+(no rows)
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;sparql&quot;&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?p ?o (COUNT(*) AS ?n) WHERE { ?s ?p ?o . FILTER(?p IN (lad:action, lad:ccyBasis, lad:outlook, lad:watch, lad:ratingType, lad:entityType, lad:seniority)) } GROUP BY ?p ?o ORDER BY ?p ?o
+&lt;/parameter&gt;
+&lt;/invoke&gt;
+```
+
+```sparql
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?s ?p ?o WHERE { ?s ?p ?o . FILTER(STRSTARTS(STR(?s),&quot;https://example.org/ladder/&quot;) &amp;&amp; !REGEX(STR(?s),&quot;ladder/(A|I|E)[0-9]+$&quot;)) FILTER(?p != lad:country || true) FILTER(!REGEX(STR(?s),&quot;ladder/[A-Z]{2}$&quot;) ) } LIMIT 100
+&lt;/parameter&gt;
+&lt;/invoke&gt;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+(no rows)
+
+Query 2:
+
+| p | o | n |
+|---|---|---|
+| lad:action | lad:action-AF | 87 |
+| lad:action | lad:action-AS | 567 |
+| lad:action | lad:action-DG | 115 |
+| lad:action | lad:action-EX | 9 |
+| lad:action | lad:action-RW | 48 |
+| lad:action | lad:action-UG | 48 |
+| lad:action | lad:action-WD | 40 |
+| lad:ccyBasis | lad:basis-FC | 745 |
+| lad:ccyBasis | lad:basis-LC | 34 |
+| lad:entityType | lad:etype-BANK | 90 |
+| lad:entityType | lad:etype-CORP | 431 |
+| lad:entityType | lad:etype-FINSUB | 17 |
+| lad:entityType | lad:etype-SOV | 2 |
+| lad:outlook | lad:outlook-NEG | 79 |
+| lad:outlook | lad:outlook-POS | 52 |
+| lad:outlook | lad:outlook-STA | 557 |
+| lad:ratingType | lad:type-CC | 2 |
+| lad:ratingType | lad:type-CO | 7 |
+| lad:ratingType | lad:type-INST | 126 |
+| lad:ratingType | lad:type-LTIDR | 778 |
+| lad:ratingType | lad:type-STIDR | 1 |
+| lad:seniority | lad:seniority-SU | 82 |
+| lad:seniority | lad:seniority-SUB | 40 |
+| lad:watch | lad:watch-RWN | 48 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>```sparql
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?a ?thing ?type ?action ?rating ?date ?outlook ?watch ?basis ?comment WHERE { ?a lad:ratedThing ?thing ; lad:ratingType ?type ; lad:action ?action ; lad:rating ?rating ; lad:date ?date . OPTIONAL{?a lad:outlook ?outlook} OPTIONAL{?a lad:watch ?watch} OPTIONAL{?a lad:ccyBasis ?basis} OPTIONAL{?a lad:comment ?comment} FILTER(?thing IN (lad:E01, lad:E02, lad:E03, lad:E05, lad:I02, lad:I03, lad:I07, lad:CV, lad:VD, lad:E15, lad:I06, lad:I08, lad:I04)) } ORDER BY ?thing ?type ?date
+```
+
+```sparql
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?a ?thing ?type ?action ?rating ?date ?outlook ?comment WHERE { ?a lad:ratedThing ?thing ; lad:ratingType ?type ; lad:action ?action ; lad:rating ?rating ; lad:date ?date . OPTIONAL{?a lad:outlook ?outlook} OPTIONAL{?a lad:comment ?comment} FILTER(?type IN (lad:type-CC, lad:type-CO, lad:type-STIDR)) } ORDER BY ?thing ?date
+```
+
+```sparql
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?s ?label ?country ?parent ?type WHERE { ?s a lad:Entity ; rdfs:label ?label . OPTIONAL{?s lad:country ?country} OPTIONAL{?s lad:parent ?parent} OPTIONAL{?s lad:entityType ?type} FILTER(REGEX(?label,&quot;Marlow|Halden|Orrin|Pellam|Brindle|Northwind|Corvenia|Valdoria|Kestrel|Cerid Rosor|Cerid Group|Rotam|Belir&quot;,&quot;i&quot;)) } ORDER BY ?label
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| a | thing | type | action | rating | date | outlook | watch | basis | comment |
+|---|---|---|---|---|---|---|---|---|---|
+| lad:A37 | lad:CV | lad:type-CC | lad:action-AS | A | 2024-01-01 |  |  |  |  |
+| lad:A38 | lad:CV | lad:type-LTIDR | lad:action-AS | BBB+ | 2024-01-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A39 | lad:CV | lad:type-LTIDR | lad:action-AS | A- | 2024-01-01 | lad:outlook-STA |  | lad:basis-LC |  |
+| lad:A01 | lad:E01 | lad:type-LTIDR | lad:action-AS | A- | 2024-03-12 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A02 | lad:E01 | lad:type-LTIDR | lad:action-DG | BBB | 2025-06-20 | lad:outlook-STA |  | lad:basis-FC | weaker cash flow after asset sale |
+| lad:A03 | lad:E01 | lad:type-LTIDR | lad:action-AF | BBB | 2026-02-10 | lad:outlook-NEG |  | lad:basis-FC |  |
+| lad:A04 | lad:E01 | lad:type-STIDR | lad:action-AF | F2 | 2026-02-10 |  |  | lad:basis-FC |  |
+| lad:A08 | lad:E02 | lad:type-LTIDR | lad:action-AS | A | 2023-11-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A09 | lad:E03 | lad:type-LTIDR | lad:action-AF | A | 2025-09-15 | lad:outlook-POS |  | lad:basis-FC |  |
+| lad:A13 | lad:E05 | lad:type-LTIDR | lad:action-AS | BBB- | 2025-04-01 | lad:outlook-STA |  | lad:basis-LC |  |
+| lad:A14 | lad:E05 | lad:type-LTIDR | lad:action-AS | BB | 2025-04-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A40 | lad:E15 | lad:type-LTIDR | lad:action-AS | A+ | 2024-03-01 | lad:outlook-STA |  | lad:basis-LC |  |
+| lad:A41 | lad:E15 | lad:type-LTIDR | lad:action-AS | A | 2024-03-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A23 | lad:I02 | lad:type-INST | lad:action-AS | BBB | 2024-03-12 |  |  |  |  |
+| lad:A07 | lad:I02 | lad:type-INST | lad:action-DG | BB+ | 2025-06-20 |  |  |  |  |
+| lad:A10 | lad:I03 | lad:type-INST | lad:action-AS | A | 2023-11-01 |  |  |  |  |
+| lad:A11 | lad:I03 | lad:type-INST | lad:action-AF | A | 2025-09-15 |  |  |  |  |
+| lad:A15 | lad:I04 | lad:type-INST | lad:action-AS | BB | 2025-04-01 |  |  |  |  |
+| lad:A42 | lad:I06 | lad:type-INST | lad:action-AS | A- | 2024-03-01 |  |  |  |  |
+| lad:A45 | lad:I07 | lad:type-INST | lad:action-AS | BBB- | 2025-04-01 |  |  |  |  |
+| lad:A47 | lad:I08 | lad:type-INST | lad:action-EX | A | 2026-09-01 |  |  |  |  |
+| lad:A12 | lad:VD | lad:type-CC | lad:action-AS | BB | 2025-04-01 |  |  |  |  |
+
+Query 2:
+
+| a | thing | type | action | rating | date | outlook | comment |
+|---|---|---|---|---|---|---|---|
+| lad:A37 | lad:CV | lad:type-CC | lad:action-AS | A | 2024-01-01 |  |  |
+| lad:A04 | lad:E01 | lad:type-STIDR | lad:action-AF | F2 | 2026-02-10 |  |  |
+| lad:A46 | lad:E11 | lad:type-CO | lad:action-AS | BBB | 2025-02-01 |  |  |
+| lad:A1698 | lad:E1326 | lad:type-CO | lad:action-AS | BB | 2026-09-02 |  |  |
+| lad:A1700 | lad:E1327 | lad:type-CO | lad:action-AS | BBB- | 2025-06-13 |  |  |
+| lad:A1704 | lad:E1330 | lad:type-CO | lad:action-AS | BB+ | 2025-06-27 |  |  |
+| lad:A1708 | lad:E1333 | lad:type-CO | lad:action-AS | BBB+ | 2024-08-17 |  |  |
+| lad:A1713 | lad:E1337 | lad:type-CO | lad:action-AS | BBB+ | 2026-11-16 |  |  |
+| lad:A1715 | lad:E1338 | lad:type-CO | lad:action-AS | BBB+ | 2026-07-04 |  |  |
+| lad:A12 | lad:VD | lad:type-CC | lad:action-AS | BB | 2025-04-01 |  |  |
+
+Query 3:
+
+| s | label | country | parent | type |
+|---|---|---|---|---|
+| lad:E5168 | BELIR MINING SA | FR | lad:E5086 | lad:etype-CORP |
+| lad:E5083 | Belir Airlines plc | GB | lad:E5075 | lad:etype-CORP |
+| lad:E5082 | Belir Bovid Telecom plc | GB | lad:E5074 | lad:etype-BANK |
+| lad:E5067 | Belir Capital AG | DE | lad:E5063 | lad:etype-CORP |
+| lad:E5071 | Belir Chemicals SA | FR | lad:E5066 | lad:etype-CORP |
+| lad:E5080 | Belir Foods AG | DE | lad:E5072 | lad:etype-CORP |
+| lad:E5075 | Belir Gitid Industries plc | GB | lad:E5068 | lad:etype-CORP |
+| lad:E5059 | Belir Group AG | DE |  | lad:etype-CORP |
+| lad:E5063 | Belir Harem Property AG | DE | lad:E5060 | lad:etype-CORP |
+| lad:E5064 | Belir Holdings plc | GB | lad:E5061 | lad:etype-CORP |
+| lad:E5074 | Belir Industries plc | GB | lad:E5068 | lad:etype-CORP |
+| lad:E5072 | Belir Katin Telecom AG | DE | lad:E5067 | lad:etype-CORP |
+| lad:E5068 | Belir Kator Energy plc | GB | lad:E5064 | lad:etype-CORP |
+| lad:E5084 | Belir Luton Media SA | FR | lad:E5076 | lad:etype-BANK |
+| lad:E5077 | Belir Media SA | FR | lad:E5069 | lad:etype-CORP |
+| lad:E5062 | Belir Mining SA | FR | lad:E5060 | lad:etype-CORP |
+| lad:E5065 | Belir Nelad Property AG | DE | lad:E5061 | lad:etype-CORP |
+| lad:E5076 | Belir Property SA | FR | lad:E5069 | lad:etype-CORP |
+| lad:E5073 | Belir Puvir Mining plc | GB | lad:E5067 | lad:etype-CORP |
+| lad:E5060 | Belir Retail AG | DE | lad:E5059 | lad:etype-CORP |
+| lad:E5070 | Belir Rusin Media SA | FR | lad:E5066 | lad:etype-CORP |
+| lad:E5085 | Belir Rutel Water SA | CV | lad:E5077 | lad:etype-CORP |
+| lad:E5066 | Belir Shipping SA | FR | lad:E5062 | lad:etype-CORP |
+| lad:E5079 | Belir Sitom Logistics SA | FR | lad:E5071 | lad:etype-CORP |
+| lad:E5061 | Belir Steel Inc | US | lad:E5059 | lad:etype-BANK |
+| lad:E5078 | Belir Vasin Water plc | GB | lad:E5070 | lad:etype-BANK |
+| lad:E5081 | Belir Vusad Telecom SA | VD | lad:E5073 | lad:etype-CORP |
+| lad:E5069 | Belir Water SA | FR | lad:E5065 | lad:etype-CORP |
+| lad:E16 | Brindle Capital Ltd | GB |  | lad:etype-CORP |
+| lad:E5001 | Cerid Group plc | GB |  | lad:etype-CORP |
+| lad:E5047 | Cerid Rosor Holdings SA | VD | lad:E5035 | lad:etype-BANK |
+| lad:E15 | Corvenia Power SA | CV |  | lad:etype-CORP |
+| lad:E17 | HALDEN BANK | LU |  | lad:etype-BANK |
+| lad:E10 | Halden Bank AG | DE | lad:E09 | lad:etype-BANK |
+| lad:E12 | Halden Foods Ltd | GB |  | lad:etype-CORP |
+| lad:E09 | Halden Group plc | GB |  | lad:etype-CORP |
+| lad:E11 | Halden Leasing SA | FR | lad:E10 | lad:etype-FINSUB |
+| lad:E01 | Kestrel Energy plc | GB |  | lad:etype-CORP |
+| lad:E14 | Marlow Utilities plc | GB |  | lad:etype-CORP |
+| lad:E03 | NORTHWIND HLDGS | GB |  | lad:etype-CORP |
+| lad:E04 | Northwind Finance BV | NL | lad:E02 | lad:etype-FINSUB |
+| lad:E02 | Northwind Holdings plc | GB |  | lad:etype-CORP |
+| lad:E13 | Orrin Bancorp Inc | US |  | lad:etype-BANK |
+| lad:E06 | Orrin Bank AG | DE |  | lad:etype-BANK |
+| lad:E07 | Pellam Retail Ltd | GB |  | lad:etype-CORP |
+| lad:CV | Republic of Corvenia | CV |  | lad:etype-SOV |
+| lad:VD | Republic of Valdoria | VD |  | lad:etype-SOV |
+| lad:E5089 | Rotam Airlines Inc | US | lad:E5086 | lad:etype-CORP |
+| lad:E5097 | Rotam Chemicals Inc | US | lad:E5092 | lad:etype-BANK |
+| lad:E5095 | Rotam Energy BV | NL | lad:E5091 | lad:etype-BANK |
+| lad:E5099 | Rotam Fived Water Inc | US | lad:E5093 | lad:etype-CORP |
+| lad:E5101 | Rotam Foods BV | NL | lad:E5095 | lad:etype-CORP |
+| lad:E5103 | Rotam Goson Energy Inc | US | lad:E5097 | lad:etype-CORP |
+| lad:E5086 | Rotam Group Inc | US |  | lad:etype-CORP |
+| lad:E5092 | Rotam Hison Holdings Inc | US | lad:E5089 | lad:etype-CORP |
+| lad:E5094 | Rotam Holdings Inc | US | lad:E5090 | lad:etype-CORP |
+| lad:E5088 | Rotam Industries Inc | US | lad:E5086 | lad:etype-CORP |
+| lad:E5090 | Rotam Logistics Inc | US | lad:E5087 | lad:etype-CORP |
+| lad:E5096 | Rotam Lulel Mining SA | ES | lad:E5091 | lad:etype-BANK |
+| lad:E5104 | Rotam Media SA | CV | lad:E5098 | lad:etype-CORP |
+(7 more rows not shown)
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;sparql&quot;&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?a ?thing ?type ?action ?rating ?date ?outlook ?watch ?basis ?comment WHERE { ?a lad:ratedThing ?thing ; lad:ratingType ?type ; lad:action ?action ; lad:date ?date . OPTIONAL{?a lad:rating ?rating} OPTIONAL{?a lad:outlook ?outlook} OPTIONAL{?a lad:watch ?watch} OPTIONAL{?a lad:ccyBasis ?basis} OPTIONAL{?a lad:comment ?comment} OPTIONAL{?thing lad:issuer ?iss} FILTER(?thing IN (lad:E02,lad:E04,lad:E06,lad:E07,lad:E09,lad:E10,lad:E11,lad:E12,lad:E13,lad:E14,lad:E16,lad:E17) || ?iss IN (lad:E09,lad:E10,lad:E11,lad:E12,lad:E14)) } ORDER BY ?thing ?type ?date
+&lt;/parameter&gt;
+```
+
+```sparql
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?i ?label ?issuer ?guar ?ccy WHERE { ?i a lad:Instrument ; rdfs:label ?label ; lad:issuer ?issuer . OPTIONAL{?i lad:guarantor ?guar} OPTIONAL{?i lad:currency ?ccy} FILTER(REGEX(?label,&quot;Cross|Halden|Marlow|Orrin|Pellam|Brindle&quot;) || ?i IN (lad:I05)) }
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT (COUNT(DISTINCT ?e) AS ?ents) (COUNT(DISTINCT ?lei) AS ?leis) (COUNT(DISTINCT ?lu) AS ?luEnts) WHERE { ?e a lad:Entity . OPTIONAL{?e lad:lei ?lei} OPTIONAL{ ?e lad:country ?c . FILTER(?c=&quot;LU&quot;) BIND(?e AS ?lu)} }
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| i | label | issuer | guar | ccy |
+|---|---|---|---|---|
+| lad:I05 | Halden Leasing 2.90% 2028 | lad:E11 | lad:E10 | EUR |
+| lad:I5007 | Cross-group 4.75% 2031 | lad:E5133 | lad:E5145 | USD |
+
+Query 2:
+
+| ents | leis | luEnts |
+|---|---|---|
+| 540 | 509 | 1 |
+
+Query 3:
+
+| a | thing | type | action | rating | date | outlook | watch | basis | comment |
+|---|---|---|---|---|---|---|---|---|---|
+| lad:A08 | lad:E02 | lad:type-LTIDR | lad:action-AS | A | 2023-11-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A16 | lad:E06 | lad:type-LTIDR | lad:action-AS | A- | 2024-05-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A17 | lad:E06 | lad:type-LTIDR | lad:action-RW | A- | 2026-09-03 |  | lad:watch-RWN | lad:basis-FC |  |
+| lad:A18 | lad:E07 | lad:type-LTIDR | lad:action-AS | BB | 2024-01-10 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A19 | lad:E07 | lad:type-LTIDR | lad:action-WD | WD | 2026-05-12 |  |  | lad:basis-FC | commercial reasons |
+| lad:A24 | lad:E09 | lad:type-LTIDR | lad:action-AS | A | 2023-05-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A25 | lad:E09 | lad:type-LTIDR | lad:action-AF | A | 2026-03-01 | lad:outlook-NEG |  | lad:basis-FC |  |
+| lad:A26 | lad:E10 | lad:type-LTIDR | lad:action-AS | A- | 2023-05-01 | lad:outlook-STA |  | lad:basis-FC | support from parent |
+| lad:A27 | lad:E10 | lad:type-LTIDR | lad:action-DG | BBB+ | 2026-04-15 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A1082 | lad:E1040 | lad:type-LTIDR | lad:action-AS | A+ | 2024-12-16 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A1109 | lad:E1053 | lad:type-LTIDR | lad:action-DG | BB | 2026-03-20 | lad:outlook-NEG |  | lad:basis-FC |  |
+| lad:A46 | lad:E11 | lad:type-CO | lad:action-AS | BBB | 2025-02-01 |  |  |  |  |
+| lad:A1216 | lad:E1100 | lad:type-LTIDR | lad:action-DG | B | 2024-09-18 | lad:outlook-POS |  | lad:basis-FC |  |
+| lad:A1219 | lad:E1101 | lad:type-LTIDR | lad:action-AS | BB | 2022-10-26 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A1239 | lad:E1110 | lad:type-LTIDR | lad:action-AS | BBB | 2022-04-17 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A1245 | lad:E1113 | lad:type-LTIDR | lad:action-AS | AA- | 2022-03-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A1261 | lad:E1121 | lad:type-LTIDR | lad:action-AS | A | 2024-01-25 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A1304 | lad:E1142 | lad:type-LTIDR | lad:action-DG | BBB+ | 2024-06-15 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A1410 | lad:E1194 | lad:type-LTIDR | lad:action-RW | A | 2025-01-20 |  | lad:watch-RWN | lad:basis-FC |  |
+| lad:A30 | lad:E12 | lad:type-LTIDR | lad:action-AS | BB- | 2024-02-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A31 | lad:E12 | lad:type-LTIDR | lad:action-UG | BB | 2025-08-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A32 | lad:E13 | lad:type-LTIDR | lad:action-AS | BBB | 2024-07-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A1666 | lad:E1309 | lad:type-LTIDR | lad:action-AS | B+ | 2022-04-20 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A1721 | lad:E1342 | lad:type-LTIDR | lad:action-AS | A- | 2024-08-06 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A34 | lad:E14 | lad:type-LTIDR | lad:action-AS | A- | 2023-01-15 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A36 | lad:E14 | lad:type-LTIDR | lad:action-DG | BBB+ | 2024-09-30 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A35 | lad:E14 | lad:type-LTIDR | lad:action-RW | BBB+ | 2025-11-20 |  | lad:watch-RWN | lad:basis-FC |  |
+| lad:A33 | lad:E14 | lad:type-LTIDR | lad:action-AF | BBB+ | 2026-05-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A43 | lad:E16 | lad:type-LTIDR | lad:action-AS | BBB- | 2024-04-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A44 | lad:E16 | lad:type-LTIDR | lad:action-DG | BB+ | 2026-06-01 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A5034 | lad:E5042 | lad:type-LTIDR | lad:action-AS | BB | 2024-12-19 | lad:outlook-STA |  | lad:basis-FC |  |
+| lad:A5048 | lad:E5062 | lad:type-LTIDR | lad:action-DG | B- | 2025-02-08 | lad:outlook-NEG |  | lad:basis-FC |  |
+| lad:A28 | lad:I05 | lad:type-INST | lad:action-AS | A- | 2023-06-01 |  |  |  |  |
+| lad:A29 | lad:I05 | lad:type-INST | lad:action-DG | BBB+ | 2026-04-15 |  |  |  |  |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;sparql&quot;&gt;
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?q ?e ?v WHERE {
+ { SELECT (&quot;DG26&quot; AS ?q) ?e (STR(?r) AS ?v) WHERE { ?a lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:action lad:action-DG; lad:date ?d; lad:rating ?r . FILTER(STR(?d)&gt;=&quot;2026-01-01&quot; &amp;&amp; STR(?d)&lt;=&quot;2026-12-31&quot;) } }
+ UNION
+ { SELECT (&quot;DEF&quot; AS ?q) ?e (CONCAT(STR(?r),&quot; &quot;,STR(?d)) AS ?v) WHERE { ?a lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:rating ?r; lad:date ?d . FILTER(?r IN (&quot;D&quot;,&quot;RD&quot;,&quot;C&quot;,&quot;DD&quot;,&quot;DDD&quot;)) } }
+ UNION
+ { SELECT (&quot;NEGW&quot; AS ?q) ?e (CONCAT(STR(?r),&quot; &quot;,COALESCE(STR(?w),&quot;-&quot;),&quot; &quot;,COALESCE(STR(?o),&quot;-&quot;)) AS ?v) WHERE { ?a lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:ccyBasis lad:basis-FC; lad:rating ?r; lad:date ?d . OPTIONAL{?a lad:watch ?w} OPTIONAL{?a lad:outlook ?o}
+   FILTER(STR(?d)&lt;=&quot;2026-10-01&quot;) FILTER NOT EXISTS { ?b lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:ccyBasis lad:basis-FC; lad:date ?d2 . FILTER(STR(?d2)&lt;=&quot;2026-10-01&quot; &amp;&amp; STR(?d2)&gt;STR(?d)) }
+   FILTER(BOUND(?w) || ?o = lad:outlook-NEG) } }
+}
+ORDER BY ?q ?e
+&lt;/invoke&gt;
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT (COUNT(DISTINCT ?e) AS ?issuers) (COUNT(DISTINCT ?gb) AS ?gb2) WHERE {
+ ?a lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:rating ?r; lad:date ?d . ?e lad:country ?c .
+ FILTER(STR(?d)&lt;=&quot;2026-10-01&quot; &amp;&amp; ?r != &quot;WD&quot;)
+ FILTER NOT EXISTS { ?b lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:ccyBasis ?cb2; lad:date ?d2 . ?a lad:ccyBasis ?cb1 . FILTER(?cb1=?cb2 &amp;&amp; STR(?d2)&lt;=&quot;2026-10-01&quot; &amp;&amp; STR(?d2)&gt;STR(?d)) }
+ BIND(IF(?c=&quot;GB&quot;,?e,?unb) AS ?gb)
+}
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| issuers | gb2 |
+|---|---|
+| 393 | 88 |
+
+Query 2:
+
+| q | e | v |
+|---|---|---|
+| DEF | lad:E08 | RD 2026-07-08 |
+| DG26 | lad:E08 | CCC |
+| DG26 | lad:E08 | RD |
+| DG26 | lad:E10 | BBB+ |
+| DG26 | lad:E1034 | BBB+ |
+| DG26 | lad:E1051 | A+ |
+| DG26 | lad:E1051 | A+ |
+| DG26 | lad:E1053 | BB |
+| DG26 | lad:E1057 | BB |
+| DG26 | lad:E1058 | BBB- |
+| DG26 | lad:E1064 | BBB+ |
+| DG26 | lad:E1080 | A- |
+| DG26 | lad:E1093 | B |
+| DG26 | lad:E1112 | BBB |
+| DG26 | lad:E1144 | B+ |
+| DG26 | lad:E1151 | BBB |
+| DG26 | lad:E1159 | BBB+ |
+| DG26 | lad:E1161 | B |
+| DG26 | lad:E1163 | BB+ |
+| DG26 | lad:E1167 | BB |
+| DG26 | lad:E1170 | BB- |
+| DG26 | lad:E1186 | BBB+ |
+| DG26 | lad:E1213 | A- |
+| DG26 | lad:E1213 | BBB+ |
+| DG26 | lad:E1228 | BB+ |
+| DG26 | lad:E1229 | BB |
+| DG26 | lad:E1229 | BB+ |
+| DG26 | lad:E1243 | BB |
+| DG26 | lad:E1255 | BBB+ |
+| DG26 | lad:E1263 | BBB- |
+| DG26 | lad:E1263 | BBB |
+| DG26 | lad:E1285 | A |
+| DG26 | lad:E1290 | B |
+| DG26 | lad:E1294 | A+ |
+| DG26 | lad:E1299 | BBB |
+| DG26 | lad:E1300 | BBB |
+| DG26 | lad:E1300 | BBB+ |
+| DG26 | lad:E1307 | BB- |
+| DG26 | lad:E1340 | BBB+ |
+| DG26 | lad:E1341 | BBB+ |
+| DG26 | lad:E1342 | BBB+ |
+| DG26 | lad:E1343 | BBB+ |
+| DG26 | lad:E1344 | A- |
+| DG26 | lad:E1345 | BB- |
+| DG26 | lad:E1346 | BBB+ |
+| DG26 | lad:E1347 | BBB- |
+| DG26 | lad:E1348 | BBB- |
+| DG26 | lad:E1349 | A- |
+| DG26 | lad:E1350 | BB |
+| DG26 | lad:E1351 | A- |
+| DG26 | lad:E16 | BB+ |
+| DG26 | lad:E5019 | BBB+ |
+| DG26 | lad:E5033 | A |
+| DG26 | lad:E5059 | BB+ |
+| DG26 | lad:E5097 | B- |
+| DG26 | lad:E5113 | BB- |
+| DG26 | lad:E5116 | A |
+| DG26 | lad:E5156 | B- |
+| NEGW | lad:E01 | BBB - https://example.org/ladder/outlook-NEG |
+| NEGW | lad:E06 | A- https://example.org/ladder/watch-RWN - |
+(90 more rows not shown)
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT (GROUP_CONCAT(DISTINCT CONCAT(STRAFTER(STR(?e),&quot;ladder/&quot;),&quot;:&quot;,STR(?d));separator=&quot;,&quot;) AS ?l) WHERE {?a lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:action lad:action-DG; lad:date ?d. FILTER(STR(?d)&gt;=&quot;2026-01-01&quot;&amp;&amp;STR(?d)&lt;=&quot;2026-12-31&quot;) }
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?k (GROUP_CONCAT(DISTINCT STRAFTER(STR(?e),&quot;ladder/&quot;);separator=&quot;,&quot;) AS ?l) WHERE {
+ ?a lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:ccyBasis lad:basis-FC; lad:date ?d; lad:action ?act . OPTIONAL{?a lad:watch ?w} OPTIONAL{?a lad:outlook ?o}
+ FILTER(STR(?d)&lt;=&quot;2026-10-01&quot;)
+ FILTER NOT EXISTS { ?b lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:ccyBasis lad:basis-FC; lad:date ?d2 . FILTER(STR(?d2)&lt;=&quot;2026-10-01&quot; &amp;&amp; STR(?d2)&gt;STR(?d)) }
+ BIND(IF(BOUND(?w),&quot;watch&quot;,IF(?o=lad:outlook-NEG,&quot;neg&quot;,IF(?act=lad:action-WD,&quot;wd&quot;,&quot;x&quot;))) AS ?k)
+ FILTER(?k!=&quot;x&quot;)
+} GROUP BY ?k
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT (COUNT(DISTINCT ?i) AS ?rated) (COUNT(DISTINCT ?ig) AS ?igc) WHERE {
+ ?a lad:ratedThing ?i; lad:ratingType lad:type-INST; lad:action ?act; lad:date ?d; lad:rating ?r .
+ FILTER(STR(?d)&lt;=&quot;2026-10-01&quot; &amp;&amp; ?act NOT IN (lad:action-WD, lad:action-EX))
+ FILTER NOT EXISTS { ?b lad:ratedThing ?i; lad:ratingType lad:type-INST; lad:date ?d2 . FILTER(STR(?d2)&lt;=&quot;2026-10-01&quot; &amp;&amp; STR(?d2)&gt;STR(?d)) }
+ BIND(IF(?r IN (&quot;AAA&quot;,&quot;AA+&quot;,&quot;AA&quot;,&quot;AA-&quot;,&quot;A+&quot;,&quot;A&quot;,&quot;A-&quot;,&quot;BBB+&quot;,&quot;BBB&quot;,&quot;BBB-&quot;),?i,?unb) AS ?ig)
+}
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?c (GROUP_CONCAT(CONCAT(STRAFTER(STR(?e),&quot;ladder/&quot;),&quot;:&quot;,?r);separator=&quot;,&quot;) AS ?l) WHERE {
+ ?e lad:country ?c . FILTER(?c IN (&quot;CV&quot;,&quot;VD&quot;))
+ ?a lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:ccyBasis lad:basis-FC; lad:date ?d; lad:rating ?r . FILTER(STR(?d)&lt;=&quot;2026-10-01&quot;)
+ FILTER NOT EXISTS { ?b lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:ccyBasis lad:basis-FC; lad:date ?d2 . FILTER(STR(?d2)&lt;=&quot;2026-10-01&quot; &amp;&amp; STR(?d2)&gt;STR(?d)) }
+} GROUP BY ?c
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT ?anc (COUNT(DISTINCT ?m) AS ?between) WHERE { lad:E5047 lad:parent+ ?anc . OPTIONAL{ lad:E5047 lad:parent+ ?m . ?m lad:parent+ ?anc } } GROUP BY ?anc
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT ?top ?l (COUNT(DISTINCT ?x) AS ?n) WHERE { ?top rdfs:label ?l . FILTER(?l IN (&quot;Cerid Group plc&quot;,&quot;Rotam Group Inc&quot;,&quot;Wonod Group SA&quot;,&quot;Vesol Group BV&quot;,&quot;Halden Group plc&quot;,&quot;Northwind Holdings plc&quot;)) ?x lad:parent* ?top } GROUP BY ?top ?l
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT ?top (GROUP_CONCAT(DISTINCT STRAFTER(STR(?x),&quot;ladder/&quot;);separator=&quot;,&quot;) AS ?vd) WHERE { ?top rdfs:label &quot;Wonod Group SA&quot; . ?x lad:parent* ?top; lad:country &quot;VD&quot; } GROUP BY ?top
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT (COUNT(*) AS ?depth3) WHERE { SELECT ?x WHERE { ?x lad:parent+ ?anc . ?anc lad:parent* lad:E5001 } GROUP BY ?x HAVING (COUNT(DISTINCT ?anc)=3) }
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT ?g (GROUP_CONCAT(CONCAT(STRAFTER(STR(?x),&quot;ladder/&quot;),&quot;:&quot;,?r);separator=&quot;,&quot;) AS ?l) WHERE {
+ { ?top rdfs:label &quot;Vesol Group BV&quot; } UNION { BIND(lad:E5001 AS ?top) }
+ ?x lad:parent* ?top . BIND(STRAFTER(STR(?top),&quot;ladder/&quot;) AS ?g)
+ ?a lad:ratedThing ?x; lad:ratingType lad:type-LTIDR; lad:ccyBasis lad:basis-FC; lad:date ?d; lad:rating ?r .
+ FILTER NOT EXISTS { ?b lad:ratedThing ?x; lad:ratingType lad:type-LTIDR; lad:ccyBasis lad:basis-FC; lad:date ?d2 . FILTER(STR(?d2)&gt;STR(?d)) }
+} GROUP BY ?g
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT ?l ?x ?anc (COUNT(DISTINCT ?m) AS ?between) WHERE { ?x rdfs:label ?l . FILTER(?l IN (&quot;Cerid Guven Energy SA&quot;,&quot;Cerid Telecom SA&quot;)) ?x lad:parent+ ?anc . OPTIONAL{ ?x lad:parent+ ?m . ?m lad:parent+ ?anc } } GROUP BY ?l ?x ?anc
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT (COUNT(DISTINCT ?e) AS ?n) WHERE { ?e lad:parent+ ?v . ?v lad:country &quot;VD&quot; . ?a lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:action ?act; lad:date ?d . FILTER(STR(?d)&lt;=&quot;2026-10-01&quot;)
+ FILTER NOT EXISTS { ?b lad:ratedThing ?e; lad:ratingType lad:type-LTIDR; lad:date ?d2 . FILTER(STR(?d2)&lt;=&quot;2026-10-01&quot; &amp;&amp; STR(?d2)&gt;STR(?d)) } FILTER(?act != lad:action-WD) }
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT ?i ?iss ?g ?ri ?rg WHERE { ?i lad:issuer ?iss; lad:guarantor ?g .
+ ?iss lad:parent* ?ri . FILTER NOT EXISTS {?ri lad:parent ?z}
+ ?g lad:parent* ?rg . FILTER NOT EXISTS {?rg lad:parent ?z2}
+ FILTER(?ri != ?rg || ?i = lad:I5007) }
+```
+
+```sparql
+PREFIX lad: &lt;https://example.org/ladder/&gt;
+SELECT (COUNT(DISTINCT ?e) AS ?ents) (COUNT(DISTINCT ?lei) AS ?leis) (COUNT(DISTINCT ?nolei) AS ?noLei) (GROUP_CONCAT(DISTINCT ?l17) AS ?e17) WHERE { ?e a lad:Entity . OPTIONAL{?e lad:lei ?lei} FILTER(true) OPTIONAL{ FILTER NOT EXISTS {?e lad:lei ?x} BIND(?e AS ?nolei)} OPTIONAL{ lad:E17 lad:lei ?l17 } }
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| l |
+|---|
+| E1285:2026-02-17,E1300:2026-05-06,E1151:2026-01-26,E1167:2026-09-07,E1080:2026-02-14,E5113:2026-06-21,E1051:2026-06-01,E10:2026-04-15,E1034:2026-05-02,E1347:2026-03-10,E1343:2026-08-08,E1290:2026-08-16,E1350:2026-09-03,E1341:2026-11-09,E1051:2026-04-05,E1229:2026-05-06,E1342:2026-07-17,E5097:2026-08-16,E1351:2026-09-27,E5059:2026-05-25,E1255:2026-01-19,E1300:2026-04-09,E1340:2026-06-26,E16:2026-06-01,E1186:2026-01-04,E1161:2026-07-28,E1263:2026-06-16,E1058:2026-07-14,E1349:2026-10-14,E1112:2026-02-20,E08:2026-01-20,E5116:2026-05-16,E1170:2026-08-16,E1344:2026-03-18,E1228:2026-06-28,E1163:2026-03-19,E1243:2026-01-13,E5033:2026-11-06,E1299:2026-02-06,E5019:2026-03-19,E1053:2026-03-20,E1348:2026-03-18,E1213:2026-02-13,E1346:2026-10-15,E1159:2026-06-16,E1057:2026-06-25,E1263:2026-03-03,E08:2026-07-08,E1345:2026-09-22,E1064:2026-03-04,E1294:2026-07-11,E1229:2026-06-02,E1093:2026-07-25,E1213:2026-06-16,E1144:2026-06-06,E1307:2026-02-08,E5156:2026-02-16 |
+
+Query 2:
+
+| k | l |
+|---|---|
+| watch | E1203,E1314,E1194,E1210,E1260,E1133,E1146,E1242,E1066,E1168,E1297,E1109,E1061,E1132,E1088,E06,E1098,E1266,E1006,E1267,E1037,E1013,E1317,E1181,E1323,E1099,E1238,E1264,E1039,E1126 |
+| neg | E1300,E5099,E1080,E1105,E5113,E1034,E1347,E1343,E1118,E1056,E1064,E1350,E1342,E1055,E5097,E1351,E1046,E5059,E5020,E1340,E1161,E1263,E1282,E01,E5131,E5023,E5141,E5116,E09,E1271,E5039,E5102,E1344,E1228,E1060,E5073,E1079,E5019,E5050,E5062,E1348,E1072,E1190,E1005,E1345,E1248,E5057,E1294,E1188,E5119,E5170,E1029,E5013,E1262,E1158,E5156,E1211 |
+
+Query 3:
+
+| rated | igc |
+|---|---|
+| 113 | 72 |
+
+Query 4:
+
+| c | l |
+|---|---|
+| CV | E1194:A,E5117:BB,E1096:BBB,E1304:BB,E5104:BB,E1019:BB+,E1245:B+,E1229:BB+,CV:BBB+,E1144:B+,E1223:BB+,E15:A,E1071:B+,E1217:BB-,E5098:B-,E1243:BB,E1136:A-,E5116:A,E5127:B,E1039:A,E1283:BB,E1060:BB-,E1185:BB+ |
+| VD | E5124:BB,E1236:BB,E5023:B-,E1126:BB,E5130:B-,E1313:BB-,E05:BB,E5047:BB,E5024:B-,E5170:B-,E1279:WD,E1106:B+,E1028:BB,E1307:BB-,E1101:BB,E5091:BB,E5012:BB |
+
+Query 5:
+
+| anc | between |
+|---|---|
+| lad:E5035 | 0 |
+| lad:E5023 | 1 |
+| lad:E5011 | 2 |
+| lad:E5167 | 3 |
+
+Query 6:
+
+| top | l | n |
+|---|---|---|
+| lad:E5001 | Cerid Group plc | 55 |
+| lad:E5086 | Rotam Group Inc | 20 |
+| lad:E5105 | Wonod Group SA | 27 |
+| lad:E5132 | Vesol Group BV | 13 |
+| lad:E09 | Halden Group plc | 3 |
+| lad:E02 | Northwind Holdings plc | 2 |
+
+Query 7:
+
+| top | vd |
+|---|---|
+| lad:E5105 | E5124,E5130 |
+
+Query 8:
+
+| depth3 |
+|---|
+| 11 |
+
+Query 9:
+
+| g | l |
+|---|---|
+| E5132 | E5132:BB+,E5133:BBB-,E5136:BBB-,E5140:A+,E5144:BB-,E5143:A,E5141:BB |
+| E5001 | E5170:B-,E5002:A+,E5007:B,E5008:BBB+,E5010:BB-,E5013:B-,E5012:BB,E5016:BB,E5017:A-,E5018:A,E5019:BBB+,E5020:BBB+,E5022:BB-,E5021:B,E5025:BB,E5024:B-,E5028:B-,E5027:BBB+,E5029:BB+,E5030:B,E5031:A+,E5032:BBB-,E5033:A,E5037:B+,E5036:A-,E5039:BB-,E5041:B-,E5042:BB,E5049:BBB-,E5050:BBB+,E5048:B-,E5053:BBB,E5057:A |
+
+Query 10:
+
+| l | x | anc | between |
+|---|---|---|---|
+| Cerid Guven Energy SA | lad:E5011 | lad:E5167 | 0 |
+| Cerid Telecom SA | lad:E5013 | lad:E5006 | 0 |
+| Cerid Telecom SA | lad:E5013 | lad:E5002 | 1 |
+| Cerid Telecom SA | lad:E5013 | lad:E5001 | 2 |
+
+Query 11:
+
+| n |
+|---|
+| 23 |
+
+Query 12:
+
+| i | iss | g | ri | rg |
+|---|---|---|---|---|
+| lad:I5007 | lad:E5133 | lad:E5145 | lad:E5132 | lad:E5145 |
+
+Query 13:
+
+| ents | leis | noLei | e17 |
+|---|---|---|---|
+| 540 | 509 | 2 | 391200QYPVFF2O9K2039 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>**Q1.** A-. E01&#x27;s rating was A- (A01, 2024-03-12) until the downgrade to BBB on 2025-06-20 (A02).
+
+**Q2.** No. The only 2026 action on E01 is an affirmation at BBB with a Negative outlook (A03).
+
+**Q3.** No. The 2031 note I02 was downgraded to BB+ (A07), which is sub-investment grade.
+
+**Q4.** Positive. E02 and E03 share a LEI, so they are the same company. The latest action is E03&#x27;s affirmation with a Positive outlook (A09, 2025-09-15), which supersedes E02&#x27;s Stable outlook (A08).
+
+**Q5.** E02, rated A. I03 is issued by E04 but guaranteed by E02, so the holder takes E02&#x27;s risk. I03 is rated A (A11).
+
+**Q6.** Valdoria&#x27;s Country Ceiling is BB (A12) and Valdoria Telecom&#x27;s foreign-currency rating is BB (A14), capped by it. Its local-currency rating is BBB- (A13), which is not capped.
+
+**Q7.** 51 entities received a long-term downgrade in 2026 (the list is in the JSON). I excluded E1341 and E5033, whose downgrades are dated after today (2026-11-09 and 2026-11-06).
+
+**Q8.** E08. It was rated RD on 2026-07-08.
+
+**Q9.** 393. This counts distinct rated entities, including the sovereigns; I did not separate them out.
+
+**Q10.** Depends. Valdoria Telecom is BB in foreign currency and BBB- in local currency (A14, A13).
+
+**Q11.** BBB+. E14 was downgraded to BBB+ on 2024-09-30 (A36).
+
+**Q12.** A-. This is E14&#x27;s rating from 2023-01-15 (A34).
+
+**Q13.** 1. The only downgrade is A36.
+
+**Q14.** None. E12&#x27;s first rating is dated 2024-02-01 (A30).
+
+**Q15.** A-. E10 was A- (A26) until the downgrade on 2026-04-15 (A27). A separate record, E17 &quot;HALDEN BANK&quot; (LU), is a possible duplicate and I did not resolve it.
+
+**Q16.** No. E14 stayed at BBB+ through the Rating Watch Negative (A35) and the affirmation (A33).
+
+**Q17.** No. E06 was only placed on Rating Watch Negative (A17).
+
+**Q18.** 30 issuers were on Rating Watch Negative on 1 October 2026 (see JSON).
+
+**Q19.** 57 issuers had a Negative outlook on 1 October 2026 (see JSON).
+
+**Q20.** No. E07&#x27;s rating was withdrawn for commercial reasons (A19), not because of a default.
+
+**Q21.** E07 and E1279, whose ratings were withdrawn (A19, and a WD for E1279). This list is partial because I did not check every withdrawal.
+
+**Q22.** E08 only, rated RD.
+
+**Q23.** F2 (A04).
+
+**Q24.** Yes. E01&#x27;s issuer rating is BBB.
+
+**Q25.** 72.
+
+**Q26.** A+ (A40).
+
+**Q27.** A- (A42).
+
+**Q28.** BBB+ (A38).
+
+**Q29.** None. Valdoria has only a Country Ceiling (A12), no issuer rating.
+
+**Q30.** The Country Ceiling data covers only CV (A) and VD (BB). The entities at exactly those levels are E1194, E15, E1039 and E5116 in CV, and E5124, E1236, E1126, E05, E5047, E1028, E5091, E5012 and E1101 in VD.
+
+**Q31.** No. No CV entity is above A and no VD entity is above BB.
+
+**Q32.** E09.
+
+**Q33.** E10, rated BBB+. I05 is issued by E11 and guaranteed by E10 (rated BBB+). The note itself is also BBB+ (A29).
+
+**Q34.** No. E12 has no parent, while E10 belongs to E09&#x27;s group.
+
+**Q35.** 3.
+
+**Q36.** 2. E03 is a duplicate record of E02 and is not in the group.
+
+**Q37.** 511. The data has 540 entity records, 509 distinct LEIs and 2 records with no LEI.
+
+**Q38.** No. E06 and E13 are separate records with different LEIs and countries.
+
+**Q39.** A.
+
+**Q40.** 88.
+
+**Q41.** BB+ (A44).
+
+**Q42.** DE (E10). E17 is a separate &quot;HALDEN BANK&quot; record in LU.
+
+**Q43.** 1.
+
+**Q44.** Yes. I07 is denominated in XVD, Valdoria&#x27;s local currency.
+
+**Q45.** Yes. I07 is rated BBB- (A45) against a BB ceiling (A12).
+
+**Q46.** No. E11 has only a Country Ceiling-type (CO) rating (A46), not an issuer rating.
+
+**Q47.** None. I08&#x27;s rating was withdrawn/expired on 2026-09-01 (A47).
+
+**Q48.** 113.
+
+**Q49.** E5167.
+
+**Q50.** 4. The chain is E5047, E5035, E5023, E5011, E5167.
+
+**Q51.** 55.
+
+**Q52.** 20.
+
+**Q53.** Depends. There are two Belir Mining records: E5062 sits in the Belir group, while E5168 (&quot;BELIR MINING SA&quot;) has Rotam Group E5086 as its parent.
+
+**Q54.** E5124 and E5130.
+
+**Q55.** 23.
+
+**Q56.** BB- (E5144).
+
+**Q57.** None. E5011&#x27;s only ancestor is E5167, while E5013&#x27;s ancestors are E5006, E5002 and E5001, so the chains share no entity.
+
+**Q58.** E5145. It guarantees I5007, issued by E5133 in the Vesol group.
+
+**Q59.** 11.
+
+**Q60.** E5145, and no. E5145 guarantees I5007 and sits outside the issuer&#x27;s (E5133) group.
+
+**Q61.** 18.
+
+```json
+{&quot;Q1&quot;:{&quot;rating&quot;:&quot;A-&quot;},&quot;Q2&quot;:{&quot;downgraded&quot;:&quot;no&quot;},&quot;Q3&quot;:{&quot;investment_grade&quot;:&quot;no&quot;,&quot;rating&quot;:&quot;BB+&quot;},&quot;Q4&quot;:{&quot;outlook&quot;:&quot;Positive&quot;},&quot;Q5&quot;:{&quot;risk_of&quot;:&quot;E02&quot;,&quot;rating&quot;:&quot;A&quot;},
+&quot;Q7&quot;:{&quot;issuers&quot;:[&quot;E1285&quot;,&quot;E1300&quot;,&quot;E1151&quot;,&quot;E1167&quot;,&quot;E1080&quot;,&quot;E5113&quot;,&quot;E1051&quot;,&quot;E10&quot;,&quot;E1034&quot;,&quot;E1347&quot;,&quot;E1343&quot;,&quot;E1290&quot;,&quot;E1350&quot;,&quot;E1229&quot;,&quot;E1342&quot;,&quot;E5097&quot;,&quot;E1351&quot;,&quot;E5059&quot;,&quot;E1255&quot;,&quot;E1340&quot;,&quot;E16&quot;,&quot;E1186&quot;,&quot;E1161&quot;,&quot;E1263&quot;,&quot;E1058&quot;,&quot;E1349&quot;,&quot;E1112&quot;,&quot;E08&quot;,&quot;E5116&quot;,&quot;E1170&quot;,&quot;E1344&quot;,&quot;E1228&quot;,&quot;E1163&quot;,&quot;E1243&quot;,&quot;E1299&quot;,&quot;E5019&quot;,&quot;E1053&quot;,&quot;E1348&quot;,&quot;E1213&quot;,&quot;E1346&quot;,&quot;E1159&quot;,&quot;E1057&quot;,&quot;E1345&quot;,&quot;E1064&quot;,&quot;E1294&quot;,&quot;E1093&quot;,&quot;E1144&quot;,&quot;E1307&quot;,&quot;E5156&quot;]},
+&quot;Q8&quot;:{&quot;entities&quot;:[&quot;E08&quot;]},&quot;Q9&quot;:{&quot;count&quot;:393},&quot;Q10&quot;:{&quot;investment_grade&quot;:&quot;depends&quot;},&quot;Q11&quot;:{&quot;rating&quot;:&quot;BBB+&quot;},&quot;Q12&quot;:{&quot;rating&quot;:&quot;A-&quot;},&quot;Q13&quot;:{&quot;count&quot;:1},&quot;Q14&quot;:{&quot;rating&quot;:&quot;none&quot;},&quot;Q15&quot;:{&quot;rating&quot;:&quot;A-&quot;},&quot;Q16&quot;:{&quot;changed&quot;:&quot;no&quot;},&quot;Q17&quot;:{&quot;downgraded&quot;:&quot;no&quot;},
+&quot;Q18&quot;:{&quot;issuers&quot;:[&quot;E1203&quot;,&quot;E1314&quot;,&quot;E1194&quot;,&quot;E1210&quot;,&quot;E1260&quot;,&quot;E1133&quot;,&quot;E1146&quot;,&quot;E1242&quot;,&quot;E1066&quot;,&quot;E1168&quot;,&quot;E1297&quot;,&quot;E1109&quot;,&quot;E1061&quot;,&quot;E1132&quot;,&quot;E1088&quot;,&quot;E06&quot;,&quot;E1098&quot;,&quot;E1266&quot;,&quot;E1006&quot;,&quot;E1267&quot;,&quot;E1037&quot;,&quot;E1013&quot;,&quot;E1317&quot;,&quot;E1181&quot;,&quot;E1323&quot;,&quot;E1099&quot;,&quot;E1238&quot;,&quot;E1264&quot;,&quot;E1039&quot;,&quot;E1126&quot;]},
+&quot;Q19&quot;:{&quot;issuers&quot;:[&quot;E1300&quot;,&quot;E5099&quot;,&quot;E1080&quot;,&quot;E1105&quot;,&quot;E5113&quot;,&quot;E1034&quot;,&quot;E1347&quot;,&quot;E1343&quot;,&quot;E1118&quot;,&quot;E1056&quot;,&quot;E1064&quot;,&quot;E1350&quot;,&quot;E1342&quot;,&quot;E1055&quot;,&quot;E5097&quot;,&quot;E1351&quot;,&quot;E1046&quot;,&quot;E5059&quot;,&quot;E5020&quot;,&quot;E1340&quot;,&quot;E1161&quot;,&quot;E1263&quot;,&quot;E1282&quot;,&quot;E01&quot;,&quot;E5131&quot;,&quot;E5023&quot;,&quot;E5141&quot;,&quot;E5116&quot;,&quot;E09&quot;,&quot;E1271&quot;,&quot;E5039&quot;,&quot;E5102&quot;,&quot;E1344&quot;,&quot;E1228&quot;,&quot;E1060&quot;,&quot;E5073&quot;,&quot;E1079&quot;,&quot;E5019&quot;,&quot;E5050&quot;,&quot;E5062&quot;,&quot;E1348&quot;,&quot;E1072&quot;,&quot;E1190&quot;,&quot;E1005&quot;,&quot;E1345&quot;,&quot;E1248&quot;,&quot;E5057&quot;,&quot;E1294&quot;,&quot;E1188&quot;,&quot;E5119&quot;,&quot;E5170&quot;,&quot;E1029&quot;,&quot;E5013&quot;,&quot;E1262&quot;,&quot;E1158&quot;,&quot;E5156&quot;,&quot;E1211&quot;]},
+&quot;Q20&quot;:{&quot;in_default&quot;:&quot;no&quot;},&quot;Q21&quot;:{&quot;entities&quot;:[&quot;E07&quot;,&quot;E1279&quot;]},&quot;Q22&quot;:{&quot;entities&quot;:[&quot;E08&quot;]},&quot;Q23&quot;:{&quot;rating&quot;:&quot;F2&quot;},&quot;Q24&quot;:{&quot;investment_grade&quot;:&quot;yes&quot;},&quot;Q25&quot;:{&quot;count&quot;:72},&quot;Q26&quot;:{&quot;rating&quot;:&quot;A+&quot;},&quot;Q27&quot;:{&quot;rating&quot;:&quot;A-&quot;},&quot;Q28&quot;:{&quot;rating&quot;:&quot;BBB+&quot;},&quot;Q29&quot;:{&quot;rating&quot;:&quot;none&quot;},
+&quot;Q30&quot;:{&quot;entities&quot;:[&quot;E1194&quot;,&quot;E15&quot;,&quot;E1039&quot;,&quot;E5116&quot;,&quot;E5124&quot;,&quot;E1236&quot;,&quot;E1126&quot;,&quot;E05&quot;,&quot;E5047&quot;,&quot;E1028&quot;,&quot;E5091&quot;,&quot;E5012&quot;,&quot;E1101&quot;]},&quot;Q31&quot;:{&quot;any&quot;:&quot;no&quot;},&quot;Q32&quot;:{&quot;parent&quot;:&quot;E09&quot;},&quot;Q33&quot;:{&quot;risk_of&quot;:&quot;E10&quot;,&quot;rating&quot;:&quot;BBB+&quot;},&quot;Q34&quot;:{&quot;same_group&quot;:&quot;no&quot;},&quot;Q35&quot;:{&quot;count&quot;:3},&quot;Q36&quot;:{&quot;count&quot;:2},&quot;Q37&quot;:{&quot;count&quot;:511},&quot;Q38&quot;:{&quot;same&quot;:&quot;no&quot;},&quot;Q39&quot;:{&quot;rating&quot;:&quot;A&quot;},&quot;Q40&quot;:{&quot;count&quot;:88},&quot;Q41&quot;:{&quot;rating&quot;:&quot;BB+&quot;},&quot;Q42&quot;:{&quot;country&quot;:&quot;DE&quot;},&quot;Q43&quot;:{&quot;count&quot;:1},&quot;Q44&quot;:{&quot;local_currency&quot;:&quot;yes&quot;},&quot;Q45&quot;:{&quot;above_ceiling&quot;:&quot;yes&quot;},&quot;Q46&quot;:{&quot;issuer_rating&quot;:&quot;no&quot;},&quot;Q47&quot;:{&quot;rating&quot;:&quot;none&quot;},&quot;Q48&quot;:{&quot;count&quot;:113},&quot;Q49&quot;:{&quot;parent&quot;:&quot;E5167&quot;},&quot;Q50&quot;:{&quot;count&quot;:4},&quot;Q51&quot;:{&quot;count&quot;:55},&quot;Q52&quot;:{&quot;count&quot;:20},&quot;Q53&quot;:{&quot;same_group&quot;:&quot;depends&quot;},&quot;Q54&quot;:{&quot;entities&quot;:[&quot;E5124&quot;,&quot;E5130&quot;]},&quot;Q55&quot;:{&quot;count&quot;:23},&quot;Q56&quot;:{&quot;rating&quot;:&quot;BB-&quot;},&quot;Q57&quot;:{&quot;entity&quot;:&quot;none&quot;},&quot;Q58&quot;:{&quot;entities&quot;:[&quot;E5145&quot;]},&quot;Q59&quot;:{&quot;count&quot;:11},&quot;Q60&quot;:{&quot;risk_of&quot;:&quot;E5145&quot;,&quot;same_group&quot;:&quot;no&quot;},&quot;Q61&quot;:{&quot;count&quot;:18}}
+```</code></pre></div></details>
+
+
+  </main>
+</div>
+</body>
+</html>

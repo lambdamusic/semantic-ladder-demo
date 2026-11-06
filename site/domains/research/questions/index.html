@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research analytics: questions and traps · Semantics ladder</title>
+  <link rel="stylesheet" href="../../../static/css/site.css">
+  <script src="../../../static/js/site.js" defer></script>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <a class="brand" href="../../../index.html">Semantics ladder</a>
+    <p class="brand-sub">How much does an LLM gain from being told what data means?</p>
+    <div class="nav-group">The experiment</div>
+    <ul>
+      <li><a class="" href="../../../index.html">Goals</a></li>
+      <li><a class="" href="../../../method/index.html">Method</a></li>
+    </ul>
+    
+    <div class="nav-group">Credit ratings</div>
+    <ul>
+      <li><a class="" href="../../credit_paths/index.html">Introduction</a></li><li><a class="" href="../../credit/data/index.html">Data</a></li><li><a class="" href="../../credit/questions/index.html">Questions and traps</a></li><li><a class="" href="../../credit/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">Research analytics</div>
+    <ul>
+      <li><a class="" href="../../research_850/index.html">Introduction</a></li><li><a class="" href="../data/index.html">Data</a></li><li><a class="active" href="index.html">Questions and traps</a></li><li><a class="" href="../ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">The results</div>
+    <ul>
+      <li><a class="" href="../../../scores/index.html">Scores</a></li>
+      <li><a class="" href="../../../conclusions/index.html">Conclusions</a></li>
+      <li><a class="" href="../../../runs/index.html">Run archive</a></li>
+    </ul>
+    <p class="nav-foot">All data is invented: the companies, LEIs, ratings, works, people and institutions. Nothing here is any rating agency's or bibliographic database's data or definitions.</p>
+  </nav>
+  <main class="content">
+    <h1>Research analytics: questions and traps</h1>
+    
+<div class="prose"><p>Each question looks like a lookup, and each has an obvious wrong answer. Only the question text is sent to the model, which must give its answer as a typed JSON field, except Q47 and Q48, which ask why and are graded against a checklist. The trap and the key are never sent. Keys are computed from the data, and each is checked against one written by hand, so the two can't silently disagree.</p>
+<h2 id="the-implicit-meanings">The implicit meanings</h2>
+<table>
+<thead>
+<tr>
+<th>Implicit meaning</th>
+<th>What it says</th>
+<th>Questions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Who is who</strong></td>
+<td>One person can have several author records, matched by ORCID; one name can belong to different people</td>
+<td>Q1 to Q7</td>
+</tr>
+<tr>
+<td><strong>Institution hierarchy</strong></td>
+<td>A lab's works are also its centre's, its university's and its system's, each work counted once</td>
+<td>Q8 to Q11</td>
+</tr>
+<tr>
+<td><strong>Counting method</strong></td>
+<td>Full counting gives each institution on a work the whole work; fractional counting splits it by author. The two can rank institutions differently</td>
+<td>Q12 to Q14, Q47</td>
+</tr>
+<tr>
+<td><strong>Document types</strong></td>
+<td>Editorials, errata and front matter aren't research output</td>
+<td>Q15 to Q17</td>
+</tr>
+<tr>
+<td><strong>Versions</strong></td>
+<td>A preprint and its published version are one work, and a citation of either is a citation of that work</td>
+<td>Q18 to Q21</td>
+</tr>
+<tr>
+<td><strong>Citation windows</strong></td>
+<td>A citation's year is the citing work's year, and an older work has had longer to be cited</td>
+<td>Q22, Q23</td>
+</tr>
+<tr>
+<td><strong>Retractions</strong></td>
+<td>A retracted work isn't research output, and its citations don't count</td>
+<td>Q24 to Q26</td>
+</tr>
+<tr>
+<td><strong>Citations at several levels</strong></td>
+<td>Citations roll up to institutions, each citing work counted once, and self-citation means something different for an author, an institution and a country</td>
+<td>Q27 to Q30</td>
+</tr>
+<tr>
+<td><strong>Citation chains</strong></td>
+<td>A work two hops away cites a work that cites the first, and each is counted once</td>
+<td>Q31, Q32</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-local-meanings">The local meanings</h2>
+<table>
+<thead>
+<tr>
+<th>Local rule</th>
+<th>Questions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STG</code> records are test data: they and their citations are ignored</td>
+<td>Q33, Q34 (also Q11, Q16, Q25, Q31)</td>
+</tr>
+<tr>
+<td><code>SUP</code> is a supplement article, which is research output, not supplementary material</td>
+<td>Q34 to Q36</td>
+</tr>
+<tr>
+<td>When an author lists several affiliations on a work, only the one listed last is credited</td>
+<td>Q37, Q38, Q45 (also Q48)</td>
+</tr>
+<tr>
+<td>The tiers count upwards: <code>K3</code> is the highest, <code>K1</code> the lowest</td>
+<td>Q39 to Q41</td>
+</tr>
+<tr>
+<td><code>K0</code> isn't a tier but a delisting: works in a delisted source aren't research output</td>
+<td>Q42, Q43 (also Q7)</td>
+</tr>
+<tr>
+<td>An affiliated institute (<code>AFF</code>) is not a unit of its parent: its parent link is an agreement, not membership</td>
+<td>Q44, Q46 (also Q48)</td>
+</tr>
+</tbody>
+</table>
+<p>"Research work" is the dataset's own term, so some answers given without the ontology, such as counting editorials, could be called a reasonable reading rather than an error. A review found they're mostly the questions that depend on the local rules anyway (see the <a href="../../../conclusions/index.html#5-does-the-domain-matter">conclusions</a>).</p></div>
+<section class="query trapcard" id="Q1">
+  <div class="qhead"><span class="qchip big">Q1</span><strong>How many distinct people do the author records named &quot;Mara Ellison&quot;, &quot;M. Ellison&quot; and &quot;Ellison, Mara J.&quot; stand for?</strong></div>
+  <p class="trap"><b>The trap: Identity.</b> A01, A02 and A03 share an ORCID; A04, also &#x27;M. Ellison&#x27;, has another.</p>
+  <p><b>Expected:</b> <code>count</code> 2 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q2">
+  <div class="qhead"><span class="qchip big">Q2</span><strong>List every work, of any type, that Mara Ellison (A01) is an author of.</strong></div>
+  <p class="trap"><b>The trap: Identity.</b> Her works are spread over three author records, and A04&#x27;s works (W08, W16) are not hers.</p>
+  <p><b>Expected:</b> <code>works</code> [&#x27;W01&#x27;, &#x27;W02&#x27;, &#x27;W03&#x27;, &#x27;W04&#x27;, &#x27;W05&#x27;, &#x27;W06&#x27;, &#x27;W07&#x27;, &#x27;W12&#x27;, &#x27;W19&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q3">
+  <div class="qhead"><span class="qchip big">Q3</span><strong>Is the Jonas Brandt who wrote W37 the same person as the Jonas Brandt who wrote W38?</strong></div>
+  <p class="trap"><b>The trap: Identity.</b> The same name, different ORCIDs.</p>
+  <p><b>Expected:</b> <code>same</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q4">
+  <div class="qhead"><span class="qchip big">Q4</span><strong>How many research works has the Jonas Brandt of Albury Metropolitan University (A05) authored?</strong></div>
+  <p class="trap"><b>The trap: Identity.</b> The other Jonas Brandt&#x27;s works (W28, W34, W38) are not his.</p>
+  <p><b>Expected:</b> <code>count</code> 2 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q5">
+  <div class="qhead"><span class="qchip big">Q5</span><strong>Is the M. Ellison who wrote W08 the same person as the Mara Ellison who wrote W01?</strong></div>
+  <p class="trap"><b>The trap: Identity.</b> A name variant shared with a different person.</p>
+  <p><b>Expected:</b> <code>same</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q6">
+  <div class="qhead"><span class="qchip big">Q6</span><strong>Which author has the most research works credited to the University of Albury, its units included?</strong></div>
+  <p class="trap"><b>The trap: Identity.</b> Mara Ellison&#x27;s five works are split over three records; by record, Priya Ramanathan (four) would come first.</p>
+  <p><b>Expected:</b> <code>author</code> A01 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q7">
+  <div class="qhead"><span class="qchip big">Q7</span><strong>How many research works has Mara Ellison authored?</strong></div>
+  <p class="trap"><b>The trap: Everything at once.</b> Identity, versions (W02 is W03), document types (W04, W05) and the delisted source (W07).</p>
+  <p><b>Expected:</b> <code>count</code> 5 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q8">
+  <div class="qhead"><span class="qchip big">Q8</span><strong>What is the ultimate parent of the Tessel Laboratory for Ocean Sensing (I04)?</strong></div>
+  <p class="trap"><b>The trap: Hierarchy.</b> Three levels up, lab to centre to university to system.</p>
+  <p><b>Expected:</b> <code>parent</code> I01 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q9">
+  <div class="qhead"><span class="qchip big">Q9</span><strong>How many research works is the University of Albury (I02) credited with, its units included?</strong></div>
+  <p class="trap"><b>The trap: Hierarchy.</b> The labs&#x27; works count, each work once; also versions, types, the affiliation rule and the affiliated institute.</p>
+  <p><b>Expected:</b> <code>count</code> 8 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q10">
+  <div class="qhead"><span class="qchip big">Q10</span><strong>How many research works is the Albury University System (I01) credited with, all its units included?</strong></div>
+  <p class="trap"><b>The trap: Hierarchy.</b> Both universities and their labs, a work shared between them (W12) counted once.</p>
+  <p><b>Expected:</b> <code>count</code> 12 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q11">
+  <div class="qhead"><span class="qchip big">Q11</span><strong>How many research works is Kesting University (I07) credited with, its units included?</strong></div>
+  <p class="trap"><b>The trap: Hierarchy with retraction and test records.</b> The institute&#x27;s W24 counts; W23 (retracted) and W90 to W92 (STG) don&#x27;t.</p>
+  <p><b>Expected:</b> <code>count</code> 6 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q12">
+  <div class="qhead"><span class="qchip big">Q12</span><strong>How many research works did Kesting University (I07, units included) publish in 2024, under full counting and under fractional counting (each work split equally among its authors)?</strong></div>
+  <p class="trap"><b>The trap: Counting method.</b> W20 is half Kesting&#x27;s, W21 two quarters, W22 whole.</p>
+  <p><b>Expected:</b> <code>full</code> 3, <code>fractional</code> 2 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q13">
+  <div class="qhead"><span class="qchip big">Q13</span><strong>In 2024, which had more research works, Kesting University (I07) or Rostval Technical University (I09): under full counting, and under fractional counting?</strong></div>
+  <p class="trap"><b>The trap: Counting method.</b> The ranking flips.</p>
+  <p><b>Expected:</b> <code>full</code> I09, <code>fractional</code> I07 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q14">
+  <div class="qhead"><span class="qchip big">Q14</span><strong>How many research works did GB institutions publish in 2024, under full counting and under fractional counting (each work split equally among its authors, each author&#x27;s share going to their institution&#x27;s country)?</strong></div>
+  <p class="trap"><b>The trap: Counting method at country level..</b> </p>
+  <p><b>Expected:</b> <code>full</code> 7, <code>fractional</code> 6 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q15">
+  <div class="qhead"><span class="qchip big">Q15</span><strong>How many research works appeared in Ocean Sensing Letters (S02) in 2024?</strong></div>
+  <p class="trap"><b>The trap: Document types.</b> The erratum W05 and the front matter W10 are not research output.</p>
+  <p><b>Expected:</b> <code>count</code> 4 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q16">
+  <div class="qhead"><span class="qchip big">Q16</span><strong>How many research works appeared in the Journal of Marine Autonomy (S01)?</strong></div>
+  <p class="trap"><b>The trap: Document types.</b> An editorial (W04) and paratext (W09) are not research output; also a test record (W91).</p>
+  <p><b>Expected:</b> <code>count</code> 10 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q17">
+  <div class="qhead"><span class="qchip big">Q17</span><strong>Which of Mara Ellison&#x27;s works are not research output because of their document type?</strong></div>
+  <p class="trap"><b>The trap: Document types.</b> An editorial and an erratum, under two author records.</p>
+  <p><b>Expected:</b> <code>works</code> [&#x27;W04&#x27;, &#x27;W05&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q18">
+  <div class="qhead"><span class="qchip big">Q18</span><strong>How many distinct research works has Priya Ramanathan (A07) authored?</strong></div>
+  <p class="trap"><b>The trap: Versions.</b> W02 is the preprint of W03; also the erratum W05 is not a work of research.</p>
+  <p><b>Expected:</b> <code>count</code> 4 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q19">
+  <div class="qhead"><span class="qchip big">Q19</span><strong>How many distinct works cite &quot;Drift-aware mapping with low-cost sonar&quot;, in either of its versions?</strong></div>
+  <p class="trap"><b>The trap: Versions.</b> Citations to the preprint W02 and to W03 are citations of one work; W15 cites both and counts once.</p>
+  <p><b>Expected:</b> <code>count</code> 7 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q20">
+  <div class="qhead"><span class="qchip big">Q20</span><strong>Which works in the data are preprints of another work that is also in the data?</strong></div>
+  <p class="trap"><b>The trap: Versions.</b> A shared title is the clue, version_of the evidence; W18 is a preprint with no published version.</p>
+  <p><b>Expected:</b> <code>works</code> [&#x27;W02&#x27;, &#x27;W42&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q21">
+  <div class="qhead"><span class="qchip big">Q21</span><strong>How many research works is Oskel Polytechnic (I14) credited with?</strong></div>
+  <p class="trap"><b>The trap: Versions.</b> W42 is the preprint of W31.</p>
+  <p><b>Expected:</b> <code>count</code> 4 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q22">
+  <div class="qhead"><span class="qchip big">Q22</span><strong>Which has more citations, W30 or W31 (counting both versions of each): in total, and within its publication year and the two years after?</strong></div>
+  <p class="trap"><b>The trap: Citation windows.</b> The older work has had more time; over the same span the newer one leads.</p>
+  <p><b>Expected:</b> <code>more_in_total</code> W30, <code>more_in_window</code> W31 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q23">
+  <div class="qhead"><span class="qchip big">Q23</span><strong>How many citations has W30 received in total, and how many within its publication year and the two years after?</strong></div>
+  <p class="trap"><b>The trap: Citation windows.</b> A citation&#x27;s year is the citing work&#x27;s year.</p>
+  <p><b>Expected:</b> <code>total</code> 5, <code>in_window</code> 1 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q24">
+  <div class="qhead"><span class="qchip big">Q24</span><strong>How many research works has Lena Vossberg (A09) authored?</strong></div>
+  <p class="trap"><b>The trap: Retractions.</b> W23 is retracted.</p>
+  <p><b>Expected:</b> <code>count</code> 3 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q25">
+  <div class="qhead"><span class="qchip big">Q25</span><strong>What is the total of the citation counts of Lena Vossberg&#x27;s research works?</strong></div>
+  <p class="trap"><b>The trap: Retractions and test records.</b> W23&#x27;s citation (W39) doesn&#x27;t count, nor do the STG works citing W22.</p>
+  <p><b>Expected:</b> <code>count</code> 6 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q26">
+  <div class="qhead"><span class="qchip big">Q26</span><strong>Does W23 count towards Kesting University&#x27;s research output?</strong></div>
+  <p class="trap"><b>The trap: Retractions.</b> A retracted work is not research output.</p>
+  <p><b>Expected:</b> <code>counts</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q27">
+  <div class="qhead"><span class="qchip big">Q27</span><strong>Which other institution&#x27;s works cite Kesting University&#x27;s research works the most, each citing work counted once per institution, and how many of its works do?</strong></div>
+  <p class="trap"><b>The trap: Citations rolled up.</b> Rostval&#x27;s one citing work has four Rostval authors; counted per author it would win.</p>
+  <p><b>Expected:</b> <code>institution</code> I12, <code>citing_works</code> 3 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q28">
+  <div class="qhead"><span class="qchip big">Q28</span><strong>How many distinct works from Rostval Technical University (I09) cite Kesting University&#x27;s research works?</strong></div>
+  <p class="trap"><b>The trap: Citations rolled up.</b> A work counts once, not once per author.</p>
+  <p><b>Expected:</b> <code>count</code> 1 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q29">
+  <div class="qhead"><span class="qchip big">Q29</span><strong>Of the works citing &quot;Drift-aware mapping with low-cost sonar&quot; (either version), how many are self-citations at the level of authors, of the University of Albury (units included), and of countries?</strong></div>
+  <p class="trap"><b>The trap: Self-citation depends on the level; W12 is Mara Ellison under another record, W13 her co-author; W16 is the other M. Ellison..</b> </p>
+  <p><b>Expected:</b> <code>author</code> 2, <code>institution</code> 2, <code>country</code> 4 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q30">
+  <div class="qhead"><span class="qchip big">Q30</span><strong>Of the works citing &quot;Drift-aware mapping with low-cost sonar&quot; (either version), how many are self-citations at the level of the Albury University System?</strong></div>
+  <p class="trap"><b>The trap: Self-citation at a level between institution and country..</b> </p>
+  <p><b>Expected:</b> <code>count</code> 3 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q31">
+  <div class="qhead"><span class="qchip big">Q31</span><strong>Which works cite at least one of the works that cite W01?</strong></div>
+  <p class="trap"><b>The trap: Two hops; W51 cites both first-hop works; W90 is a test record..</b> </p>
+  <p><b>Expected:</b> <code>works</code> [&#x27;W50&#x27;, &#x27;W51&#x27;, &#x27;W52&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q32">
+  <div class="qhead"><span class="qchip big">Q32</span><strong>How many distinct works are within two citation hops of W01 (citing it, or citing a work that cites it)?</strong></div>
+  <p class="trap"><b>The trap: Two hops, counted once each..</b> </p>
+  <p><b>Expected:</b> <code>count</code> 5 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q33">
+  <div class="qhead"><span class="qchip big">Q33</span><strong>Which of Kesting University&#x27;s research works has the most citations?</strong></div>
+  <p class="trap"><b>The trap: Local rule.</b> STG records are test data; with them W22 would lead.</p>
+  <p><b>Expected:</b> <code>work</code> W20 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q34">
+  <div class="qhead"><span class="qchip big">Q34</span><strong>How many research works was Kesting University (units included) credited with in 2025?</strong></div>
+  <p class="trap"><b>The trap: Local rules.</b> STG records are test data; SUP is a research article.</p>
+  <p><b>Expected:</b> <code>count</code> 3 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q35">
+  <div class="qhead"><span class="qchip big">Q35</span><strong>How many research works is the Kesting Institute of Hydrodynamics (I08) credited with?</strong></div>
+  <p class="trap"><b>The trap: Local code.</b> SUP is a supplement article, research output, not supplementary material.</p>
+  <p><b>Expected:</b> <code>count</code> 2 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q36">
+  <div class="qhead"><span class="qchip big">Q36</span><strong>How many research works appeared in the Proceedings of the Hydrodynamics Forum (S06)?</strong></div>
+  <p class="trap"><b>The trap: Local code.</b> Both SUP works count; the foreword (EDT) doesn&#x27;t.</p>
+  <p><b>Expected:</b> <code>count</code> 2 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q37">
+  <div class="qhead"><span class="qchip big">Q37</span><strong>Which institution is W70 credited to?</strong></div>
+  <p class="trap"><b>The trap: Local rule.</b> Only the affiliation listed last counts.</p>
+  <p><b>Expected:</b> <code>institution</code> I06 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q38">
+  <div class="qhead"><span class="qchip big">Q38</span><strong>Which institutions is W71 credited to, at every level?</strong></div>
+  <p class="trap"><b>The trap: Local rule on affiliations, then the hierarchy.</b> The Tessel Laboratory is listed last, so Halloran gets nothing.</p>
+  <p><b>Expected:</b> <code>institutions</code> [&#x27;I01&#x27;, &#x27;I02&#x27;, &#x27;I03&#x27;, &#x27;I04&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q39">
+  <div class="qhead"><span class="qchip big">Q39</span><strong>How many of the University of Albury&#x27;s research works (units included) appeared in a source of the highest tier?</strong></div>
+  <p class="trap"><b>The trap: Local code.</b> The tiers count upwards, K3 the highest.</p>
+  <p><b>Expected:</b> <code>count</code> 3 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q40">
+  <div class="qhead"><span class="qchip big">Q40</span><strong>Which source is in the highest tier?</strong></div>
+  <p class="trap"><b>The trap: Local code.</b> K3 is the highest tier, not K1.</p>
+  <p><b>Expected:</b> <code>source</code> S01 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q41">
+  <div class="qhead"><span class="qchip big">Q41</span><strong>Is Coastal Engineering Review (S03) in a higher tier than Ocean Sensing Letters (S02)?</strong></div>
+  <p class="trap"><b>The trap: Local code.</b> K1 is below K2.</p>
+  <p><b>Expected:</b> <code>higher</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q42">
+  <div class="qhead"><span class="qchip big">Q42</span><strong>How many research works appeared in Global Marine Science Reports (S04)?</strong></div>
+  <p class="trap"><b>The trap: Local code.</b> K0 is a delisted source, whose works are not research output.</p>
+  <p><b>Expected:</b> <code>count</code> 0 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q43">
+  <div class="qhead"><span class="qchip big">Q43</span><strong>Is W07 research output?</strong></div>
+  <p class="trap"><b>The trap: Local code.</b> An article in a delisted source.</p>
+  <p><b>Expected:</b> <code>research</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q44">
+  <div class="qhead"><span class="qchip big">Q44</span><strong>Which institutions are part of the Albury University System, at any level below it?</strong></div>
+  <p class="trap"><b>The trap: Local type.</b> An affiliated institute (AFF) is not a unit of its parent.</p>
+  <p><b>Expected:</b> <code>institutions</code> [&#x27;I02&#x27;, &#x27;I03&#x27;, &#x27;I04&#x27;, &#x27;I05&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q45">
+  <div class="qhead"><span class="qchip big">Q45</span><strong>How many research works is the Halloran Institute for Coastal Studies (I06) credited with?</strong></div>
+  <p class="trap"><b>The trap: Local rule on affiliations.</b> W71 lists Halloran first, so it goes to the Tessel Laboratory.</p>
+  <p><b>Expected:</b> <code>count</code> 3 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q46">
+  <div class="qhead"><span class="qchip big">Q46</span><strong>What is the ultimate parent of the Halloran Institute for Coastal Studies (I06)?</strong></div>
+  <p class="trap"><b>The trap: Local type.</b> An affiliated institute&#x27;s parent link is an agreement, not membership.</p>
+  <p><b>Expected:</b> <code>parent</code> I06 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q47">
+  <div class="qhead"><span class="qchip big">Q47</span><strong>Why do Kesting University and Rostval Technical University swap places in 2024 between full and fractional counting?</strong></div>
+  <p class="trap"><b>The trap: Counting method.</b> Why the ranking flips.</p>
+  <p><b>Graded against a checklist:</b></p><ul><li>Says each of Rostval&#x27;s four 2024 works has four authors with only one from Rostval, so a quarter each</li><li>Says Kesting holds larger shares: a single-author review (W22) and half of W20 and W21</li></ul>
+</section>
+<section class="query trapcard" id="Q48">
+  <div class="qhead"><span class="qchip big">Q48</span><strong>Why is W70 not one of the University of Albury&#x27;s research works, though its author lists the Tessel Laboratory?</strong></div>
+  <p class="trap"><b>The trap: Local rules.</b> The last-listed affiliation, and affiliated institutes.</p>
+  <p><b>Graded against a checklist:</b></p><ul><li>Says only the affiliation listed last counts, so W70 is credited to the Halloran Institute</li><li>Says the Halloran Institute is an affiliated institute, not a unit, so its works don&#x27;t roll up to the University of Albury</li></ul>
+</section>
+
+
+
+  </main>
+</div>
+</body>
+</html>

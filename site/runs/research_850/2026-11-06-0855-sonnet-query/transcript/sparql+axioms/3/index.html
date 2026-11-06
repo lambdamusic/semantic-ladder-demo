@@ -1,0 +1,1386 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>D6 sparql+axioms, run 3: the query session · Semantics ladder</title>
+  <link rel="stylesheet" href="../../../../../../static/css/site.css">
+  <script src="../../../../../../static/js/site.js" defer></script>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <a class="brand" href="../../../../../../index.html">Semantics ladder</a>
+    <p class="brand-sub">How much does an LLM gain from being told what data means?</p>
+    <div class="nav-group">The experiment</div>
+    <ul>
+      <li><a class="" href="../../../../../../index.html">Goals</a></li>
+      <li><a class="" href="../../../../../../method/index.html">Method</a></li>
+    </ul>
+    
+    <div class="nav-group">Credit ratings</div>
+    <ul>
+      <li><a class="" href="../../../../../../domains/credit_paths/index.html">Introduction</a></li><li><a class="" href="../../../../../../domains/credit/data/index.html">Data</a></li><li><a class="" href="../../../../../../domains/credit/questions/index.html">Questions and traps</a></li><li><a class="" href="../../../../../../domains/credit/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">Research analytics</div>
+    <ul>
+      <li><a class="" href="../../../../../../domains/research_850/index.html">Introduction</a></li><li><a class="" href="../../../../../../domains/research/data/index.html">Data</a></li><li><a class="" href="../../../../../../domains/research/questions/index.html">Questions and traps</a></li><li><a class="" href="../../../../../../domains/research/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">The results</div>
+    <ul>
+      <li><a class="" href="../../../../../../scores/index.html">Scores</a></li>
+      <li><a class="" href="../../../../../../conclusions/index.html">Conclusions</a></li>
+      <li><a class="" href="../../../../../index.html">Run archive</a></li>
+    </ul>
+    <p class="nav-foot">All data is invented: the companies, LEIs, ratings, works, people and institutions. Nothing here is any rating agency's or bibliographic database's data or definitions.</p>
+  </nav>
+  <main class="content">
+    <h1>D6 sparql+axioms, run 3: the query session</h1>
+    
+<p><a href="../../../index.html">← back to the run</a></p>
+<div class="status"><span class="pill ok">30 queries</span><span class="pill warn">1 failed</span><span class="pill ok">6 rounds</span></div>
+
+<details class="source" ><summary>The opening prompt</summary>
+  <div class="code"><pre><code>## The data
+
+You can&#x27;t see the data, but you can query it. It is in an RDF store, described below. Write SPARQL 1.1 SELECT or ASK queries.
+
+To run queries, reply with one or more fenced blocks (```sparql), and nothing else is needed:
+each is run and its results sent back to you. You have up to 8 rounds of queries.
+When you have what you need, reply with the final answers and no queries.
+
+Prefixes:
+```
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+PREFIX res: &lt;https://example.org/research/&gt;
+```
+
+Classes and the properties their resources use:
+
+- `res:Author`: `rdf:type`, `rdfs:label`, `res:name`, `res:orcid`, `res:samePersonAs`
+- `res:Authorship`: `rdf:type`, `rdfs:label`, `res:affiliationSeq`, `res:author`, `res:authorPosition`, `res:institution`, `res:work`
+- `res:Citation`: `rdf:type`, `rdfs:label`, `res:citedWork`, `res:citingWork`
+- `res:CreditedAuthorship`: `rdf:type`, `rdfs:label`, `res:affiliationSeq`, `res:author`, `res:authorPosition`, `res:institution`, `res:work`
+- `res:Institution`: `rdf:type`, `rdfs:label`, `res:country`, `res:countsTowards`, `res:institutionType`, `res:name`, `res:parent`, `res:ror`, `res:ultimateParent`, `res:unitOf`
+- `res:ResearchWork`: `rdf:type`, `rdfs:label`, `res:cites`, `res:countsAs`, `res:creditedCountry`, `res:creditedInstitution`, `res:doi`, `res:hasPerson`, `res:recordSource`, `res:retracted`, `res:source`, `res:title`, `res:workType`, `res:year`
+- `res:Source`: `rdf:type`, `rdfs:label`, `res:issn`, `res:name`, `res:sourceType`, `res:tier`
+- `res:Work`: `rdf:type`, `rdfs:label`, `res:cites`, `res:countsAs`, `res:creditedCountry`, `res:creditedInstitution`, `res:doi`, `res:hasPerson`, `res:recordSource`, `res:retracted`, `res:source`, `res:title`, `res:versionOf`, `res:workType`, `res:year`
+
+The store holds the data after the rules of its axioms have run, with no definitions alongside. Besides the data&#x27;s own properties, it holds what the rules derived: res:samePersonAs links the author records of one person; res:countsAs gives the work a record counts as (a preprint&#x27;s published version, or itself), and the class res:ResearchWork holds the works that count as research output; res:hasPerson gives each work&#x27;s distinct people, one author record each; res:creditedInstitution and res:creditedCountry give the institutions and countries credited on a work, every level up; res:unitOf, res:countsTowards and res:ultimateParent give the hierarchy; res:cites links the works of the citations that count; res:tierRank ranks the journal tiers, 1 the highest.
+
+## Questions
+
+Answer each question below from the data above. Start each answer on a new line with its
+number in bold, like **Q1.**, give the direct answer first, then at most two sentences of
+reasoning that cite the records (IDs) you relied on.
+
+Then end with one JSON block (```json) holding the structured answer to each question listed
+here, with exactly these fields, shaped like {&quot;Q1&quot;: {&quot;field&quot;: value}, ...}. Name works, authors, institutions and sources by their record ID: the work_id, author_id, institution_id or source_id in the CSV files, or the part of the IRI after res: in the RDF (W01, A07, I02, S03; not their titles or names).
+
+- Q1: count (a number)
+- Q2: works (a list of record IDs)
+- Q3: same (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q4: count (a number)
+- Q5: same (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q6: author (a record ID)
+- Q7: count (a number)
+- Q8: parent (a record ID)
+- Q9: count (a number)
+- Q10: count (a number)
+- Q11: count (a number)
+- Q12: full (a number), fractional (a number)
+- Q13: full (a record ID), fractional (a record ID)
+- Q14: full (a number), fractional (a number)
+- Q15: count (a number)
+- Q16: count (a number)
+- Q17: works (a list of record IDs)
+- Q18: count (a number)
+- Q19: count (a number)
+- Q20: works (a list of record IDs)
+- Q21: count (a number)
+- Q22: more_in_total (a record ID), more_in_window (a record ID)
+- Q23: total (a number), in_window (a number)
+- Q24: count (a number)
+- Q25: count (a number)
+- Q26: counts (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q27: institution (a record ID), citing_works (a number)
+- Q28: count (a number)
+- Q29: author (a number), institution (a number), country (a number)
+- Q30: count (a number)
+- Q31: works (a list of record IDs)
+- Q32: count (a number)
+- Q33: work (a record ID)
+- Q34: count (a number)
+- Q35: count (a number)
+- Q36: count (a number)
+- Q37: institution (a record ID)
+- Q38: institutions (a list of record IDs)
+- Q39: count (a number)
+- Q40: source (a record ID)
+- Q41: higher (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q42: count (a number)
+- Q43: research (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q44: institutions (a list of record IDs)
+- Q45: count (a number)
+- Q46: parent (a record ID)
+
+Q1. How many distinct people do the author records named &quot;Mara Ellison&quot;, &quot;M. Ellison&quot; and &quot;Ellison, Mara J.&quot; stand for?
+Q2. List every work, of any type, that Mara Ellison (A01) is an author of.
+Q3. Is the Jonas Brandt who wrote W37 the same person as the Jonas Brandt who wrote W38?
+Q4. How many research works has the Jonas Brandt of Albury Metropolitan University (A05) authored?
+Q5. Is the M. Ellison who wrote W08 the same person as the Mara Ellison who wrote W01?
+Q6. Which author has the most research works credited to the University of Albury, its units included?
+Q7. How many research works has Mara Ellison authored?
+Q8. What is the ultimate parent of the Tessel Laboratory for Ocean Sensing (I04)?
+Q9. How many research works is the University of Albury (I02) credited with, its units included?
+Q10. How many research works is the Albury University System (I01) credited with, all its units included?
+Q11. How many research works is Kesting University (I07) credited with, its units included?
+Q12. How many research works did Kesting University (I07, units included) publish in 2024, under full counting and under fractional counting (each work split equally among its authors)?
+Q13. In 2024, which had more research works, Kesting University (I07) or Rostval Technical University (I09): under full counting, and under fractional counting?
+Q14. How many research works did GB institutions publish in 2024, under full counting and under fractional counting (each work split equally among its authors, each author&#x27;s share going to their institution&#x27;s country)?
+Q15. How many research works appeared in Ocean Sensing Letters (S02) in 2024?
+Q16. How many research works appeared in the Journal of Marine Autonomy (S01)?
+Q17. Which of Mara Ellison&#x27;s works are not research output because of their document type?
+Q18. How many distinct research works has Priya Ramanathan (A07) authored?
+Q19. How many distinct works cite &quot;Drift-aware mapping with low-cost sonar&quot;, in either of its versions?
+Q20. Which works in the data are preprints of another work that is also in the data?
+Q21. How many research works is Oskel Polytechnic (I14) credited with?
+Q22. Which has more citations, W30 or W31 (counting both versions of each): in total, and within its publication year and the two years after?
+Q23. How many citations has W30 received in total, and how many within its publication year and the two years after?
+Q24. How many research works has Lena Vossberg (A09) authored?
+Q25. What is the total of the citation counts of Lena Vossberg&#x27;s research works?
+Q26. Does W23 count towards Kesting University&#x27;s research output?
+Q27. Which other institution&#x27;s works cite Kesting University&#x27;s research works the most, each citing work counted once per institution, and how many of its works do?
+Q28. How many distinct works from Rostval Technical University (I09) cite Kesting University&#x27;s research works?
+Q29. Of the works citing &quot;Drift-aware mapping with low-cost sonar&quot; (either version), how many are self-citations at the level of authors, of the University of Albury (units included), and of countries?
+Q30. Of the works citing &quot;Drift-aware mapping with low-cost sonar&quot; (either version), how many are self-citations at the level of the Albury University System?
+Q31. Which works cite at least one of the works that cite W01?
+Q32. How many distinct works are within two citation hops of W01 (citing it, or citing a work that cites it)?
+Q33. Which of Kesting University&#x27;s research works has the most citations?
+Q34. How many research works was Kesting University (units included) credited with in 2025?
+Q35. How many research works is the Kesting Institute of Hydrodynamics (I08) credited with?
+Q36. How many research works appeared in the Proceedings of the Hydrodynamics Forum (S06)?
+Q37. Which institution is W70 credited to?
+Q38. Which institutions is W71 credited to, at every level?
+Q39. How many of the University of Albury&#x27;s research works (units included) appeared in a source of the highest tier?
+Q40. Which source is in the highest tier?
+Q41. Is Coastal Engineering Review (S03) in a higher tier than Ocean Sensing Letters (S02)?
+Q42. How many research works appeared in Global Marine Science Reports (S04)?
+Q43. Is W07 research output?
+Q44. Which institutions are part of the Albury University System, at any level below it?
+Q45. How many research works is the Halloran Institute for Coastal Studies (I06) credited with?
+Q46. What is the ultimate parent of the Halloran Institute for Coastal Studies (I06)?
+Q47. Why do Kesting University and Rostval Technical University swap places in 2024 between full and fractional counting?
+Q48. Why is W70 not one of the University of Albury&#x27;s research works, though its author lists the Tessel Laboratory?</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>I&#x27;ll start by exploring the data.
+
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT ?s ?p ?o WHERE {
+  ?s ?p ?o .
+  FILTER(REGEX(STR(?s), &quot;research/(A|I|S)[0-9]+$&quot;))
+} ORDER BY ?s ?p
+```
+
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?s ?p ?o WHERE {
+  ?s ?p ?o .
+  FILTER(REGEX(STR(?s), &quot;research/W[0-9]+$&quot;))
+  FILTER(?p != res:cites)
+} ORDER BY ?s ?p
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| s | p | o |
+|---|---|---|
+| res:A01 | rdf:type | res:Author |
+| res:A01 | rdfs:label | Mara Ellison |
+| res:A01 | res:name | Mara Ellison |
+| res:A01 | res:orcid | 0000-0002-9841-6229 |
+| res:A01 | res:samePersonAs | res:A101 |
+| res:A01 | res:samePersonAs | res:A02 |
+| res:A01 | res:samePersonAs | res:A03 |
+| res:A02 | rdf:type | res:Author |
+| res:A02 | rdfs:label | M. Ellison |
+| res:A02 | res:name | M. Ellison |
+| res:A02 | res:orcid | 0000-0002-9841-6229 |
+| res:A02 | res:samePersonAs | res:A03 |
+| res:A02 | res:samePersonAs | res:A101 |
+| res:A02 | res:samePersonAs | res:A01 |
+| res:A03 | rdf:type | res:Author |
+| res:A03 | rdfs:label | Ellison, Mara J. |
+| res:A03 | res:name | Ellison, Mara J. |
+| res:A03 | res:orcid | 0000-0002-9841-6229 |
+| res:A03 | res:samePersonAs | res:A02 |
+| res:A03 | res:samePersonAs | res:A101 |
+| res:A03 | res:samePersonAs | res:A01 |
+| res:A04 | rdf:type | res:Author |
+| res:A04 | rdfs:label | M. Ellison |
+| res:A04 | res:name | M. Ellison |
+| res:A04 | res:orcid | 0000-0004-8662-8360 |
+| res:A05 | rdf:type | res:Author |
+| res:A05 | rdfs:label | Jonas Brandt |
+| res:A05 | res:name | Jonas Brandt |
+| res:A05 | res:orcid | 0000-0001-6105-5008 |
+| res:A05 | res:samePersonAs | res:A104 |
+| res:A06 | rdf:type | res:Author |
+| res:A06 | rdfs:label | Jonas Brandt |
+| res:A06 | res:name | Jonas Brandt |
+| res:A06 | res:orcid | 0000-0007-5475-1779 |
+| res:A07 | rdf:type | res:Author |
+| res:A07 | rdfs:label | Priya Ramanathan |
+| res:A07 | res:name | Priya Ramanathan |
+| res:A07 | res:orcid | 0000-0009-2298-3695 |
+| res:A08 | rdf:type | res:Author |
+| res:A08 | rdfs:label | Tomasz Wierzba |
+| res:A08 | res:name | Tomasz Wierzba |
+| res:A08 | res:orcid | 0000-0007-9318-6032 |
+| res:A08 | res:samePersonAs | res:A106 |
+| res:A09 | rdf:type | res:Author |
+| res:A09 | rdfs:label | Lena Vossberg |
+| res:A09 | res:name | Lena Vossberg |
+| res:A09 | res:orcid | 0000-0000-8073-7028 |
+| res:A09 | res:samePersonAs | res:A103 |
+| res:A10 | rdf:type | res:Author |
+| res:A10 | rdfs:label | Dirk Hallmann |
+| res:A10 | res:name | Dirk Hallmann |
+| res:A10 | res:orcid | 0000-0003-8222-6468 |
+| res:A101 | rdf:type | res:Author |
+| res:A101 | rdfs:label | M. Ellison |
+| res:A101 | res:name | M. Ellison |
+| res:A101 | res:orcid | 0000-0002-9841-6229 |
+| res:A101 | res:samePersonAs | res:A02 |
+| res:A101 | res:samePersonAs | res:A01 |
+| res:A101 | res:samePersonAs | res:A03 |
+| res:A102 | rdf:type | res:Author |
+(977 more rows not shown)
+
+Query 2:
+
+| s | p | o |
+|---|---|---|
+| res:W01 | rdf:type | res:Work |
+| res:W01 | rdf:type | res:ResearchWork |
+| res:W01 | rdfs:label | Adaptive path planning for underwater gliders |
+| res:W01 | res:countsAs | res:W01 |
+| res:W01 | res:creditedCountry | GB |
+| res:W01 | res:creditedInstitution | res:I02 |
+| res:W01 | res:creditedInstitution | res:I03 |
+| res:W01 | res:creditedInstitution | res:I01 |
+| res:W01 | res:doi | 10.55555/s01.2021.1465 |
+| res:W01 | res:hasPerson | res:A01 |
+| res:W01 | res:hasPerson | res:A07 |
+| res:W01 | res:recordSource | res:origin-FEED |
+| res:W01 | res:retracted | false |
+| res:W01 | res:source | res:S01 |
+| res:W01 | res:title | Adaptive path planning for underwater gliders |
+| res:W01 | res:workType | res:wtype-ART |
+| res:W01 | res:year | 2021 |
+| res:W02 | rdf:type | res:Work |
+| res:W02 | rdfs:label | Drift-aware mapping with low-cost sonar |
+| res:W02 | res:countsAs | res:W03 |
+| res:W02 | res:creditedCountry | GB |
+| res:W02 | res:creditedInstitution | res:I02 |
+| res:W02 | res:creditedInstitution | res:I03 |
+| res:W02 | res:creditedInstitution | res:I01 |
+| res:W02 | res:doi | 10.55555/s05.2022.2911 |
+| res:W02 | res:recordSource | res:origin-FEED |
+| res:W02 | res:retracted | false |
+| res:W02 | res:source | res:S05 |
+| res:W02 | res:title | Drift-aware mapping with low-cost sonar |
+| res:W02 | res:versionOf | res:W03 |
+| res:W02 | res:workType | res:wtype-PPR |
+| res:W02 | res:year | 2022 |
+| res:W03 | rdf:type | res:ResearchWork |
+| res:W03 | rdf:type | res:Work |
+| res:W03 | rdfs:label | Drift-aware mapping with low-cost sonar |
+| res:W03 | res:countsAs | res:W03 |
+| res:W03 | res:creditedCountry | GB |
+| res:W03 | res:creditedInstitution | res:I02 |
+| res:W03 | res:creditedInstitution | res:I03 |
+| res:W03 | res:creditedInstitution | res:I01 |
+| res:W03 | res:doi | 10.55555/s02.2023.9437 |
+| res:W03 | res:hasPerson | res:A01 |
+| res:W03 | res:hasPerson | res:A07 |
+| res:W03 | res:recordSource | res:origin-FEED |
+| res:W03 | res:retracted | false |
+| res:W03 | res:source | res:S02 |
+| res:W03 | res:title | Drift-aware mapping with low-cost sonar |
+| res:W03 | res:workType | res:wtype-ART |
+| res:W03 | res:year | 2023 |
+| res:W04 | rdf:type | res:Work |
+| res:W04 | rdfs:label | Editorial: a new decade of marine autonomy |
+| res:W04 | res:countsAs | res:W04 |
+| res:W04 | res:creditedCountry | GB |
+| res:W04 | res:creditedInstitution | res:I02 |
+| res:W04 | res:creditedInstitution | res:I01 |
+| res:W04 | res:doi | 10.55555/s01.2023.1032 |
+| res:W04 | res:hasPerson | res:A01 |
+| res:W04 | res:recordSource | res:origin-FEED |
+| res:W04 | res:retracted | false |
+| res:W04 | res:source | res:S01 |
+(13353 more rows not shown)
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;sparql&quot;&gt;
+&lt;/invoke&gt;
+
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?s (GROUP_CONCAT(CONCAT(STRAFTER(STR(?p),&quot;research/&quot;),&quot;=&quot;,REPLACE(STR(?o),&quot;https://example.org/research/&quot;,&quot;&quot;)); separator=&quot;; &quot;) AS ?props) WHERE {
+  ?s ?p ?o .
+  FILTER(REGEX(STR(?s), &quot;research/(I|S)[0-9]+$&quot;))
+  FILTER(?p != &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt;)
+} GROUP BY ?s ORDER BY ?s
+```
+
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?s (GROUP_CONCAT(CONCAT(STRAFTER(STR(?p),&quot;research/&quot;),&quot;=&quot;,REPLACE(STR(?o),&quot;https://example.org/research/&quot;,&quot;&quot;)); separator=&quot;; &quot;) AS ?props) WHERE {
+  ?s ?p ?o .
+  FILTER(REGEX(STR(?s), &quot;research/res:?W[0-9]+$|research/W[0-9]+$&quot;))
+  FILTER(?p IN (res:year, res:workType, res:source, res:countsAs, res:retracted, res:versionOf, res:recordSource))
+} GROUP BY ?s ORDER BY ?s</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>The runner found no ```sparql block and no ```json block in your reply. Put each query in its own ```sparql fenced block, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?s (GROUP_CONCAT(CONCAT(STRAFTER(STR(?p),&quot;research/&quot;),&quot;=&quot;,REPLACE(STR(?o),&quot;https://example.org/research/&quot;,&quot;&quot;)); separator=&quot;; &quot;) AS ?props) WHERE {
+  ?s ?p ?o .
+  FILTER(REGEX(STR(?s), &quot;research/(I|S)[0-9]+$&quot;))
+  FILTER(?p != &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt;)
+} GROUP BY ?s ORDER BY ?s
+```
+
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?s (GROUP_CONCAT(CONCAT(STRAFTER(STR(?p),&quot;research/&quot;),&quot;=&quot;,REPLACE(STR(?o),&quot;https://example.org/research/&quot;,&quot;&quot;)); separator=&quot;; &quot;) AS ?props) WHERE {
+  ?s ?p ?o .
+  FILTER(REGEX(STR(?s), &quot;research/W[0-9]+$&quot;))
+  FILTER(?p IN (res:year, res:workType, res:source, res:countsAs, res:retracted, res:versionOf, res:recordSource))
+} GROUP BY ?s ORDER BY ?s
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| s | props |
+|---|---|
+| res:I01 | ror=0hygr4985; =Albury University System; countsTowards=I01; institutionType=itype-SYS; name=Albury University System; ultimateParent=I01; country=GB |
+| res:I02 | unitOf=I01; countsTowards=I02; ultimateParent=I01; name=University of Albury; country=GB; =University of Albury; parent=I01; ror=06safhw22; countsTowards=I01; institutionType=itype-UNI |
+| res:I03 | name=Albury Centre for Marine Robotics; country=GB; institutionType=itype-LAB; countsTowards=I01; unitOf=I02; countsTowards=I03; =Albury Centre for Marine Robotics; ultimateParent=I01; ror=06a9yq342; parent=I02; countsTowards=I02 |
+| res:I04 | parent=I03; countsTowards=I03; countsTowards=I04; institutionType=itype-LAB; countsTowards=I01; ror=0002ezf81; unitOf=I03; ultimateParent=I01; name=Tessel Laboratory for Ocean Sensing; countsTowards=I02; country=GB; =Tessel Laboratory for Ocean Sensing |
+| res:I05 | parent=I01; countsTowards=I01; =Albury Metropolitan University; institutionType=itype-UNI; unitOf=I01; ror=0ww7kxb57; ultimateParent=I01; country=GB; name=Albury Metropolitan University; countsTowards=I05 |
+| res:I06 | institutionType=itype-AFF; countsTowards=I06; =Halloran Institute for Coastal Studies; parent=I02; ultimateParent=I06; name=Halloran Institute for Coastal Studies; country=GB; ror=0175f3924 |
+| res:I07 | ultimateParent=I07; name=Kesting University; ror=0593t4875; =Kesting University; country=DE; countsTowards=I07; institutionType=itype-UNI |
+| res:I08 | =Kesting Institute of Hydrodynamics; unitOf=I07; ultimateParent=I07; institutionType=itype-LAB; countsTowards=I08; ror=0brjdg570; name=Kesting Institute of Hydrodynamics; countsTowards=I07; parent=I07; country=DE |
+| res:I09 | ror=0k8rh7879; countsTowards=I09; name=Rostval Technical University; =Rostval Technical University; country=NL; ultimateParent=I09; institutionType=itype-UNI |
+| res:I10 | country=NL; name=Marrow Instruments BV; ultimateParent=I10; ror=0t3x83535; =Marrow Instruments BV; countsTowards=I10; institutionType=itype-CO |
+| res:I11 | =Brevin Ocean Agency; countsTowards=I11; institutionType=itype-GOV; ror=0wvack776; name=Brevin Ocean Agency; country=FR; ultimateParent=I11 |
+| res:I12 | country=FR; ultimateParent=I12; institutionType=itype-UNI; ror=091pt9775; countsTowards=I12; =Université de Lorvain; name=Université de Lorvain |
+| res:I13 | institutionType=itype-UNI; =Dunmore College; countsTowards=I13; country=GB; name=Dunmore College; ultimateParent=I13; ror=095cwy722 |
+| res:I14 | ror=06t6n5818; =Oskel Polytechnic; country=NL; institutionType=itype-UNI; countsTowards=I14; name=Oskel Polytechnic; ultimateParent=I14 |
+| res:I15 | countsTowards=I15; institutionType=itype-UNI; =Carrow State University; ultimateParent=I15; ror=0v91gp428; country=US; name=Carrow State University |
+| res:I16 | =Hoshimine Institute of Technology; countsTowards=I16; institutionType=itype-UNI; ultimateParent=I16; name=Hoshimine Institute of Technology; ror=06afa6f88; country=JP |
+| res:I17 | countsTowards=I17; name=Université de Mallois; =Université de Mallois; ultimateParent=I17; ror=0pshcv029; institutionType=itype-UNI; country=CA |
+| res:I18 | institutionType=itype-UNI; countsTowards=I18; name=Universidad de Ventolera; ror=0ay9jr885; ultimateParent=I18; country=ES; =Universidad de Ventolera |
+| res:I19 | countsTowards=I01; unitOf=I02; =Albury Laboratory for Acoustic Imaging; parent=I02; countsTowards=I02; country=GB; ror=0xe2n1515; ultimateParent=I01; countsTowards=I19; institutionType=itype-LAB; name=Albury Laboratory for Acoustic Imaging |
+| res:I20 | countsTowards=I20; parent=I05; countsTowards=I05; institutionType=itype-LAB; countsTowards=I01; unitOf=I05; ror=0bp5b1111; name=Albury Metropolitan Centre for Port Studies; ultimateParent=I01; country=GB; =Albury Metropolitan Centre for Port Studies |
+| res:I21 | ultimateParent=I21; name=Wexcombe Institute for Estuary Research; countsTowards=I21; country=GB; ror=0ms1zdt74; parent=I05; =Wexcombe Institute for Estuary Research; institutionType=itype-AFF |
+| res:I22 | ror=0rn08b412; name=Sandhaven Institute for Wave Research; institutionType=itype-AFF; ultimateParent=I22; parent=I07; country=DE; =Sandhaven Institute for Wave Research; countsTowards=I22 |
+| res:I23 | ror=0zekfva10; countsTowards=I09; =Rostval Laboratory for Offshore Structures; institutionType=itype-LAB; unitOf=I09; country=NL; ultimateParent=I09; countsTowards=I23; parent=I09; name=Rostval Laboratory for Offshore Structures |
+| res:I24 | =Pellmore University; country=US; name=Pellmore University; countsTowards=I24; ror=0n0j86p46; institutionType=itype-UNI; ultimateParent=I24 |
+| res:I25 | institutionType=itype-UNI; countsTowards=I25; =Università di Calvessa; ror=08mz9rf83; name=Università di Calvessa; country=IT; ultimateParent=I25 |
+| res:I26 | countsTowards=I26; name=Tarnowa University of Technology; country=PL; ultimateParent=I26; =Tarnowa University of Technology; institutionType=itype-UNI; ror=0189z6431 |
+| res:I27 | ultimateParent=I27; =Kirrabay University; institutionType=itype-UNI; country=AU; name=Kirrabay University; ror=0wam41j64; countsTowards=I27 |
+| res:I28 | countsTowards=I28; =Nordvik University; country=NO; institutionType=itype-UNI; ultimateParent=I28; name=Nordvik University; ror=00etvqe29 |
+| res:I29 | countsTowards=I29; ror=0g18r1r20; institutionType=itype-GOV; =Hanseo Ocean Institute; ultimateParent=I29; country=KR; name=Hanseo Ocean Institute |
+| res:I30 | ror=0ha4xax60; country=PT; institutionType=itype-UNI; countsTowards=I30; =Universidade de Arvela; ultimateParent=I30; name=Universidade de Arvela |
+| res:I31 | country=US; countsTowards=I31; ror=0nq63kw54; name=Corrimal Marine Systems Inc; ultimateParent=I31; =Corrimal Marine Systems Inc; institutionType=itype-CO |
+| res:S01 | name=Journal of Marine Autonomy; tier=tier-K3; sourceType=stype-JOU; issn=9866-3925; =Journal of Marine Autonomy |
+| res:S02 | =Ocean Sensing Letters; tier=tier-K2; name=Ocean Sensing Letters; sourceType=stype-JOU; issn=3195-4973 |
+| res:S03 | name=Coastal Engineering Review; sourceType=stype-JOU; issn=1154-9679; =Coastal Engineering Review; tier=tier-K1 |
+| res:S04 | =Global Marine Science Reports; tier=tier-K0; issn=8864-5325; sourceType=stype-JOU; name=Global Marine Science Reports |
+| res:S05 | =OceanArXiv; name=OceanArXiv; sourceType=stype-REP |
+| res:S06 | sourceType=stype-JOU; name=Proceedings of the Hydrodynamics Forum; issn=9804-2748; tier=tier-K2; =Proceedings of the Hydrodynamics Forum |
+| res:S07 | issn=1483-2835; sourceType=stype-JOU; name=Journal of Estuarine Dynamics; tier=tier-K2; =Journal of Estuarine Dynamics |
+| res:S08 | issn=9832-2482; tier=tier-K1; name=Hydrology Notes; sourceType=stype-JOU; =Hydrology Notes |
+| res:S09 | =Journal of Coastal Hydraulics; issn=3431-7424; name=Journal of Coastal Hydraulics; tier=tier-K2; sourceType=stype-JOU |
+| res:S10 | tier=tier-K1; =Marine Technology Bulletin; sourceType=stype-JOU; issn=7809-8515; name=Marine Technology Bulletin |
+| res:S11 | sourceType=stype-JOU; tier=tier-K2; name=Annals of Ocean Observation; issn=8324-8964; =Annals of Ocean Observation |
+| res:S12 | name=Shelf Sea Letters; issn=8103-2767; tier=tier-K1; =Shelf Sea Letters; sourceType=stype-JOU |
+| res:S13 | name=International Journal of Ocean Frontiers; =International Journal of Ocean Frontiers; sourceType=stype-JOU; tier=tier-K0; issn=1765-9671 |
+| res:S14 | sourceType=stype-REP; =CoastRxiv; name=CoastRxiv |
+
+Query 2:
+
+| s | props |
+|---|---|
+| res:W01 | retracted=false; workType=wtype-ART; source=S01; year=2021; recordSource=origin-FEED; countsAs=W01 |
+| res:W02 | countsAs=W03; versionOf=W03; source=S05; recordSource=origin-FEED; workType=wtype-PPR; year=2022; retracted=false |
+| res:W03 | workType=wtype-ART; retracted=false; countsAs=W03; source=S02; recordSource=origin-FEED; year=2023 |
+| res:W04 | workType=wtype-EDT; retracted=false; source=S01; recordSource=origin-FEED; year=2023; countsAs=W04 |
+| res:W05 | year=2024; retracted=false; workType=wtype-ERR; countsAs=W05; source=S02; recordSource=origin-FEED |
+| res:W06 | countsAs=W06; year=2024; workType=wtype-ART; source=S03; retracted=false; recordSource=origin-FEED |
+| res:W07 | source=S04; workType=wtype-ART; year=2020; countsAs=W07; retracted=false; recordSource=origin-FEED |
+| res:W08 | retracted=false; source=S01; recordSource=origin-FEED; countsAs=W08; workType=wtype-ART; year=2025 |
+| res:W09 | workType=wtype-PTX; year=2023; recordSource=origin-FEED; countsAs=W09; retracted=false; source=S01 |
+| res:W10 | workType=wtype-PTX; source=S02; recordSource=origin-FEED; year=2024; countsAs=W10; retracted=false |
+| res:W1000 | retracted=false; source=S01; recordSource=origin-FEED; year=2024; countsAs=W1000; workType=wtype-ART |
+| res:W1001 | year=2024; workType=wtype-ART; retracted=false; countsAs=W1001; recordSource=origin-FEED; source=S09 |
+| res:W1002 | workType=wtype-SUP; retracted=false; source=S06; year=2021; recordSource=origin-FEED; countsAs=W1002 |
+| res:W1003 | year=2024; retracted=false; countsAs=W1003; source=S06; recordSource=origin-FEED; workType=wtype-ART |
+| res:W1004 | retracted=false; source=S02; countsAs=W1004; recordSource=origin-FEED; year=2024; workType=wtype-ART |
+| res:W1005 | retracted=false; source=S02; recordSource=origin-FEED; workType=wtype-ART; countsAs=W1005; year=2025 |
+| res:W1006 | retracted=false; source=S13; recordSource=origin-FEED; countsAs=W1006; year=2020; workType=wtype-REV |
+| res:W1007 | retracted=false; source=S01; countsAs=W1007; year=2023; recordSource=origin-FEED; workType=wtype-ART |
+| res:W1008 | retracted=false; year=2025; countsAs=W1008; recordSource=origin-FEED; source=S11; workType=wtype-ART |
+| res:W1009 | recordSource=origin-FEED; year=2022; workType=wtype-REV; countsAs=W1009; source=S12; retracted=false |
+| res:W101 | workType=wtype-ART; year=2019; retracted=false; source=S08; recordSource=origin-FEED; countsAs=W101 |
+| res:W1010 | recordSource=origin-FEED; year=2020; workType=wtype-ART; countsAs=W1010; retracted=false; source=S02 |
+| res:W1011 | year=2021; recordSource=origin-FEED; countsAs=W1011; source=S04; workType=wtype-REV; retracted=false |
+| res:W1012 | workType=wtype-ART; retracted=false; source=S08; recordSource=origin-FEED; year=2020; countsAs=W1012 |
+| res:W1013 | retracted=false; countsAs=W1013; recordSource=origin-FEED; source=S04; workType=wtype-ART; year=2025 |
+| res:W1014 | year=2023; workType=wtype-ART; retracted=false; source=S01; countsAs=W1014; recordSource=origin-FEED |
+| res:W1015 | source=S12; countsAs=W1015; recordSource=origin-FEED; year=2023; retracted=false; workType=wtype-ART |
+| res:W1016 | countsAs=W1016; source=S06; recordSource=origin-FEED; workType=wtype-ART; year=2025; retracted=false |
+| res:W1017 | source=S07; recordSource=origin-FEED; countsAs=W1017; workType=wtype-ART; year=2025; retracted=false |
+| res:W1018 | source=S08; recordSource=origin-FEED; countsAs=W1018; retracted=false; workType=wtype-ART; year=2025 |
+| res:W1019 | source=S03; countsAs=W1019; recordSource=origin-FEED; year=2020; workType=wtype-ART; retracted=false |
+| res:W102 | source=S07; year=2023; recordSource=origin-FEED; workType=wtype-ART; retracted=false; countsAs=W102 |
+| res:W1020 | retracted=false; source=S13; recordSource=origin-FEED; countsAs=W1020; year=2020; workType=wtype-ART |
+| res:W1021 | workType=wtype-ART; retracted=false; countsAs=W1021; source=S02; year=2021; recordSource=origin-FEED |
+| res:W1022 | workType=wtype-ART; retracted=false; countsAs=W1022; recordSource=origin-FEED; source=S09; year=2023 |
+| res:W1023 | year=2024; workType=wtype-ART; retracted=false; recordSource=origin-FEED; source=S09; countsAs=W1023 |
+| res:W1024 | source=S12; retracted=false; recordSource=origin-FEED; year=2020; countsAs=W1024; workType=wtype-ART |
+| res:W1025 | workType=wtype-ART; retracted=true; source=S02; recordSource=origin-FEED; year=2020; countsAs=W1025 |
+| res:W1026 | recordSource=origin-FEED; workType=wtype-ART; countsAs=W1026; retracted=false; year=2019; source=S09 |
+| res:W1027 | retracted=false; countsAs=W1027; source=S10; recordSource=origin-FEED; workType=wtype-REV; year=2024 |
+| res:W1028 | year=2019; recordSource=origin-FEED; countsAs=W1028; workType=wtype-ART; source=S03; retracted=false |
+| res:W1029 | retracted=false; workType=wtype-ART; countsAs=W1029; source=S09; recordSource=origin-FEED; year=2022 |
+| res:W103 | source=S07; recordSource=origin-FEED; year=2020; countsAs=W103; retracted=false; workType=wtype-ART |
+| res:W1030 | source=S12; retracted=false; countsAs=W1030; recordSource=origin-FEED; year=2021; workType=wtype-ART |
+| res:W1031 | retracted=false; workType=wtype-ART; year=2025; source=S01; countsAs=W1031; recordSource=origin-FEED |
+| res:W1032 | countsAs=W1032; retracted=false; year=2019; source=S02; recordSource=origin-FEED; workType=wtype-ART |
+| res:W1033 | countsAs=W1033; recordSource=origin-FEED; workType=wtype-ART; retracted=false; year=2025; source=S08 |
+| res:W1034 | year=2025; workType=wtype-EDT; retracted=false; countsAs=W1034; source=S06; recordSource=origin-FEED |
+| res:W1035 | workType=wtype-ART; source=S03; retracted=false; countsAs=W1035; year=2021; recordSource=origin-FEED |
+| res:W1036 | retracted=false; source=S06; countsAs=W1036; recordSource=origin-FEED; year=2024; workType=wtype-ART |
+| res:W1037 | source=S02; recordSource=origin-FEED; year=2022; workType=wtype-ART; countsAs=W1037; retracted=true |
+| res:W1038 | retracted=false; countsAs=W1038; source=S02; year=2020; recordSource=origin-FEED; workType=wtype-ART |
+| res:W1039 | recordSource=origin-FEED; source=S11; countsAs=W1039; retracted=false; workType=wtype-ART; year=2023 |
+| res:W104 | year=2019; recordSource=origin-FEED; countsAs=W104; retracted=false; workType=wtype-ART; source=S07 |
+| res:W1040 | source=S08; recordSource=origin-FEED; workType=wtype-ART; year=2024; countsAs=W1040; retracted=false |
+| res:W1041 | workType=wtype-EDT; source=S03; retracted=false; year=2025; countsAs=W1041; recordSource=origin-FEED |
+| res:W1042 | workType=wtype-ART; retracted=false; year=2025; source=S01; countsAs=W1042; recordSource=origin-FEED |
+| res:W1043 | retracted=false; source=S08; year=2023; recordSource=origin-FEED; countsAs=W1043; workType=wtype-EDT |
+| res:W1044 | source=S02; year=2021; recordSource=origin-FEED; workType=wtype-ART; retracted=false; countsAs=W1044 |
+| res:W1046 | retracted=false; source=S01; recordSource=origin-FEED; countsAs=W1046; year=2024; workType=wtype-ART |
+(790 more rows not shown)
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?w ?au ?i ?t ?y ?wt (GROUP_CONCAT(DISTINCT STRAFTER(STR(?ty),&quot;research/&quot;)) AS ?types) WHERE {
+  ?a res:author ?au; res:work ?w . ?a a ?ty .
+  OPTIONAL {?a res:institution ?i}
+  ?w res:workType ?wt; res:year ?y .
+  FILTER(?au IN (res:A01,res:A02,res:A03,res:A101,res:A04,res:A05,res:A104,res:A06,res:A09,res:A103))
+} GROUP BY ?w ?au ?i ?t ?y ?wt ORDER BY ?au ?w
+```
+
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?i (COUNT(DISTINCT ?w) AS ?n) (SUM(IF(?y=2024,1,0)) AS ?n24) (SUM(IF(?y=2025,1,0)) AS ?n25) WHERE {
+  ?w a res:ResearchWork; res:creditedInstitution ?i; res:year ?y .
+  FILTER(?i IN (res:I01,res:I02,res:I03,res:I04,res:I05,res:I06,res:I07,res:I08,res:I09,res:I14))
+} GROUP BY ?i ORDER BY ?i
+```
+
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?s ?y (COUNT(DISTINCT ?w) AS ?n) WHERE {
+  ?w a res:ResearchWork; res:source ?s; res:year ?y .
+  FILTER(?s IN (res:S01,res:S02,res:S04,res:S06))
+} GROUP BY ?s ?y ORDER BY ?s ?y
+```
+
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?w ?p ?o WHERE {
+  ?w ?p ?o .
+  FILTER(?w IN (res:W23,res:W37,res:W38,res:W70,res:W71,res:W08,res:W30,res:W31,res:W07))
+  FILTER(?p != res:cites)
+} ORDER BY ?w ?p
+```
+
+
+&lt;br&gt;</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| w | au | i | t | y | wt | types |
+|---|---|---|---|---|---|---|
+| res:W01 | res:A01 | res:I02 |  | 2021 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W04 | res:A01 | res:I02 |  | 2023 | res:wtype-EDT | Authorship CreditedAuthorship |
+| res:W05 | res:A01 | res:I02 |  | 2024 | res:wtype-ERR | Authorship CreditedAuthorship |
+| res:W06 | res:A01 | res:I02 |  | 2024 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W1005 | res:A01 | res:I02 |  | 2025 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W12 | res:A01 | res:I02 |  | 2024 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W238 | res:A01 | res:I02 |  | 2023 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W271 | res:A01 | res:I02 |  | 2019 | res:wtype-EDT | Authorship CreditedAuthorship |
+| res:W374 | res:A01 | res:I02 |  | 2023 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W464 | res:A01 | res:I02 |  | 2021 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W676 | res:A01 | res:I02 |  | 2025 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W813 | res:A01 | res:I02 |  | 2025 | res:wtype-ERR | Authorship CreditedAuthorship |
+| res:W949 | res:A01 | res:I02 |  | 2024 | res:wtype-ERR | Authorship CreditedAuthorship |
+| res:W02 | res:A02 | res:I02 |  | 2022 | res:wtype-PPR | Authorship CreditedAuthorship |
+| res:W07 | res:A02 | res:I02 |  | 2020 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W1048 | res:A02 | res:I02 |  | 2023 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W1050 | res:A02 | res:I02 |  | 2024 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W19 | res:A02 | res:I02 |  | 2025 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W449 | res:A02 | res:I02 |  | 2022 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W663 | res:A02 | res:I02 |  | 2021 | res:wtype-PPR | Authorship CreditedAuthorship |
+| res:W869 | res:A02 | res:I02 |  | 2023 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W972 | res:A02 | res:I02 |  | 2020 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W03 | res:A03 | res:I02 |  | 2023 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W206 | res:A03 | res:I02 |  | 2020 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W763 | res:A03 | res:I02 |  | 2024 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W817 | res:A03 | res:I02 |  | 2023 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W08 | res:A04 | res:I07 |  | 2025 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W1020 | res:A04 | res:I07 |  | 2020 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W16 | res:A04 | res:I07 |  | 2025 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W428 | res:A04 | res:I07 |  | 2022 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W603 | res:A04 | res:I07 |  | 2025 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W720 | res:A04 | res:I07 |  | 2019 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W890 | res:A04 | res:I07 |  | 2023 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W985 | res:A04 | res:I07 |  | 2023 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W998 | res:A04 | res:I07 |  | 2022 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W1038 | res:A05 | res:I05 |  | 2020 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W14 | res:A05 | res:I05 |  | 2025 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W37 | res:A05 | res:I05 |  | 2022 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W554 | res:A05 | res:I05 |  | 2024 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W565 | res:A05 | res:I05 |  | 2019 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W785 | res:A05 | res:I05 |  | 2020 | res:wtype-REV | Authorship CreditedAuthorship |
+| res:W792 | res:A05 | res:I05 |  | 2023 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W1031 | res:A06 | res:I12 |  | 2025 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W28 | res:A06 | res:I12 |  | 2024 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W34 | res:A06 | res:I12 |  | 2025 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W38 | res:A06 | res:I12 |  | 2023 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W384 | res:A06 | res:I12 |  | 2025 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W525 | res:A06 | res:I12 |  | 2024 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W835 | res:A06 | res:I12 |  | 2020 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W1025 | res:A09 | res:I07 |  | 2020 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W20 | res:A09 | res:I07 |  | 2024 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W203 | res:A09 | res:I07 |  | 2024 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W21 | res:A09 | res:I07 |  | 2024 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W22 | res:A09 | res:I07 |  | 2024 | res:wtype-REV | Authorship CreditedAuthorship |
+| res:W23 | res:A09 | res:I07 |  | 2023 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W232 | res:A09 | res:I07 |  | 2019 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W268 | res:A09 | res:I07 |  | 2025 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W366 | res:A09 | res:I07 |  | 2022 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W417 | res:A09 | res:I07 |  | 2023 | res:wtype-ART | Authorship CreditedAuthorship |
+| res:W714 | res:A09 | res:I07 |  | 2025 | res:wtype-ART | Authorship CreditedAuthorship |
+(19 more rows not shown)
+
+Query 2:
+
+| i | n | n24 | n25 |
+|---|---|---|---|
+| res:I01 | 140 | 0 | 0 |
+| res:I02 | 95 | 0 | 0 |
+| res:I03 | 58 | 0 | 0 |
+| res:I04 | 23 | 0 | 0 |
+| res:I05 | 46 | 0 | 0 |
+| res:I06 | 16 | 0 | 0 |
+| res:I07 | 59 | 0 | 0 |
+| res:I08 | 25 | 0 | 0 |
+| res:I09 | 48 | 0 | 0 |
+| res:I14 | 45 | 0 | 0 |
+
+Query 3:
+
+| s | y | n |
+|---|---|---|
+| res:S01 | 2019 | 12 |
+| res:S01 | 2020 | 8 |
+| res:S01 | 2021 | 9 |
+| res:S01 | 2022 | 8 |
+| res:S01 | 2023 | 11 |
+| res:S01 | 2024 | 24 |
+| res:S01 | 2025 | 16 |
+| res:S02 | 2019 | 15 |
+| res:S02 | 2020 | 12 |
+| res:S02 | 2021 | 12 |
+| res:S02 | 2022 | 8 |
+| res:S02 | 2023 | 18 |
+| res:S02 | 2024 | 25 |
+| res:S02 | 2025 | 20 |
+| res:S06 | 2019 | 4 |
+| res:S06 | 2020 | 2 |
+| res:S06 | 2021 | 5 |
+| res:S06 | 2022 | 3 |
+| res:S06 | 2023 | 8 |
+| res:S06 | 2024 | 9 |
+| res:S06 | 2025 | 5 |
+
+Query 4:
+
+| w | p | o |
+|---|---|---|
+| res:W07 | rdf:type | res:Work |
+| res:W07 | rdfs:label | Low-cost sonar arrays for coastal monitoring |
+| res:W07 | res:countsAs | res:W07 |
+| res:W07 | res:creditedCountry | GB |
+| res:W07 | res:creditedInstitution | res:I01 |
+| res:W07 | res:creditedInstitution | res:I02 |
+| res:W07 | res:doi | 10.55555/s04.2020.7029 |
+| res:W07 | res:hasPerson | res:A01 |
+| res:W07 | res:recordSource | res:origin-FEED |
+| res:W07 | res:retracted | false |
+| res:W07 | res:source | res:S04 |
+| res:W07 | res:title | Low-cost sonar arrays for coastal monitoring |
+| res:W07 | res:workType | res:wtype-ART |
+| res:W07 | res:year | 2020 |
+| res:W08 | rdf:type | res:Work |
+| res:W08 | rdf:type | res:ResearchWork |
+| res:W08 | rdfs:label | Turbulent wake modelling behind tidal turbines |
+| res:W08 | res:countsAs | res:W08 |
+| res:W08 | res:creditedCountry | DE |
+| res:W08 | res:creditedInstitution | res:I07 |
+| res:W08 | res:doi | 10.55555/s01.2025.5958 |
+| res:W08 | res:hasPerson | res:A04 |
+| res:W08 | res:recordSource | res:origin-FEED |
+| res:W08 | res:retracted | false |
+| res:W08 | res:source | res:S01 |
+| res:W08 | res:title | Turbulent wake modelling behind tidal turbines |
+| res:W08 | res:workType | res:wtype-ART |
+| res:W08 | res:year | 2025 |
+| res:W23 | rdf:type | res:Work |
+| res:W23 | rdfs:label | Anomalous dissipation in estuarine plumes |
+| res:W23 | res:countsAs | res:W23 |
+| res:W23 | res:creditedCountry | DE |
+| res:W23 | res:creditedInstitution | res:I07 |
+| res:W23 | res:doi | 10.55555/s02.2023.2925 |
+| res:W23 | res:hasPerson | res:A09 |
+| res:W23 | res:recordSource | res:origin-FEED |
+| res:W23 | res:retracted | true |
+| res:W23 | res:source | res:S02 |
+| res:W23 | res:title | Anomalous dissipation in estuarine plumes |
+| res:W23 | res:workType | res:wtype-ART |
+| res:W23 | res:year | 2023 |
+| res:W30 | rdf:type | res:ResearchWork |
+| res:W30 | rdf:type | res:Work |
+| res:W30 | rdfs:label | Tidal stream resource maps for the Dunmore coast |
+| res:W30 | res:countsAs | res:W30 |
+| res:W30 | res:creditedCountry | GB |
+| res:W30 | res:creditedInstitution | res:I13 |
+| res:W30 | res:doi | 10.55555/s03.2019.9502 |
+| res:W30 | res:hasPerson | res:A15 |
+| res:W30 | res:recordSource | res:origin-FEED |
+| res:W30 | res:retracted | false |
+| res:W30 | res:source | res:S03 |
+| res:W30 | res:title | Tidal stream resource maps for the Dunmore coast |
+| res:W30 | res:workType | res:wtype-ART |
+| res:W30 | res:year | 2019 |
+| res:W31 | rdf:type | res:Work |
+| res:W31 | rdf:type | res:ResearchWork |
+| res:W31 | rdfs:label | Machine-learned tidal forecasts |
+| res:W31 | res:countsAs | res:W31 |
+| res:W31 | res:creditedCountry | NL |
+(69 more rows not shown)
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;sparql&quot;&gt;
+&lt;/invoke&gt;
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?rep (COUNT(DISTINCT ?w) AS ?alls) (COUNT(DISTINCT ?c) AS ?rs) WHERE {
+  VALUES ?rep {res:A01 res:A05 res:A07 res:A09}
+  ?rep res:samePersonAs? ?au .
+  ?a a res:Authorship; res:author ?au; res:work ?w .
+  OPTIONAL { ?w res:countsAs ?c . ?c a res:ResearchWork }
+} GROUP BY ?rep
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT DISTINCT ?w ?wt ?y ?c ?rw WHERE {
+  res:A01 res:samePersonAs? ?au .
+  ?a a res:Authorship; res:author ?au; res:work ?w .
+  ?w res:workType ?wt; res:year ?y .
+  OPTIONAL { ?w res:countsAs ?c }
+  OPTIONAL { ?w a res:ResearchWork . BIND(&quot;RW&quot; AS ?rw) }
+} ORDER BY ?w
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT (COUNT(?w) AS ?cnt) (SUM(xsd:decimal(?g)/xsd:decimal(?n)) AS ?frac) WHERE {
+ {SELECT ?w (COUNT(DISTINCT ?p) AS ?n) (COUNT(DISTINCT ?pg) AS ?g) WHERE {
+  ?w a res:ResearchWork; res:year ?y; res:creditedInstitution res:I07; res:hasPerson ?p . FILTER(STR(?y)=&quot;2024&quot;)
+  OPTIONAL { ?a a res:Authorship; res:work ?w; res:author ?au; res:institution ?i . ?i res:countsTowards res:I07 . ?p res:samePersonAs? ?au . BIND(?p AS ?pg) }
+ } GROUP BY ?w}
+}
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+SELECT (COUNT(?w) AS ?cnt) (SUM(xsd:decimal(?g)/xsd:decimal(?n)) AS ?frac) WHERE {
+ {SELECT ?w (COUNT(DISTINCT ?p) AS ?n) (COUNT(DISTINCT ?pg) AS ?g) WHERE {
+  ?w a res:ResearchWork; res:year ?y; res:creditedInstitution res:I09; res:hasPerson ?p . FILTER(STR(?y)=&quot;2024&quot;)
+  OPTIONAL { ?a a res:Authorship; res:work ?w; res:author ?au; res:institution ?i . ?i res:countsTowards res:I09 . ?p res:samePersonAs? ?au . BIND(?p AS ?pg) }
+ } GROUP BY ?w}
+}
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+SELECT (COUNT(?w) AS ?cnt) (SUM(xsd:decimal(?g)/xsd:decimal(?n)) AS ?frac) WHERE {
+ {SELECT ?w (COUNT(DISTINCT ?p) AS ?n) (COUNT(DISTINCT ?pg) AS ?g) WHERE {
+  ?w a res:ResearchWork; res:year ?y; res:creditedCountry &quot;GB&quot;; res:hasPerson ?p . FILTER(STR(?y)=&quot;2024&quot;)
+  OPTIONAL { ?a a res:Authorship; res:work ?w; res:author ?au; res:institution ?i . ?i res:country &quot;GB&quot; . ?p res:samePersonAs? ?au . BIND(?p AS ?pg) }
+ } GROUP BY ?w}
+}
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?y (COUNT(DISTINCT ?w) AS ?n) WHERE {
+  ?w a res:ResearchWork; res:year ?y; res:creditedInstitution res:I07 .
+} GROUP BY ?y ORDER BY ?y
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?w ?p ?o WHERE {
+  ?w ?p ?o . FILTER(?w IN (res:W70,res:W71))
+  FILTER(?p != res:cites)
+}
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?s ?p ?o WHERE {
+  ?s ?p ?o . FILTER(REGEX(STR(?s),&quot;research/(wtype|tier|origin|stype|itype)-&quot;))
+}
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?t ?r (COUNT(DISTINCT ?w) AS ?n) WHERE {
+  ?w a res:ResearchWork; res:creditedInstitution res:I02; res:source ?s .
+  OPTIONAL { ?s res:tier ?t . OPTIONAL{?t res:tierRank ?r} }
+} GROUP BY ?t ?r
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?a ?b WHERE { ?a res:versionOf ?b }
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?t (COUNT(DISTINCT ?x) AS ?tot) (COUNT(DISTINCT ?xw) AS ?win) WHERE {
+  ?c res:citedWork ?v; res:citingWork ?x .
+  ?v res:countsAs ?t . FILTER(?t IN (res:W30,res:W31))
+  ?t res:year ?ty . ?x res:year ?xy .
+  OPTIONAL { FILTER(xsd:integer(?xy) &lt;= xsd:integer(?ty)+2 &amp;&amp; xsd:integer(?xy) &gt;= xsd:integer(?ty)) BIND(?x AS ?xw) }
+} GROUP BY ?t
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?x ?xy
+ (EXISTS{ res:W03 res:hasPerson ?p . ?x res:hasPerson ?q . ?p res:samePersonAs? ?q } AS ?au)
+ (EXISTS{ ?x res:creditedInstitution res:I02 } AS ?i02)
+ (EXISTS{ ?x res:creditedInstitution res:I01 } AS ?i01)
+ (EXISTS{ ?x res:creditedCountry &quot;GB&quot; } AS ?gb)
+WHERE {
+  ?c res:citedWork ?v; res:citingWork ?x . FILTER(?v IN (res:W02,res:W03))
+  ?x res:year ?xy .
+  FILTER(?x != res:W02 &amp;&amp; ?x != res:W03)
+} GROUP BY ?x ?xy
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?w ?hop WHERE {
+  { ?w res:cites res:W01 . BIND(1 AS ?hop) }
+  UNION { ?w res:cites ?y . ?y res:cites res:W01 . BIND(2 AS ?hop) }
+}
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?i (COUNT(DISTINCT ?x) AS ?n) WHERE {
+  ?x res:cites ?w . ?w a res:ResearchWork; res:creditedInstitution res:I07 .
+  ?x res:creditedInstitution ?i .
+} GROUP BY ?i ORDER BY DESC(?n)
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?w (COUNT(DISTINCT ?x) AS ?n) WHERE {
+  ?x res:cites ?w . ?w a res:ResearchWork; res:creditedInstitution res:I07 .
+} GROUP BY ?w ORDER BY DESC(?n) LIMIT 5
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT (COUNT(DISTINCT ?x) AS ?n) (COUNT(DISTINCT ?w) AS ?nw) WHERE {
+  ?w res:hasPerson ?q . res:A09 res:samePersonAs? ?q . ?w a res:ResearchWork .
+  ?x res:cites ?w .
+}
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| rep | alls | rs |
+|---|---|---|
+| res:A01 | 32 | 19 |
+| res:A05 | 10 | 9 |
+| res:A07 | 18 | 15 |
+| res:A09 | 18 | 12 |
+
+Query 2:
+
+| w | wt | y | c | rw |
+|---|---|---|---|---|
+| res:W01 | res:wtype-ART | 2021 | res:W01 | RW |
+| res:W02 | res:wtype-PPR | 2022 | res:W03 |  |
+| res:W03 | res:wtype-ART | 2023 | res:W03 | RW |
+| res:W04 | res:wtype-EDT | 2023 | res:W04 |  |
+| res:W05 | res:wtype-ERR | 2024 | res:W05 |  |
+| res:W06 | res:wtype-ART | 2024 | res:W06 | RW |
+| res:W07 | res:wtype-ART | 2020 | res:W07 |  |
+| res:W1005 | res:wtype-ART | 2025 | res:W1005 | RW |
+| res:W1048 | res:wtype-ART | 2023 | res:W1048 | RW |
+| res:W1050 | res:wtype-ART | 2024 | res:W1050 | RW |
+| res:W12 | res:wtype-ART | 2024 | res:W12 | RW |
+| res:W19 | res:wtype-ART | 2025 | res:W19 | RW |
+| res:W206 | res:wtype-ART | 2020 | res:W206 | RW |
+| res:W238 | res:wtype-ART | 2023 | res:W238 | RW |
+| res:W271 | res:wtype-EDT | 2019 | res:W271 |  |
+| res:W374 | res:wtype-ART | 2023 | res:W374 |  |
+| res:W449 | res:wtype-ART | 2022 | res:W449 |  |
+| res:W464 | res:wtype-ART | 2021 | res:W464 | RW |
+| res:W555 | res:wtype-ART | 2020 | res:W555 | RW |
+| res:W612 | res:wtype-PPR | 2023 | res:W869 |  |
+| res:W663 | res:wtype-PPR | 2021 | res:W464 |  |
+| res:W676 | res:wtype-ART | 2025 | res:W676 | RW |
+| res:W763 | res:wtype-ART | 2024 | res:W763 |  |
+| res:W813 | res:wtype-ERR | 2025 | res:W813 |  |
+| res:W817 | res:wtype-ART | 2023 | res:W817 | RW |
+| res:W843 | res:wtype-ART | 2023 | res:W843 | RW |
+| res:W869 | res:wtype-ART | 2023 | res:W869 | RW |
+| res:W905 | res:wtype-ART | 2025 | res:W905 | RW |
+| res:W936 | res:wtype-EDT | 2019 | res:W936 |  |
+| res:W949 | res:wtype-ERR | 2024 | res:W949 |  |
+| res:W972 | res:wtype-ART | 2020 | res:W972 | RW |
+| res:W984 | res:wtype-ART | 2024 | res:W984 | RW |
+
+Query 3:
+
+| cnt | frac |
+|---|---|
+| 13 | 11.00000000000000000000000000 |
+
+Query 4:
+
+| cnt | frac |
+|---|---|
+| 16 | 4.00 |
+
+Query 5:
+
+| cnt | frac |
+|---|---|
+| 46 | 42.00000000000000000000000001 |
+
+Query 6:
+
+| y | n |
+|---|---|
+| 2019 | 7 |
+| 2020 | 5 |
+| 2021 | 8 |
+| 2022 | 8 |
+| 2023 | 11 |
+| 2024 | 13 |
+| 2025 | 7 |
+
+Query 7:
+
+| w | p | o |
+|---|---|---|
+| res:W71 | res:source | res:S01 |
+| res:W70 | res:countsAs | res:W70 |
+| res:W70 | res:source | res:S02 |
+| res:W70 | res:year | 2023 |
+| res:W71 | res:creditedInstitution | res:I02 |
+| res:W70 | rdfs:label | Optical backscatter in turbid estuaries |
+| res:W71 | res:countsAs | res:W71 |
+| res:W70 | res:recordSource | res:origin-FEED |
+| res:W70 | res:title | Optical backscatter in turbid estuaries |
+| res:W71 | res:hasPerson | res:A08 |
+| res:W70 | res:creditedCountry | GB |
+| res:W70 | rdf:type | res:ResearchWork |
+| res:W70 | res:doi | 10.55555/s02.2023.6434 |
+| res:W70 | res:retracted | false |
+| res:W70 | res:workType | res:wtype-ART |
+| res:W71 | res:recordSource | res:origin-FEED |
+| res:W70 | res:creditedInstitution | res:I06 |
+| res:W71 | res:doi | 10.55555/s01.2024.6287 |
+| res:W71 | res:creditedInstitution | res:I03 |
+| res:W71 | res:creditedInstitution | res:I04 |
+| res:W70 | rdf:type | res:Work |
+| res:W71 | rdf:type | res:ResearchWork |
+| res:W71 | res:year | 2024 |
+| res:W71 | res:workType | res:wtype-ART |
+| res:W71 | res:creditedInstitution | res:I01 |
+| res:W71 | res:creditedCountry | GB |
+| res:W71 | rdfs:label | Low-power optical sensors for gliders |
+| res:W70 | res:hasPerson | res:A08 |
+| res:W71 | res:title | Low-power optical sensors for gliders |
+| res:W71 | res:retracted | false |
+| res:W71 | rdf:type | res:Work |
+
+Query 8:
+
+| s | p | o |
+|---|---|---|
+| res:itype-LAB | skos:prefLabel | Laboratory, centre or institute |
+| res:wtype-EDT | skos:inScheme | res:WorkTypes |
+| res:origin-CRIS | skos:definition | Entered by an institution in its own research information system. As good as a feed record. |
+| res:tier-K3 | skos:definition | The highest tier: the journals the list ranks first. A higher number is a higher tier, so K3 ranks above K2, and K2 above K1. |
+| res:wtype-EDT | rdfs:label | Editorial |
+| res:itype-LAB | skos:notation | LAB |
+| res:wtype-SUP | rdf:type | skos:Concept |
+| res:itype-AFF | rdf:type | skos:Concept |
+| res:stype-REP | rdfs:label | Repository |
+| res:tier-K2 | skos:inScheme | res:Tiers |
+| res:itype-UNI | skos:notation | UNI |
+| res:wtype-ART | skos:inScheme | res:WorkTypes |
+| res:itype-AFF | skos:prefLabel | Affiliated institute |
+| res:itype-GOV | rdf:type | skos:Concept |
+| res:tier-K1 | rdfs:label | Tier K1 |
+| res:wtype-EDT | rdf:type | skos:Concept |
+| res:stype-JOU | skos:prefLabel | Journal |
+| res:stype-JOU | skos:inScheme | res:SourceTypes |
+| res:itype-LAB | skos:inScheme | res:InstitutionTypes |
+| res:tier-K0 | skos:prefLabel | Delisted source |
+| res:origin-STG | skos:prefLabel | Staging load |
+| res:wtype-PPR | skos:definition | A version posted to a repository before or without peer review. Research output, but if its published version is in the data (res:versionOf), the two are one research work, counted once. |
+| res:itype-LAB | skos:definition | A research unit inside its parent institution. Its works are also its parent&#x27;s works, and its parent&#x27;s parent&#x27;s, to the top. |
+| res:origin-CRIS | skos:prefLabel | Institutional research information system |
+| res:wtype-REV | rdfs:label | Review |
+| res:stype-REP | skos:inScheme | res:SourceTypes |
+| res:wtype-ART | rdf:type | skos:Concept |
+| res:itype-GOV | skos:definition | A government agency or laboratory. |
+| res:itype-CO | skos:definition | A company. |
+| res:wtype-PTX | rdf:type | skos:Concept |
+| res:origin-STG | rdf:type | skos:Concept |
+| res:tier-K1 | skos:definition | The lowest tier that is still listed: below K2. |
+| res:itype-SYS | rdf:type | skos:Concept |
+| res:stype-JOU | rdfs:label | Journal |
+| res:wtype-ART | skos:notation | ART |
+| res:itype-LAB | rdfs:label | Lab or centre |
+| res:itype-SYS | skos:notation | SYS |
+| res:wtype-PPR | skos:inScheme | res:WorkTypes |
+| res:tier-K3 | rdfs:label | Tier K3 |
+| res:origin-FEED | skos:definition | Loaded from the external bibliographic feed. |
+| res:itype-AFF | skos:definition | A legally independent institute linked to a university by an agreement. Its parent link records that agreement and nothing more: an affiliated institute is not a unit of its parent, is not part of the parent&#x27;s system, and its works are never credited to the parent or to anything above it. Its ultimate parent is itself. |
+| res:itype-AFF | skos:inScheme | res:InstitutionTypes |
+| res:wtype-ERR | skos:notation | ERR |
+| res:itype-CO | skos:notation | CO |
+| res:origin-STG | skos:inScheme | res:RecordSources |
+| res:wtype-REV | skos:definition | A peer-reviewed article that surveys a field. Research output. |
+| res:itype-AFF | skos:notation | AFF |
+| res:tier-K2 | res:tierRank | 2 |
+| res:wtype-REV | skos:inScheme | res:WorkTypes |
+| res:wtype-ART | rdfs:label | Article |
+| res:tier-K0 | skos:notation | K0 |
+| res:itype-CO | skos:inScheme | res:InstitutionTypes |
+| res:wtype-PTX | skos:prefLabel | Paratext |
+| res:tier-K2 | rdfs:label | Tier K2 |
+| res:itype-AFF | rdfs:label | Affiliated institute |
+| res:tier-K3 | rdf:type | skos:Concept |
+| res:tier-K0 | skos:definition | Not a tier: a source removed from the list for failing its review of editorial practice. Works that appeared in a K0 source are not research output, whatever their type, and are left out of every count of works and citations. |
+| res:itype-SYS | skos:prefLabel | University system |
+| res:wtype-ERR | rdf:type | skos:Concept |
+| res:tier-K2 | skos:notation | K2 |
+(75 more rows not shown)
+
+Query 9:
+
+| t | r | n |
+|---|---|---|
+| res:tier-K2 | 2 | 49 |
+| res:tier-K1 | 3 | 26 |
+| res:tier-K3 | 1 | 19 |
+|  |  | 1 |
+
+Query 10:
+
+| a | b |
+|---|---|
+| res:W226 | res:W710 |
+| res:W1049 | res:W789 |
+| res:W432 | res:W879 |
+| res:W210 | res:W902 |
+| res:W416 | res:W640 |
+| res:W506 | res:W422 |
+| res:W611 | res:W301 |
+| res:W219 | res:W251 |
+| res:W460 | res:W496 |
+| res:W663 | res:W464 |
+| res:W877 | res:W965 |
+| res:W263 | res:W279 |
+| res:W407 | res:W1027 |
+| res:W42 | res:W31 |
+| res:W556 | res:W1038 |
+| res:W612 | res:W869 |
+| res:W522 | res:W312 |
+| res:W728 | res:W665 |
+| res:W524 | res:W807 |
+| res:W730 | res:W303 |
+| res:W545 | res:W742 |
+| res:W322 | res:W453 |
+| res:W02 | res:W03 |
+
+Query 11:
+
+| t | tot | win |
+|---|---|---|
+| res:W30 | 18 | 0 |
+| res:W31 | 13 | 0 |
+
+Query 12 failed: What do I do with this CompValue? GroupGraphPatternSub_GroupGraphPatternSub_{&#x27;part&#x27;: [TriplesBlock_{&#x27;triples&#x27;: [[rdflib.term.URIRef(&#x27;https://example.org/research/W03&#x27;), PathAlternative_{&#x27;part&#x27;: [PathSequence_{&#x27;part&#x27;: [PathElt_{&#x27;part&#x27;: rdflib.term.URIRef(&#x27;https://example.org/research/hasPerson&#x27;), &#x27;_v
+
+Query 13:
+
+| w | hop |
+|---|---|
+| res:W657 | 1 |
+| res:W895 | 1 |
+| res:W229 | 1 |
+| res:W602 | 1 |
+| res:W41 | 1 |
+| res:W660 | 1 |
+| res:W40 | 1 |
+| res:W682 | 2 |
+| res:W1042 | 2 |
+| res:W338 | 2 |
+| res:W52 | 2 |
+| res:W51 | 2 |
+| res:W895 | 2 |
+| res:W337 | 2 |
+| res:W546 | 2 |
+| res:W801 | 2 |
+| res:W50 | 2 |
+| res:W51 | 2 |
+| res:W396 | 2 |
+| res:W546 | 2 |
+| res:W895 | 2 |
+| res:W338 | 2 |
+
+Query 14:
+
+| i | n |
+|---|---|
+| res:I12 | 12 |
+| res:I01 | 5 |
+| res:I09 | 4 |
+| res:I11 | 4 |
+| res:I02 | 3 |
+| res:I14 | 3 |
+| res:I19 | 2 |
+| res:I05 | 2 |
+| res:I13 | 2 |
+| res:I22 | 2 |
+| res:I20 | 1 |
+| res:I23 | 1 |
+| res:I03 | 1 |
+| res:I04 | 1 |
+
+Query 15:
+
+| w | n |
+|---|---|
+| res:W20 | 13 |
+| res:W473 | 2 |
+| res:W450 | 2 |
+| res:W855 | 2 |
+| res:W341 | 2 |
+
+Query 16:
+
+| n | nw |
+|---|---|
+| 19 | 6 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT (COUNT(DISTINCT ?x) AS ?n) WHERE { ?x res:cites res:W03 }
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?t (COUNT(DISTINCT ?x) AS ?tot) (COUNT(DISTINCT ?xi) AS ?win) WHERE {
+  ?x res:cites ?t . ?t res:year ?ty . ?x res:year ?xy .
+  FILTER(?t IN (res:W30,res:W31))
+  BIND(IF(xsd:integer(?xy) &gt;= xsd:integer(?ty) &amp;&amp; xsd:integer(?xy) &lt;= xsd:integer(?ty)+2, ?x, ?unb) AS ?xi)
+} GROUP BY ?t
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT (SUM(?n) AS ?total) WHERE {
+  SELECT ?w (COUNT(DISTINCT ?x) AS ?n) WHERE {
+    ?w a res:ResearchWork; res:hasPerson ?q . res:A09 res:samePersonAs ?q .
+    ?x res:cites ?w .
+  } GROUP BY ?w
+}
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?x
+ (COUNT(DISTINCT ?p) AS ?pa) (COUNT(DISTINCT ?q) AS ?q1)
+ (COUNT(DISTINCT ?ia) AS ?i02) (COUNT(DISTINCT ?ib) AS ?i01) (COUNT(DISTINCT ?ic) AS ?gb)
+WHERE {
+  ?x res:cites res:W03 .
+  OPTIONAL { res:W03 res:hasPerson ?p . ?x res:hasPerson ?p2 . FILTER(?p = ?p2) BIND(?p AS ?q) }
+  OPTIONAL { ?x res:creditedInstitution ?ia . FILTER(?ia = res:I02) }
+  OPTIONAL { ?x res:creditedInstitution ?ib . FILTER(?ib = res:I01) }
+  OPTIONAL { ?x res:creditedCountry ?ic . FILTER(?ic = &quot;GB&quot;) }
+} GROUP BY ?x
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| n |
+|---|
+| 27 |
+
+Query 2:
+
+| t | tot | win |
+|---|---|---|
+| res:W31 | 11 | 0 |
+| res:W30 | 16 | 0 |
+
+Query 3:
+
+| total |
+|---|
+| 0 |
+
+Query 4:
+
+| x | pa | q1 | i02 | i01 | gb |
+|---|---|---|---|---|---|
+| res:W1056 | 0 | 0 | 0 | 0 | 0 |
+| res:W13 | 1 | 1 | 1 | 1 | 1 |
+| res:W14 | 0 | 0 | 0 | 1 | 1 |
+| res:W16 | 0 | 0 | 0 | 0 | 0 |
+| res:W17 | 0 | 0 | 0 | 0 | 0 |
+| res:W18 | 0 | 0 | 0 | 0 | 0 |
+| res:W748 | 0 | 0 | 0 | 1 | 1 |
+| res:W812 | 0 | 0 | 0 | 0 | 1 |
+| res:W12 | 1 | 1 | 1 | 1 | 1 |
+| res:W15 | 0 | 0 | 0 | 0 | 1 |
+| res:W558 | 0 | 0 | 0 | 0 | 0 |
+| res:W598 | 1 | 1 | 1 | 1 | 1 |
+| res:W711 | 0 | 0 | 0 | 0 | 0 |
+| res:W315 | 0 | 0 | 1 | 1 | 1 |
+| res:W676 | 1 | 1 | 1 | 1 | 1 |
+| res:W833 | 1 | 1 | 1 | 1 | 1 |
+| res:W931 | 0 | 0 | 1 | 1 | 1 |
+| res:W273 | 0 | 0 | 1 | 1 | 1 |
+| res:W535 | 0 | 0 | 0 | 0 | 1 |
+| res:W761 | 0 | 0 | 0 | 0 | 1 |
+| res:W889 | 0 | 0 | 0 | 0 | 1 |
+| res:W890 | 0 | 0 | 0 | 0 | 0 |
+| res:W1048 | 1 | 1 | 1 | 1 | 1 |
+| res:W214 | 0 | 0 | 0 | 0 | 1 |
+| res:W544 | 0 | 0 | 0 | 1 | 1 |
+| res:W843 | 1 | 1 | 1 | 1 | 1 |
+| res:W349 | 0 | 0 | 0 | 1 | 1 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?au (COUNT(DISTINCT ?w) AS ?n) WHERE {
+  ?w a res:ResearchWork; res:creditedInstitution res:I02; res:hasPerson ?au .
+} GROUP BY ?au ORDER BY DESC(?n) LIMIT 5
+```
+```sparql
+PREFIX res: &lt;https://example.org/research/&gt;
+SELECT ?t ?x ?xy ?ty WHERE {
+  ?x res:cites ?t . ?t res:year ?ty . ?x res:year ?xy .
+  FILTER(?t IN (res:W30,res:W31))
+} ORDER BY ?t ?xy
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| au | n |
+|---|---|
+| res:A01 | 19 |
+| res:A07 | 15 |
+| res:A110 | 14 |
+| res:A118 | 14 |
+| res:A125 | 10 |
+
+Query 2:
+
+| t | x | xy | ty |
+|---|---|---|---|
+| res:W30 | res:W60 | 2020 | 2019 |
+| res:W30 | res:W988 | 2021 | 2019 |
+| res:W30 | res:W289 | 2022 | 2019 |
+| res:W30 | res:W439 | 2022 | 2019 |
+| res:W30 | res:W276 | 2022 | 2019 |
+| res:W30 | res:W61 | 2022 | 2019 |
+| res:W30 | res:W62 | 2023 | 2019 |
+| res:W30 | res:W246 | 2023 | 2019 |
+| res:W30 | res:W334 | 2023 | 2019 |
+| res:W30 | res:W274 | 2024 | 2019 |
+| res:W30 | res:W63 | 2024 | 2019 |
+| res:W30 | res:W856 | 2024 | 2019 |
+| res:W30 | res:W894 | 2024 | 2019 |
+| res:W30 | res:W64 | 2025 | 2019 |
+| res:W30 | res:W992 | 2025 | 2019 |
+| res:W30 | res:W1033 | 2025 | 2019 |
+| res:W31 | res:W67 | 2023 | 2023 |
+| res:W31 | res:W1039 | 2023 | 2023 |
+| res:W31 | res:W62 | 2023 | 2023 |
+| res:W31 | res:W757 | 2023 | 2023 |
+| res:W31 | res:W851 | 2023 | 2023 |
+| res:W31 | res:W650 | 2024 | 2023 |
+| res:W31 | res:W65 | 2024 | 2023 |
+| res:W31 | res:W249 | 2025 | 2023 |
+| res:W31 | res:W66 | 2025 | 2023 |
+| res:W31 | res:W318 | 2025 | 2023 |
+| res:W31 | res:W794 | 2025 | 2023 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>**Q1.** 1. A01, A02, A03 and the linked A101 share ORCID 0000-0002-9841-6229 and are linked by samePersonAs.
+**Q2.** 32 works, listed in the JSON, taken across all of Mara&#x27;s linked author records.
+**Q3.** No. Jonas Brandt on W37 is A05 and on W38 is A06, and their ORCIDs differ.
+**Q4.** 9. A05 and its linked record A104 have 10 works, 9 of them research works.
+**Q5.** No. The M. Ellison on W08 is A04 (ORCID 0000-0004-8662-8360), not A01.
+**Q6.** A01, with 19 research works credited to I02.
+**Q7.** 19.
+**Q8.** I01.
+**Q9.** 95.
+**Q10.** 140.
+**Q11.** 59.
+**Q12.** Full 13, fractional 11.
+**Q13.** Under full counting Rostval (I09) has more, 16 against 13. Under fractional counting Kesting (I07) has more, 11 against 4.
+**Q14.** Full 46, fractional 42.
+**Q15.** 25.
+**Q16.** 88, summing the S01 counts across 2019–2025.
+**Q17.** W04, W271 and W936 (editorials) and W05, W813 and W949 (errata). W07 is excluded for its source, not its type.
+**Q18.** 15.
+**Q19.** 27.
+**Q20.** 23 preprints have a published version in the data, listed in the JSON.
+**Q21.** 45.
+**Q22.** W30 has more citations in total (16 against 11). W31 has more within its publication year and the two years after (11 against 2).
+**Q23.** Total 16, in window 2. The citing works are W60 (2020) and W988 (2021).
+**Q24.** 12.
+**Q25.** 19, using the citation links of the research works of A09 and its linked A103.
+**Q26.** No. W23 is retracted and is not a research work.
+**Q27.** I12, with 12 citing works.
+**Q28.** 4.
+**Q29.** Author 7, institution 10, country 20.
+**Q30.** 14.
+**Q31.** W682, W1042, W338, W52, W51, W895, W337, W546, W801, W50 and W396, from the two-hop citation query.
+**Q32.** 17: 7 direct citers plus 10 further works at two hops.
+**Q33.** W20, with 13 citations.
+**Q34.** 7.
+**Q35.** 25.
+**Q36.** 36.
+**Q37.** I06. W70 lists only I06 as credited institution.
+**Q38.** I01, I02, I03 and I04.
+**Q39.** 19, all in tier K3.
+**Q40.** S01, which is tier K3.
+**Q41.** No. S03 is K1 and S02 is K2, so S02 is higher.
+**Q42.** 0. S04 is K0 (delisted), so its works are not research output.
+**Q43.** No. W07 appeared in S04, a K0 source.
+**Q44.** I02, I03, I04, I05, I19 and I20. The affiliated institutes I06 and I21 are not part of the system.
+**Q45.** 16.
+**Q46.** I06. It is an affiliated institute, so its ultimate parent is itself.
+**Q47.** Not answered; I did not run a query on this. Full counting credits a work in full to every institution on it, while fractional counting splits each work among its authors, so the order can change.
+**Q48.** Not answered; I did not run a query on this. W70 is credited only to I06, an affiliated institute, and the data defines such an institute&#x27;s works as never credited to its parent.
+
+```json
+{&quot;Q1&quot;:{&quot;count&quot;:1},
+&quot;Q2&quot;:{&quot;works&quot;:[&quot;W01&quot;,&quot;W02&quot;,&quot;W03&quot;,&quot;W04&quot;,&quot;W05&quot;,&quot;W06&quot;,&quot;W07&quot;,&quot;W1005&quot;,&quot;W1048&quot;,&quot;W1050&quot;,&quot;W12&quot;,&quot;W19&quot;,&quot;W206&quot;,&quot;W238&quot;,&quot;W271&quot;,&quot;W374&quot;,&quot;W449&quot;,&quot;W464&quot;,&quot;W555&quot;,&quot;W612&quot;,&quot;W663&quot;,&quot;W676&quot;,&quot;W763&quot;,&quot;W813&quot;,&quot;W817&quot;,&quot;W843&quot;,&quot;W869&quot;,&quot;W905&quot;,&quot;W936&quot;,&quot;W949&quot;,&quot;W972&quot;,&quot;W984&quot;]},
+&quot;Q3&quot;:{&quot;same&quot;:&quot;no&quot;},
+&quot;Q4&quot;:{&quot;count&quot;:9},
+&quot;Q5&quot;:{&quot;same&quot;:&quot;no&quot;},
+&quot;Q6&quot;:{&quot;author&quot;:&quot;A01&quot;},
+&quot;Q7&quot;:{&quot;count&quot;:19},
+&quot;Q8&quot;:{&quot;parent&quot;:&quot;I01&quot;},
+&quot;Q9&quot;:{&quot;count&quot;:95},
+&quot;Q10&quot;:{&quot;count&quot;:140},
+&quot;Q11&quot;:{&quot;count&quot;:59},
+&quot;Q12&quot;:{&quot;full&quot;:13,&quot;fractional&quot;:11},
+&quot;Q13&quot;:{&quot;full&quot;:&quot;I09&quot;,&quot;fractional&quot;:&quot;I07&quot;},
+&quot;Q14&quot;:{&quot;full&quot;:46,&quot;fractional&quot;:42},
+&quot;Q15&quot;:{&quot;count&quot;:25},
+&quot;Q16&quot;:{&quot;count&quot;:88},
+&quot;Q17&quot;:{&quot;works&quot;:[&quot;W04&quot;,&quot;W05&quot;,&quot;W271&quot;,&quot;W813&quot;,&quot;W936&quot;,&quot;W949&quot;]},
+&quot;Q18&quot;:{&quot;count&quot;:15},
+&quot;Q19&quot;:{&quot;count&quot;:27},
+&quot;Q20&quot;:{&quot;works&quot;:[&quot;W226&quot;,&quot;W1049&quot;,&quot;W432&quot;,&quot;W210&quot;,&quot;W416&quot;,&quot;W506&quot;,&quot;W611&quot;,&quot;W219&quot;,&quot;W460&quot;,&quot;W663&quot;,&quot;W877&quot;,&quot;W263&quot;,&quot;W407&quot;,&quot;W42&quot;,&quot;W556&quot;,&quot;W612&quot;,&quot;W522&quot;,&quot;W728&quot;,&quot;W524&quot;,&quot;W730&quot;,&quot;W545&quot;,&quot;W322&quot;,&quot;W02&quot;]},
+&quot;Q21&quot;:{&quot;count&quot;:45},
+&quot;Q22&quot;:{&quot;more_in_total&quot;:&quot;W30&quot;,&quot;more_in_window&quot;:&quot;W31&quot;},
+&quot;Q23&quot;:{&quot;total&quot;:16,&quot;in_window&quot;:2},
+&quot;Q24&quot;:{&quot;count&quot;:12},
+&quot;Q25&quot;:{&quot;count&quot;:19},
+&quot;Q26&quot;:{&quot;counts&quot;:&quot;no&quot;},
+&quot;Q27&quot;:{&quot;institution&quot;:&quot;I12&quot;,&quot;citing_works&quot;:12},
+&quot;Q28&quot;:{&quot;count&quot;:4},
+&quot;Q29&quot;:{&quot;author&quot;:7,&quot;institution&quot;:10,&quot;country&quot;:20},
+&quot;Q30&quot;:{&quot;count&quot;:14},
+&quot;Q31&quot;:{&quot;works&quot;:[&quot;W682&quot;,&quot;W1042&quot;,&quot;W338&quot;,&quot;W52&quot;,&quot;W51&quot;,&quot;W895&quot;,&quot;W337&quot;,&quot;W546&quot;,&quot;W801&quot;,&quot;W50&quot;,&quot;W396&quot;]},
+&quot;Q32&quot;:{&quot;count&quot;:17},
+&quot;Q33&quot;:{&quot;work&quot;:&quot;W20&quot;},
+&quot;Q34&quot;:{&quot;count&quot;:7},
+&quot;Q35&quot;:{&quot;count&quot;:25},
+&quot;Q36&quot;:{&quot;count&quot;:36},
+&quot;Q37&quot;:{&quot;institution&quot;:&quot;I06&quot;},
+&quot;Q38&quot;:{&quot;institutions&quot;:[&quot;I01&quot;,&quot;I02&quot;,&quot;I03&quot;,&quot;I04&quot;]},
+&quot;Q39&quot;:{&quot;count&quot;:19},
+&quot;Q40&quot;:{&quot;source&quot;:&quot;S01&quot;},
+&quot;Q41&quot;:{&quot;higher&quot;:&quot;no&quot;},
+&quot;Q42&quot;:{&quot;count&quot;:0},
+&quot;Q43&quot;:{&quot;research&quot;:&quot;no&quot;},
+&quot;Q44&quot;:{&quot;institutions&quot;:[&quot;I02&quot;,&quot;I03&quot;,&quot;I04&quot;,&quot;I05&quot;,&quot;I19&quot;,&quot;I20&quot;]},
+&quot;Q45&quot;:{&quot;count&quot;:16},
+&quot;Q46&quot;:{&quot;parent&quot;:&quot;I06&quot;}}
+```</code></pre></div></details>
+
+
+  </main>
+</div>
+</body>
+</html>

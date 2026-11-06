@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>D3 sql+executed, run 3: the query session · Semantics ladder</title>
+  <link rel="stylesheet" href="../../../../../../static/css/site.css">
+  <script src="../../../../../../static/js/site.js" defer></script>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <a class="brand" href="../../../../../../index.html">Semantics ladder</a>
+    <p class="brand-sub">How much does an LLM gain from being told what data means?</p>
+    <div class="nav-group">The experiment</div>
+    <ul>
+      <li><a class="" href="../../../../../../index.html">Goals</a></li>
+      <li><a class="" href="../../../../../../method/index.html">Method</a></li>
+    </ul>
+    
+    <div class="nav-group">Credit ratings</div>
+    <ul>
+      <li><a class="" href="../../../../../../domains/credit_paths/index.html">Introduction</a></li><li><a class="" href="../../../../../../domains/credit/data/index.html">Data</a></li><li><a class="" href="../../../../../../domains/credit/questions/index.html">Questions and traps</a></li><li><a class="" href="../../../../../../domains/credit/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">Research analytics</div>
+    <ul>
+      <li><a class="" href="../../../../../../domains/research_850/index.html">Introduction</a></li><li><a class="" href="../../../../../../domains/research/data/index.html">Data</a></li><li><a class="" href="../../../../../../domains/research/questions/index.html">Questions and traps</a></li><li><a class="" href="../../../../../../domains/research/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">The results</div>
+    <ul>
+      <li><a class="" href="../../../../../../scores/index.html">Scores</a></li>
+      <li><a class="" href="../../../../../../conclusions/index.html">Conclusions</a></li>
+      <li><a class="" href="../../../../../index.html">Run archive</a></li>
+    </ul>
+    <p class="nav-foot">All data is invented: the companies, LEIs, ratings, works, people and institutions. Nothing here is any rating agency's or bibliographic database's data or definitions.</p>
+  </nav>
+  <main class="content">
+    <h1>D3 sql+executed, run 3: the query session</h1>
+    
+<p><a href="../../../index.html">← back to the run</a></p>
+<div class="status"><span class="pill ok">24 queries</span><span class="pill ok">0 failed</span><span class="pill ok">4 rounds</span></div>
+
+<details class="source" ><summary>The opening prompt</summary>
+  <div class="code"><pre><code>## The data
+
+You can&#x27;t see the data, but you can query it. It is in DuckDB, in the tables below. Write DuckDB SQL.
+
+To run queries, reply with one or more fenced blocks (```sql), and nothing else is needed:
+each is run and its results sent back to you. You have up to 8 rounds of queries.
+When you have what you need, reply with the final answers and no queries.
+
+All columns are text (VARCHAR); dates are ISO strings.
+
+- `works` (802 rows): work_id, title, year, type, source_id, retracted, research_output, record_ids
+- `people` (160 rows): person_id, name, orcid, author_ids
+- `credits` (1430 rows): work_id, person_id, institution_id
+- `institutions` (31 rows): institution_id, name, ror, country, type, parent_id
+- `institution_units` (44 rows): institution_id, counts_towards, levels_up
+- `sources` (14 rows): source_id, name, issn, type, tier, tier_rank, delisted
+- `citations` (979 rows): citing_work_id, cited_work_id
+
+These tables are the data after its rules have been applied. Test records are gone. A preprint is merged into its published version (record_ids lists the records each work merges). research_output says whether a work counts as research output. Author records are merged into people (author_ids lists them). credits gives the one institution credited for each person on each work. institution_units lists every institution each institution&#x27;s works count towards, itself included, with how many levels up. citations links merged works, and only from citing works that count. tier_rank ranks journal tiers, 1 the highest; a delisted source&#x27;s works are not research output.
+
+## Questions
+
+Answer each question below from the data above. Start each answer on a new line with its
+number in bold, like **Q1.**, give the direct answer first, then at most two sentences of
+reasoning that cite the records (IDs) you relied on.
+
+Then end with one JSON block (```json) holding the structured answer to each question listed
+here, with exactly these fields, shaped like {&quot;Q1&quot;: {&quot;field&quot;: value}, ...}. Name works, authors, institutions and sources by their record ID: the work_id, author_id, institution_id or source_id in the CSV files, or the part of the IRI after res: in the RDF (W01, A07, I02, S03; not their titles or names).
+
+- Q1: count (a number)
+- Q2: works (a list of record IDs)
+- Q3: same (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q4: count (a number)
+- Q5: same (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q6: author (a record ID)
+- Q7: count (a number)
+- Q8: parent (a record ID)
+- Q9: count (a number)
+- Q10: count (a number)
+- Q11: count (a number)
+- Q12: full (a number), fractional (a number)
+- Q13: full (a record ID), fractional (a record ID)
+- Q14: full (a number), fractional (a number)
+- Q15: count (a number)
+- Q16: count (a number)
+- Q17: works (a list of record IDs)
+- Q18: count (a number)
+- Q19: count (a number)
+- Q20: works (a list of record IDs)
+- Q21: count (a number)
+- Q22: more_in_total (a record ID), more_in_window (a record ID)
+- Q23: total (a number), in_window (a number)
+- Q24: count (a number)
+- Q25: count (a number)
+- Q26: counts (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q27: institution (a record ID), citing_works (a number)
+- Q28: count (a number)
+- Q29: author (a number), institution (a number), country (a number)
+- Q30: count (a number)
+- Q31: works (a list of record IDs)
+- Q32: count (a number)
+- Q33: work (a record ID)
+- Q34: count (a number)
+- Q35: count (a number)
+- Q36: count (a number)
+- Q37: institution (a record ID)
+- Q38: institutions (a list of record IDs)
+- Q39: count (a number)
+- Q40: source (a record ID)
+- Q41: higher (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q42: count (a number)
+- Q43: research (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q44: institutions (a list of record IDs)
+- Q45: count (a number)
+- Q46: parent (a record ID)
+
+Q1. How many distinct people do the author records named &quot;Mara Ellison&quot;, &quot;M. Ellison&quot; and &quot;Ellison, Mara J.&quot; stand for?
+Q2. List every work, of any type, that Mara Ellison (A01) is an author of.
+Q3. Is the Jonas Brandt who wrote W37 the same person as the Jonas Brandt who wrote W38?
+Q4. How many research works has the Jonas Brandt of Albury Metropolitan University (A05) authored?
+Q5. Is the M. Ellison who wrote W08 the same person as the Mara Ellison who wrote W01?
+Q6. Which author has the most research works credited to the University of Albury, its units included?
+Q7. How many research works has Mara Ellison authored?
+Q8. What is the ultimate parent of the Tessel Laboratory for Ocean Sensing (I04)?
+Q9. How many research works is the University of Albury (I02) credited with, its units included?
+Q10. How many research works is the Albury University System (I01) credited with, all its units included?
+Q11. How many research works is Kesting University (I07) credited with, its units included?
+Q12. How many research works did Kesting University (I07, units included) publish in 2024, under full counting and under fractional counting (each work split equally among its authors)?
+Q13. In 2024, which had more research works, Kesting University (I07) or Rostval Technical University (I09): under full counting, and under fractional counting?
+Q14. How many research works did GB institutions publish in 2024, under full counting and under fractional counting (each work split equally among its authors, each author&#x27;s share going to their institution&#x27;s country)?
+Q15. How many research works appeared in Ocean Sensing Letters (S02) in 2024?
+Q16. How many research works appeared in the Journal of Marine Autonomy (S01)?
+Q17. Which of Mara Ellison&#x27;s works are not research output because of their document type?
+Q18. How many distinct research works has Priya Ramanathan (A07) authored?
+Q19. How many distinct works cite &quot;Drift-aware mapping with low-cost sonar&quot;, in either of its versions?
+Q20. Which works in the data are preprints of another work that is also in the data?
+Q21. How many research works is Oskel Polytechnic (I14) credited with?
+Q22. Which has more citations, W30 or W31 (counting both versions of each): in total, and within its publication year and the two years after?
+Q23. How many citations has W30 received in total, and how many within its publication year and the two years after?
+Q24. How many research works has Lena Vossberg (A09) authored?
+Q25. What is the total of the citation counts of Lena Vossberg&#x27;s research works?
+Q26. Does W23 count towards Kesting University&#x27;s research output?
+Q27. Which other institution&#x27;s works cite Kesting University&#x27;s research works the most, each citing work counted once per institution, and how many of its works do?
+Q28. How many distinct works from Rostval Technical University (I09) cite Kesting University&#x27;s research works?
+Q29. Of the works citing &quot;Drift-aware mapping with low-cost sonar&quot; (either version), how many are self-citations at the level of authors, of the University of Albury (units included), and of countries?
+Q30. Of the works citing &quot;Drift-aware mapping with low-cost sonar&quot; (either version), how many are self-citations at the level of the Albury University System?
+Q31. Which works cite at least one of the works that cite W01?
+Q32. How many distinct works are within two citation hops of W01 (citing it, or citing a work that cites it)?
+Q33. Which of Kesting University&#x27;s research works has the most citations?
+Q34. How many research works was Kesting University (units included) credited with in 2025?
+Q35. How many research works is the Kesting Institute of Hydrodynamics (I08) credited with?
+Q36. How many research works appeared in the Proceedings of the Hydrodynamics Forum (S06)?
+Q37. Which institution is W70 credited to?
+Q38. Which institutions is W71 credited to, at every level?
+Q39. How many of the University of Albury&#x27;s research works (units included) appeared in a source of the highest tier?
+Q40. Which source is in the highest tier?
+Q41. Is Coastal Engineering Review (S03) in a higher tier than Ocean Sensing Letters (S02)?
+Q42. How many research works appeared in Global Marine Science Reports (S04)?
+Q43. Is W07 research output?
+Q44. Which institutions are part of the Albury University System, at any level below it?
+Q45. How many research works is the Halloran Institute for Coastal Studies (I06) credited with?
+Q46. What is the ultimate parent of the Halloran Institute for Coastal Studies (I06)?
+Q47. Why do Kesting University and Rostval Technical University swap places in 2024 between full and fractional counting?
+Q48. Why is W70 not one of the University of Albury&#x27;s research works, though its author lists the Tessel Laboratory?</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>I&#x27;ll start by looking at the tables.
+
+```sql
+SELECT * FROM institutions;
+```
+```sql
+SELECT * FROM sources;
+```
+```sql
+SELECT * FROM institution_units;
+```
+```sql
+SELECT * FROM people WHERE name LIKE &#x27;%Ellison%&#x27; OR name LIKE &#x27;%Brandt%&#x27; OR name LIKE &#x27;%Ramanathan%&#x27; OR name LIKE &#x27;%Vossberg%&#x27;;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| institution_id | name | ror | country | type | parent_id |
+|---|---|---|---|---|---|
+| I01 | Albury University System | 0hygr4985 | GB | SYS |  |
+| I02 | University of Albury | 06safhw22 | GB | UNI | I01 |
+| I03 | Albury Centre for Marine Robotics | 06a9yq342 | GB | LAB | I02 |
+| I04 | Tessel Laboratory for Ocean Sensing | 0002ezf81 | GB | LAB | I03 |
+| I05 | Albury Metropolitan University | 0ww7kxb57 | GB | UNI | I01 |
+| I06 | Halloran Institute for Coastal Studies | 0175f3924 | GB | AFF | I02 |
+| I07 | Kesting University | 0593t4875 | DE | UNI |  |
+| I08 | Kesting Institute of Hydrodynamics | 0brjdg570 | DE | LAB | I07 |
+| I09 | Rostval Technical University | 0k8rh7879 | NL | UNI |  |
+| I10 | Marrow Instruments BV | 0t3x83535 | NL | CO |  |
+| I11 | Brevin Ocean Agency | 0wvack776 | FR | GOV |  |
+| I12 | Université de Lorvain | 091pt9775 | FR | UNI |  |
+| I13 | Dunmore College | 095cwy722 | GB | UNI |  |
+| I14 | Oskel Polytechnic | 06t6n5818 | NL | UNI |  |
+| I15 | Carrow State University | 0v91gp428 | US | UNI |  |
+| I16 | Hoshimine Institute of Technology | 06afa6f88 | JP | UNI |  |
+| I17 | Université de Mallois | 0pshcv029 | CA | UNI |  |
+| I18 | Universidad de Ventolera | 0ay9jr885 | ES | UNI |  |
+| I19 | Albury Laboratory for Acoustic Imaging | 0xe2n1515 | GB | LAB | I02 |
+| I20 | Albury Metropolitan Centre for Port Studies | 0bp5b1111 | GB | LAB | I05 |
+| I21 | Wexcombe Institute for Estuary Research | 0ms1zdt74 | GB | AFF | I05 |
+| I22 | Sandhaven Institute for Wave Research | 0rn08b412 | DE | AFF | I07 |
+| I23 | Rostval Laboratory for Offshore Structures | 0zekfva10 | NL | LAB | I09 |
+| I24 | Pellmore University | 0n0j86p46 | US | UNI |  |
+| I25 | Università di Calvessa | 08mz9rf83 | IT | UNI |  |
+| I26 | Tarnowa University of Technology | 0189z6431 | PL | UNI |  |
+| I27 | Kirrabay University | 0wam41j64 | AU | UNI |  |
+| I28 | Nordvik University | 00etvqe29 | NO | UNI |  |
+| I29 | Hanseo Ocean Institute | 0g18r1r20 | KR | GOV |  |
+| I30 | Universidade de Arvela | 0ha4xax60 | PT | UNI |  |
+| I31 | Corrimal Marine Systems Inc | 0nq63kw54 | US | CO |  |
+
+Query 2:
+
+| source_id | name | issn | type | tier | tier_rank | delisted |
+|---|---|---|---|---|---|---|
+| S01 | Journal of Marine Autonomy | 9866-3925 | JOU | K3 | 1 | no |
+| S02 | Ocean Sensing Letters | 3195-4973 | JOU | K2 | 2 | no |
+| S03 | Coastal Engineering Review | 1154-9679 | JOU | K1 | 3 | no |
+| S04 | Global Marine Science Reports | 8864-5325 | JOU | K0 |  | yes |
+| S05 | OceanArXiv |  | REP |  |  | no |
+| S06 | Proceedings of the Hydrodynamics Forum | 9804-2748 | JOU | K2 | 2 | no |
+| S07 | Journal of Estuarine Dynamics | 1483-2835 | JOU | K2 | 2 | no |
+| S08 | Hydrology Notes | 9832-2482 | JOU | K1 | 3 | no |
+| S09 | Journal of Coastal Hydraulics | 3431-7424 | JOU | K2 | 2 | no |
+| S10 | Marine Technology Bulletin | 7809-8515 | JOU | K1 | 3 | no |
+| S11 | Annals of Ocean Observation | 8324-8964 | JOU | K2 | 2 | no |
+| S12 | Shelf Sea Letters | 8103-2767 | JOU | K1 | 3 | no |
+| S13 | International Journal of Ocean Frontiers | 1765-9671 | JOU | K0 |  | yes |
+| S14 | CoastRxiv |  | REP |  |  | no |
+
+Query 3:
+
+| institution_id | counts_towards | levels_up |
+|---|---|---|
+| I01 | I01 | 0 |
+| I02 | I02 | 0 |
+| I02 | I01 | 1 |
+| I03 | I03 | 0 |
+| I03 | I02 | 1 |
+| I03 | I01 | 2 |
+| I04 | I04 | 0 |
+| I04 | I03 | 1 |
+| I04 | I02 | 2 |
+| I04 | I01 | 3 |
+| I05 | I05 | 0 |
+| I05 | I01 | 1 |
+| I06 | I06 | 0 |
+| I07 | I07 | 0 |
+| I08 | I08 | 0 |
+| I08 | I07 | 1 |
+| I09 | I09 | 0 |
+| I10 | I10 | 0 |
+| I11 | I11 | 0 |
+| I12 | I12 | 0 |
+| I13 | I13 | 0 |
+| I14 | I14 | 0 |
+| I15 | I15 | 0 |
+| I16 | I16 | 0 |
+| I17 | I17 | 0 |
+| I18 | I18 | 0 |
+| I19 | I19 | 0 |
+| I19 | I02 | 1 |
+| I19 | I01 | 2 |
+| I20 | I20 | 0 |
+| I20 | I05 | 1 |
+| I20 | I01 | 2 |
+| I21 | I21 | 0 |
+| I22 | I22 | 0 |
+| I23 | I23 | 0 |
+| I23 | I09 | 1 |
+| I24 | I24 | 0 |
+| I25 | I25 | 0 |
+| I26 | I26 | 0 |
+| I27 | I27 | 0 |
+| I28 | I28 | 0 |
+| I29 | I29 | 0 |
+| I30 | I30 | 0 |
+| I31 | I31 | 0 |
+
+Query 4:
+
+| person_id | name | orcid | author_ids |
+|---|---|---|---|
+| A01 | Mara Ellison | 0000-0002-9841-6229 | A01 A02 A03 A101 |
+| A04 | M. Ellison | 0000-0004-8662-8360 | A04 |
+| A05 | Jonas Brandt | 0000-0001-6105-5008 | A05 A104 |
+| A06 | Jonas Brandt | 0000-0007-5475-1779 | A06 |
+| A07 | Priya Ramanathan | 0000-0009-2298-3695 | A07 |
+| A09 | Lena Vossberg | 0000-0000-8073-7028 | A09 A103 |
+| A102 | M. Ellison | 0000-0008-4738-8328 | A102 |
+| A105 | Jonas Brandt | 0000-0004-9046-7961 | A105 |
+| A108 | Priya Ramanathan | 0000-0007-1802-8393 | A108 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>```sql
+SELECT w.*, (SELECT string_agg(c.person_id||&#x27;:&#x27;||c.institution_id, &#x27;, &#x27;) FROM credits c WHERE c.work_id=w.work_id) AS cr FROM works w WHERE w.work_id IN (SELECT work_id FROM credits WHERE person_id IN (&#x27;A01&#x27;,&#x27;A04&#x27;,&#x27;A05&#x27;,&#x27;A06&#x27;,&#x27;A07&#x27;,&#x27;A09&#x27;,&#x27;A102&#x27;,&#x27;A105&#x27;,&#x27;A108&#x27;)) ORDER BY w.work_id;
+```
+```sql
+SELECT * FROM works WHERE title LIKE &#x27;%Drift-aware%&#x27; OR work_id IN (&#x27;W01&#x27;,&#x27;W07&#x27;,&#x27;W23&#x27;,&#x27;W30&#x27;,&#x27;W31&#x27;,&#x27;W37&#x27;,&#x27;W38&#x27;,&#x27;W70&#x27;,&#x27;W71&#x27;,&#x27;W08&#x27;) OR record_ids LIKE &#x27;% %&#x27; ORDER BY work_id;
+```
+```sql
+SELECT type, research_output, retracted, count(*) FROM works GROUP BY ALL;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| work_id | title | year | type | source_id | retracted | research_output | record_ids | cr |
+|---|---|---|---|---|---|---|---|---|
+| W01 | Adaptive path planning for underwater gliders | 2021 | ART | S01 | false | yes | W01 | A01:I02, A07:I03 |
+| W03 | Drift-aware mapping with low-cost sonar | 2023 | ART | S02 | false | yes | W02 W03 | A01:I02, A07:I03 |
+| W04 | Editorial: a new decade of marine autonomy | 2023 | EDT | S01 | false | no | W04 | A01:I02 |
+| W05 | Erratum: Drift-aware mapping with low-cost sonar | 2024 | ERR | S02 | false | no | W05 | A01:I02, A07:I03 |
+| W06 | Shoreline change detection from glider transects | 2024 | ART | S03 | false | yes | W06 | A01:I02, A15:I13 |
+| W07 | Low-cost sonar arrays for coastal monitoring | 2020 | ART | S04 | false | no | W07 | A01:I02 |
+| W08 | Turbulent wake modelling behind tidal turbines | 2025 | ART | S01 | false | yes | W08 | A04:I07 |
+| W1005 | Remote sensing of buoy telemetry in fjords | 2025 | ART | S02 | false | yes | W1005 | A01:I02, A111:I02, A198:I17 |
+| W1018 | Remote sensing of estuarine salinity in the Brevin shelf | 2025 | ART | S08 | false | yes | W1018 | A108:I16 |
+| W1020 | Machine learning for vortex shedding in mixed-energy coasts | 2020 | ART | S13 | false | no | W1020 | A04:I07 |
+| W1025 | Long-term trends in stratified flows | 2020 | ART | S02 | true | no | W1025 | A09:I07 |
+| W1031 | Remote sensing of internal waves in the open shelf | 2025 | ART | S01 | false | yes | W1031 | A06:I12, A158:I12 |
+| W1038 | Low-cost methods for marsh accretion | 2020 | ART | S02 | false | yes | W1038 W556 | A05:I05, A164:I14 |
+| W1048 | Long-term trends in fleet coordination in shallow channels | 2023 | ART | S10 | false | yes | W1048 | A01:I02 |
+| W1050 | Low-cost methods for glider navigation in the Wexcombe marshes | 2024 | ART | S09 | false | yes | W1050 | A01:I02, A114:I02 |
+| W1056 | A model of sonar imaging | 2023 | ART | S02 | false | yes | W1056 | A102:I09 |
+| W12 | Sonar mosaics from glider fleets | 2024 | ART | S02 | false | yes | W12 | A01:I02, A16:I05 |
+| W13 | Fleet coordination for survey gliders | 2024 | ART | S01 | false | yes | W13 | A07:I03 |
+| W14 | Harbour mapping with autonomous surface vessels | 2025 | ART | S03 | false | yes | W14 | A05:I05 |
+| W16 | Sonar-based wake detection | 2025 | ART | S02 | false | yes | W16 | A04:I07 |
+| W19 | Glider-borne turbidity sensing | 2025 | ART | S02 | false | yes | W19 | A01:I02 |
+| W20 | Bed shear stress under breaking waves | 2024 | ART | S01 | false | yes | W20 | A09:I07, A13:I11 |
+| W203 | A community intercomparison of beach profiles | 2024 | ART | S03 | false | yes | W203 | A09:I07, A10:I08, A139:I07, A143:I08, A144:I08, A225:I28 |
+| W206 | Observations of buoy telemetry in a semi-enclosed sea | 2020 | ART | S01 | false | yes | W206 | A01:I02, A123:I19 |
+| W21 | A field campaign on tidal mixing | 2024 | ART | S02 | false | yes | W21 | A09:I07, A10:I08, A107:I09, A12:I10 |
+| W22 | Turbulence closures for coastal models: a review | 2024 | REV | S03 | false | yes | W22 | A09:I07 |
+| W23 | Anomalous dissipation in estuarine plumes | 2023 | ART | S02 | true | no | W23 | A09:I07 |
+| W232 | A model of channel hydraulics | 2019 | ART | S06 | false | yes | W232 | A09:I07, A137:I07 |
+| W238 | Observations of survey vessel autonomy in tidal inlets | 2023 | ART | S02 | false | yes | W238 | A01:I02, A111:I02, A32:I17 |
+| W242 | Remote sensing of estuarine salinity | 2024 | ART | S03 | false | yes | W242 | A105:I14 |
+| W251 | Remote sensing of sensor calibration | 2023 | ART | S02 | false | yes | W219 W251 | A07:I03, A125:I19 |
+| W262 | Revisiting sensor calibration in a semi-enclosed sea | 2025 | ART | S01 | false | yes | W262 | A07:I03, A194:I30 |
+| W271 | Editorial: battery endurance | 2019 | EDT | S01 | false | no | W271 | A01:I02 |
+| W28 | Calibration drift in conductivity sensors | 2024 | ART | S02 | false | yes | W28 | A06:I12, A15:I13, A16:I05, A19:I09 |
+| W292 | A model of underwater docking in the Albury estuary | 2020 | ART | S01 | false | yes | W292 | A07:I03, A155:I12 |
+| W293 | Low-cost methods for buoy telemetry | 2023 | ART | S02 | false | yes | W293 | A07:I03, A125:I19 |
+| W34 | Evaluating turbulence closures against flume data | 2025 | ART | S03 | false | yes | W34 | A06:I12 |
+| W357 | Observations of tidal mixing | 2025 | ART | S10 | false | yes | W357 | A102:I09, A107:I09, A148:I09, A20:I09 |
+| W366 | Scaling laws for tidal mixing in harbour basins | 2022 | ART | S03 | false | yes | W366 | A09:I07, A219:I30 |
+| W37 | Port traffic and seabed disturbance | 2022 | ART | S03 | false | yes | W37 | A05:I05 |
+| W374 | Machine learning for underwater docking in the open shelf | 2023 | ART | S02 | true | no | W374 | A01:I02, A114:I02 |
+| W38 | Seagrass mapping from aerial imagery | 2023 | ART | S02 | false | yes | W38 | A06:I12 |
+| W384 | Machine learning for storm surge | 2025 | ART | S10 | false | yes | W384 | A06:I12, A157:I12 |
+| W417 | A model of turbulent wakes in harbour basins | 2023 | ART | S02 | false | yes | W417 | A09:I07, A143:I08 |
+| W422 | Remote sensing of coastal upwelling | 2023 | ART | S01 | false | yes | W422 W506 | A102:I09, A152:I09 |
+| W428 | Revisiting turbulent wakes in the open shelf | 2022 | ART | S03 | false | yes | W428 | A04:I07, A174:I17 |
+| W435 | Remote sensing of underwater docking in a macrotidal bay | 2023 | ART | S06 | false | yes | W435 | A07:I03, A125:I19 |
+| W437 | Editorial: low-cost methods for beach profiles in shallow channels | 2024 | EDT | S08 | false | no | W437 | A108:I16, A176:I24 |
+| W449 | Machine learning for glider navigation | 2022 | ART | S04 | false | no | W449 | A01:I02 |
+| W464 | A framework for turbidity sensing | 2021 | ART | S09 | false | yes | W464 W663 | A01:I02, A224:I16 |
+| W478 | Long-term trends in bed shear stress in a semi-enclosed sea | 2019 | ART | S01 | false | yes | W478 | A09:I07 |
+| W487 | Remote sensing of wave runup in the open shelf | 2024 | ART | S11 | false | yes | W487 | A102:I09, A177:I25, A195:I31, A221:I30 |
+| W509 | Uncertainty in harbour seiches estimates in fjords | 2024 | ART | S08 | false | yes | W509 | A108:I16, A183:I31, A198:I17 |
+| W525 | A model of harbour seiches in the open shelf | 2024 | ART | S02 | false | yes | W525 | A06:I12, A158:I12 |
+| W531 | A framework for stratified flows in shallow channels | 2023 | ART | S01 | false | yes | W531 | A09:I07 |
+| W553 | Field measurements of buoy telemetry in mixed-energy coasts | 2022 | ART | S03 | false | yes | W553 | A07:I03 |
+| W554 | Remote sensing of coastal upwelling in a macrotidal bay | 2024 | ART | S01 | false | yes | W554 | A05:I05 |
+| W555 | A model of underwater docking in a macrotidal bay | 2020 | ART | S09 | false | yes | W555 | A01:I02, A123:I19 |
+| W565 | Observations of beach profiles | 2019 | ART | S03 | false | yes | W565 | A05:I05 |
+| W598 | Revisiting underwater docking in a laboratory flume | 2024 | ART | S10 | false | yes | W598 | A07:I03 |
+(41 more rows not shown)
+
+Query 2:
+
+| work_id | title | year | type | source_id | retracted | research_output | record_ids |
+|---|---|---|---|---|---|---|---|
+| W01 | Adaptive path planning for underwater gliders | 2021 | ART | S01 | false | yes | W01 |
+| W03 | Drift-aware mapping with low-cost sonar | 2023 | ART | S02 | false | yes | W02 W03 |
+| W05 | Erratum: Drift-aware mapping with low-cost sonar | 2024 | ERR | S02 | false | no | W05 |
+| W07 | Low-cost sonar arrays for coastal monitoring | 2020 | ART | S04 | false | no | W07 |
+| W08 | Turbulent wake modelling behind tidal turbines | 2025 | ART | S01 | false | yes | W08 |
+| W1027 | Low-cost methods for bed shear stress in fjords: a review | 2024 | REV | S10 | false | yes | W1027 W407 |
+| W1038 | Low-cost methods for marsh accretion | 2020 | ART | S02 | false | yes | W1038 W556 |
+| W23 | Anomalous dissipation in estuarine plumes | 2023 | ART | S02 | true | no | W23 |
+| W251 | Remote sensing of sensor calibration | 2023 | ART | S02 | false | yes | W219 W251 |
+| W279 | Low-cost methods for storm surge in shallow channels | 2019 | ART | S01 | false | yes | W263 W279 |
+| W30 | Tidal stream resource maps for the Dunmore coast | 2019 | ART | S03 | false | yes | W30 |
+| W301 | A framework for wave boundary layers in shallow channels | 2020 | ART | S02 | false | yes | W301 W611 |
+| W303 | A framework for tidal asymmetry in the Albury estuary | 2020 | ART | S03 | false | yes | W303 W730 |
+| W31 | Machine-learned tidal forecasts | 2023 | ART | S01 | false | yes | W31 W42 |
+| W312 | Observations of estuarine plumes | 2021 | ART | S03 | false | yes | W312 W522 |
+| W37 | Port traffic and seabed disturbance | 2022 | ART | S03 | false | yes | W37 |
+| W38 | Seagrass mapping from aerial imagery | 2023 | ART | S02 | false | yes | W38 |
+| W422 | Remote sensing of coastal upwelling | 2023 | ART | S01 | false | yes | W422 W506 |
+| W453 | A framework for fleet coordination | 2019 | ART | S03 | false | yes | W322 W453 |
+| W464 | A framework for turbidity sensing | 2021 | ART | S09 | false | yes | W464 W663 |
+| W496 | Low-cost methods for sensor calibration | 2022 | ART | S02 | false | yes | W460 W496 |
+| W640 | Uncertainty in turbidity sensing estimates in a semi-enclosed sea | 2021 | ART | S02 | false | yes | W416 W640 |
+| W665 | Uncertainty in wave boundary layers estimates | 2019 | ART | S03 | false | yes | W665 W728 |
+| W70 | Optical backscatter in turbid estuaries | 2023 | ART | S02 | false | yes | W70 |
+| W71 | Low-power optical sensors for gliders | 2024 | ART | S01 | false | yes | W71 |
+| W710 | Uncertainty in estuarine plumes estimates | 2023 | ART | S02 | false | yes | W226 W710 |
+| W742 | Field measurements of beach profiles | 2019 | ART | S11 | false | yes | W545 W742 |
+| W789 | Field measurements of tidal mixing | 2022 | ART | S09 | false | yes | W1049 W789 |
+| W807 | Field measurements of harbour seiches in the North Sea | 2020 | ART | S03 | false | yes | W524 W807 |
+| W869 | A model of survey vessel autonomy in mixed-energy coasts | 2023 | ART | S02 | false | yes | W612 W869 |
+| W879 | Revisiting tidal asymmetry in tidal inlets | 2023 | ART | S02 | false | yes | W432 W879 |
+| W902 | Low-cost methods for estuarine salinity | 2021 | ART | S03 | false | yes | W210 W902 |
+| W965 | A model of breaking waves in the North Sea | 2024 | ART | S03 | false | yes | W877 W965 |
+
+Query 3:
+
+| type | research_output | retracted | count_star() |
+|---|---|---|---|
+| EDT | no | false | 33 |
+| ERR | no | false | 8 |
+| ART | yes | false | 620 |
+| SUP | yes | false | 12 |
+| PTX | no | false | 12 |
+| ART | no | false | 20 |
+| PPR | yes | false | 11 |
+| REV | yes | false | 69 |
+| REV | no | false | 4 |
+| ART | no | true | 13 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;sql&quot;&gt;
+&lt;/invoke&gt;
+```sql
+SELECT &#x27;Q2&#x27; q, string_agg(work_id||&#x27;/&#x27;||type||&#x27;/&#x27;||research_output, &#x27;, &#x27; ORDER BY work_id) v FROM (SELECT DISTINCT w.* FROM works w JOIN credits c USING(work_id) WHERE c.person_id=&#x27;A01&#x27;);
+```
+```sql
+SELECT person_id, count(DISTINCT work_id) n FROM credits JOIN works USING(work_id) WHERE research_output=&#x27;yes&#x27; AND person_id IN (&#x27;A01&#x27;,&#x27;A05&#x27;,&#x27;A06&#x27;,&#x27;A07&#x27;,&#x27;A09&#x27;,&#x27;A04&#x27;,&#x27;A102&#x27;) GROUP BY 1 ORDER BY 1;
+```
+```sql
+SELECT c.person_id, count(DISTINCT work_id) n FROM credits c JOIN works w USING(work_id) JOIN institution_units u ON u.institution_id=c.institution_id WHERE w.research_output=&#x27;yes&#x27; AND u.counts_towards=&#x27;I02&#x27; GROUP BY 1 ORDER BY 2 DESC LIMIT 4;
+```
+```sql
+SELECT u.counts_towards inst, count(DISTINCT work_id) n, count(DISTINCT work_id) FILTER (WHERE year=&#x27;2024&#x27;) n24, count(DISTINCT work_id) FILTER (WHERE year=&#x27;2025&#x27;) n25 FROM credits c JOIN works w USING(work_id) JOIN institution_units u ON u.institution_id=c.institution_id WHERE w.research_output=&#x27;yes&#x27; AND u.counts_towards IN (&#x27;I01&#x27;,&#x27;I02&#x27;,&#x27;I07&#x27;,&#x27;I09&#x27;,&#x27;I14&#x27;,&#x27;I08&#x27;,&#x27;I06&#x27;) GROUP BY 1 ORDER BY 1;
+```
+```sql
+WITH a AS (SELECT work_id, count(*) k FROM credits GROUP BY 1), x AS (SELECT DISTINCT c.work_id, u.counts_towards inst, c.person_id FROM credits c JOIN institution_units u ON u.institution_id=c.institution_id JOIN works w ON w.work_id=c.work_id WHERE w.research_output=&#x27;yes&#x27; AND w.year=&#x27;2024&#x27;) SELECT inst, count(DISTINCT work_id) full_c, sum(1.0/k) frac FROM x JOIN a USING(work_id) WHERE inst IN (&#x27;I07&#x27;,&#x27;I09&#x27;) GROUP BY 1;
+```
+```sql
+WITH a AS (SELECT work_id, count(*) k FROM credits GROUP BY 1) SELECT count(DISTINCT c.work_id) full_c, sum(1.0/k) frac FROM credits c JOIN a USING(work_id) JOIN works w ON w.work_id=c.work_id JOIN institutions i ON i.institution_id=c.institution_id WHERE w.research_output=&#x27;yes&#x27; AND w.year=&#x27;2024&#x27; AND i.country=&#x27;GB&#x27;;
+```
+```sql
+SELECT source_id, year, count(*) FROM works WHERE research_output=&#x27;yes&#x27; AND source_id IN (&#x27;S01&#x27;,&#x27;S02&#x27;,&#x27;S06&#x27;,&#x27;S04&#x27;) GROUP BY ALL ORDER BY 1,2;
+```
+```sql
+SELECT * FROM works WHERE work_id IN (&#x27;W03&#x27;,&#x27;W02&#x27;) OR title LIKE &#x27;Drift-aware%&#x27;;
+```
+```sql
+SELECT cited_work_id, citing_work_id, w.year, w.research_output, (SELECT string_agg(institution_id||&#x27;/&#x27;||person_id,&#x27;,&#x27;) FROM credits c WHERE c.work_id=citing_work_id) cr FROM citations JOIN works w ON w.work_id=citing_work_id WHERE cited_work_id IN (&#x27;W03&#x27;,&#x27;W02&#x27;,&#x27;W30&#x27;,&#x27;W31&#x27;) ORDER BY 1,2;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| q | v |
+|---|---|
+| Q2 | W01/ART/yes, W03/ART/yes, W04/EDT/no, W05/ERR/no, W06/ART/yes, W07/ART/no, W1005/ART/yes, W1048/ART/yes, W1050/ART/yes, W12/ART/yes, W19/ART/yes, W206/ART/yes, W238/ART/yes, W271/EDT/no, W374/ART/no, W449/ART/no, W464/ART/yes, W555/ART/yes, W676/ART/yes, W763/ART/no, W813/ERR/no, W817/ART/yes, W843/ART/yes, W869/ART/yes, W905/ART/yes, W936/EDT/no, W949/ERR/no, W972/ART/yes, W984/ART/yes |
+
+Query 2:
+
+| person_id | n |
+|---|---|
+| A01 | 19 |
+| A04 | 8 |
+| A05 | 9 |
+| A06 | 7 |
+| A07 | 15 |
+| A09 | 12 |
+| A102 | 9 |
+
+Query 3:
+
+| person_id | n |
+|---|---|
+| A01 | 19 |
+| A07 | 15 |
+| A110 | 14 |
+| A118 | 14 |
+
+Query 4:
+
+| inst | n | n24 | n25 |
+|---|---|---|---|
+| I01 | 140 | 34 | 16 |
+| I02 | 95 | 25 | 12 |
+| I06 | 16 | 2 | 3 |
+| I07 | 59 | 13 | 7 |
+| I08 | 25 | 6 | 3 |
+| I09 | 48 | 16 | 4 |
+| I14 | 45 | 16 | 6 |
+
+Query 5:
+
+| inst | full_c | frac |
+|---|---|---|
+| I09 | 16 | 4.0 |
+| I07 | 13 | 11.0 |
+
+Query 6:
+
+| full_c | frac |
+|---|---|
+| 46 | 41.99999999999999 |
+
+Query 7:
+
+| source_id | year | count_star() |
+|---|---|---|
+| S01 | 2019 | 12 |
+| S01 | 2020 | 8 |
+| S01 | 2021 | 9 |
+| S01 | 2022 | 8 |
+| S01 | 2023 | 11 |
+| S01 | 2024 | 24 |
+| S01 | 2025 | 16 |
+| S02 | 2019 | 15 |
+| S02 | 2020 | 12 |
+| S02 | 2021 | 12 |
+| S02 | 2022 | 8 |
+| S02 | 2023 | 18 |
+| S02 | 2024 | 25 |
+| S02 | 2025 | 20 |
+| S06 | 2019 | 4 |
+| S06 | 2020 | 2 |
+| S06 | 2021 | 5 |
+| S06 | 2022 | 3 |
+| S06 | 2023 | 8 |
+| S06 | 2024 | 9 |
+| S06 | 2025 | 5 |
+
+Query 8:
+
+| work_id | title | year | type | source_id | retracted | research_output | record_ids |
+|---|---|---|---|---|---|---|---|
+| W03 | Drift-aware mapping with low-cost sonar | 2023 | ART | S02 | false | yes | W02 W03 |
+
+Query 9:
+
+| cited_work_id | citing_work_id | year | research_output | cr |
+|---|---|---|---|---|
+| W03 | W1048 | 2023 | yes | I02/A01 |
+| W03 | W1056 | 2023 | yes | I09/A102 |
+| W03 | W12 | 2024 | yes | I02/A01,I05/A16 |
+| W03 | W13 | 2024 | yes | I03/A07 |
+| W03 | W14 | 2025 | yes | I05/A05 |
+| W03 | W15 | 2025 | yes | I13/A15 |
+| W03 | W16 | 2025 | yes | I07/A04 |
+| W03 | W17 | 2024 | yes | I11/A13 |
+| W03 | W18 | 2022 | yes | I09/A107 |
+| W03 | W214 | 2023 | yes | I13/A129 |
+| W03 | W273 | 2024 | yes | I02/A110,I14/A163 |
+| W03 | W315 | 2024 | yes | I19/A122 |
+| W03 | W349 | 2024 | yes | I20/A130 |
+| W03 | W535 | 2025 | yes | I11/A160,I13/A168 |
+| W03 | W544 | 2025 | yes | I05/A127,I05/A128 |
+| W03 | W558 | 2025 | yes | I24/A176 |
+| W03 | W598 | 2024 | yes | I03/A07 |
+| W03 | W676 | 2025 | yes | I02/A01 |
+| W03 | W711 | 2025 | yes | I12/A156 |
+| W03 | W748 | 2024 | yes | I05/A126 |
+| W03 | W761 | 2024 | yes | I06/A22 |
+| W03 | W812 | 2024 | yes | I21/A132 |
+| W03 | W833 | 2024 | yes | I03/A07,I12/A155 |
+| W03 | W843 | 2023 | yes | I02/A01,I14/A164 |
+| W03 | W889 | 2024 | yes | I13/A167 |
+| W03 | W890 | 2023 | yes | I07/A04 |
+| W03 | W931 | 2023 | yes | I04/A119 |
+| W30 | W1033 | 2025 | yes | I12/A14,I12/A156 |
+| W30 | W246 | 2023 | yes | I30/A221 |
+| W30 | W274 | 2024 | yes | I13/A15 |
+| W30 | W276 | 2022 | yes | I12/A157,I12/A158 |
+| W30 | W289 | 2022 | yes | I25/A201,I31/A207 |
+| W30 | W334 | 2023 | yes | I12/A157 |
+| W30 | W439 | 2022 | yes | I16/A185 |
+| W30 | W60 | 2020 | yes | I15/A34 |
+| W30 | W61 | 2022 | yes | I16/A35,I15/A38 |
+| W30 | W62 | 2023 | yes | I15/A34,I15/A38 |
+| W30 | W63 | 2024 | yes | I18/A33,I15/A34,I17/A44 |
+| W30 | W64 | 2025 | yes | I17/A40 |
+| W30 | W856 | 2024 | yes | I12/A156,I12/A159 |
+| W30 | W894 | 2024 | yes | I13/A167,I13/A169 |
+| W30 | W988 | 2021 | yes | I27/A215 |
+| W30 | W992 | 2025 | yes | I13/A169 |
+| W31 | W1039 | 2023 | yes | I14/A164,I14/A165 |
+| W31 | W249 | 2025 | yes | I14/A17 |
+| W31 | W318 | 2025 | yes | I14/A163,I14/A164 |
+| W31 | W62 | 2023 | yes | I15/A34,I15/A38 |
+| W31 | W65 | 2024 | yes | I16/A35,I17/A36,I18/A45 |
+| W31 | W650 | 2024 | yes | I16/A224,I17/A229 |
+| W31 | W66 | 2025 | yes | I15/A38 |
+| W31 | W67 | 2023 | yes | I16/A35,I18/A45 |
+| W31 | W757 | 2023 | yes | I11/A13 |
+| W31 | W794 | 2025 | yes | I18/A199 |
+| W31 | W851 | 2023 | yes | I15/A30 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>```sql
+SELECT work_id,title,type,source_id,retracted,research_output FROM works WHERE work_id IN (&#x27;W763&#x27;,&#x27;W813&#x27;,&#x27;W936&#x27;,&#x27;W949&#x27;,&#x27;W676&#x27;);
+```
+```sql
+SELECT work_id,title,year,type,source_id,record_ids FROM works WHERE type=&#x27;PPR&#x27; ORDER BY 1;
+```
+```sql
+SELECT count(*) FROM citations ci WHERE cited_work_id IN (SELECT work_id FROM credits JOIN works USING(work_id) WHERE person_id=&#x27;A09&#x27; AND research_output=&#x27;yes&#x27;);
+```
+```sql
+WITH k AS (SELECT DISTINCT work_id FROM credits c JOIN institution_units u USING(institution_id) JOIN works w USING(work_id) WHERE u.counts_towards=&#x27;I07&#x27; AND w.research_output=&#x27;yes&#x27;) SELECT u.counts_towards, count(DISTINCT ci.citing_work_id) n FROM citations ci JOIN k ON k.work_id=ci.cited_work_id JOIN credits c ON c.work_id=ci.citing_work_id JOIN institution_units u ON u.institution_id=c.institution_id WHERE u.counts_towards&lt;&gt;&#x27;I07&#x27; GROUP BY 1 ORDER BY 2 DESC LIMIT 4;
+```
+```sql
+WITH k AS (SELECT DISTINCT work_id FROM credits c JOIN institution_units u USING(institution_id) JOIN works w USING(work_id) WHERE u.counts_towards=&#x27;I07&#x27; AND w.research_output=&#x27;yes&#x27;) SELECT count(DISTINCT ci.citing_work_id) FROM citations ci JOIN k ON k.work_id=ci.cited_work_id JOIN credits c ON c.work_id=ci.citing_work_id JOIN institution_units u ON u.institution_id=c.institution_id WHERE u.counts_towards=&#x27;I09&#x27;;
+```
+```sql
+WITH k AS (SELECT DISTINCT work_id FROM credits c JOIN institution_units u USING(institution_id) JOIN works w USING(work_id) WHERE u.counts_towards=&#x27;I07&#x27; AND w.research_output=&#x27;yes&#x27;) SELECT cited_work_id, count(*) FROM citations JOIN k ON k.work_id=cited_work_id GROUP BY 1 ORDER BY 2 DESC LIMIT 3;
+```
+```sql
+SELECT ci.citing_work_id,
+ bool_or(c.person_id IN (&#x27;A01&#x27;,&#x27;A07&#x27;)) au,
+ bool_or(u.counts_towards=&#x27;I02&#x27;) i02,
+ bool_or(u.counts_towards=&#x27;I01&#x27;) i01,
+ bool_or(i.country=&#x27;GB&#x27;) gb
+FROM citations ci JOIN credits c ON c.work_id=ci.citing_work_id JOIN institution_units u ON u.institution_id=c.institution_id JOIN institutions i ON i.institution_id=c.institution_id
+WHERE ci.cited_work_id=&#x27;W03&#x27; GROUP BY 1;
+```
+```sql
+SELECT &#x27;q31&#x27;, string_agg(DISTINCT a.citing_work_id, &#x27;,&#x27;) FROM citations a JOIN citations b ON a.cited_work_id=b.citing_work_id WHERE b.cited_work_id=&#x27;W01&#x27;
+UNION ALL SELECT &#x27;q32&#x27;, count(DISTINCT x)::varchar FROM (SELECT citing_work_id x FROM citations WHERE cited_work_id=&#x27;W01&#x27; UNION SELECT a.citing_work_id FROM citations a JOIN citations b ON a.cited_work_id=b.citing_work_id WHERE b.cited_work_id=&#x27;W01&#x27;) WHERE x&lt;&gt;&#x27;W01&#x27;
+UNION ALL SELECT &#x27;q37&#x27;, string_agg(institution_id,&#x27;,&#x27;) FROM credits WHERE work_id=&#x27;W70&#x27;
+UNION ALL SELECT &#x27;q38&#x27;, string_agg(DISTINCT u.counts_towards,&#x27;,&#x27;) FROM credits c JOIN institution_units u USING(institution_id) WHERE work_id=&#x27;W71&#x27;
+UNION ALL SELECT &#x27;q39&#x27;, count(DISTINCT work_id)::varchar FROM credits c JOIN institution_units u USING(institution_id) JOIN works w USING(work_id) WHERE u.counts_towards=&#x27;I02&#x27; AND w.research_output=&#x27;yes&#x27; AND w.source_id=&#x27;S01&#x27;;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| work_id | title | type | source_id | retracted | research_output |
+|---|---|---|---|---|---|
+| W676 | Low-cost methods for turbidity sensing | ART | S02 | false | yes |
+| W763 | A model of glider navigation in a macrotidal bay | ART | S13 | false | no |
+| W813 | Erratum: Remote sensing of buoy telemetry in fjords | ERR | S02 | false | no |
+| W936 | Editorial: fleet coordination | EDT | S01 | false | no |
+| W949 | Erratum: Observations of survey vessel autonomy in tidal inlets | ERR | S02 | false | no |
+
+Query 2:
+
+| work_id | title | year | type | source_id | record_ids |
+|---|---|---|---|---|---|
+| W1054 | A framework for sonar imaging in the Brevin shelf | 2021 | PPR | S05 | W1054 |
+| W18 | Comparing sonar odometry methods | 2022 | PPR | S05 | W18 |
+| W221 | A model of marsh accretion in mixed-energy coasts | 2023 | PPR | S14 | W221 |
+| W306 | Seasonal variability in sediment flux in the Brevin shelf | 2023 | PPR | S14 | W306 |
+| W336 | Uncertainty in river plumes estimates in a semi-enclosed sea | 2021 | PPR | S14 | W336 |
+| W566 | A model of wave runup | 2023 | PPR | S05 | W566 |
+| W745 | A model of sonar imaging in the Brevin shelf | 2020 | PPR | S05 | W745 |
+| W747 | Observations of river plumes | 2024 | PPR | S14 | W747 |
+| W780 | Long-term trends in ocean optics in sandy coasts | 2019 | PPR | S05 | W780 |
+| W781 | Field measurements of turbidity sensing in the Wexcombe marshes | 2025 | PPR | S05 | W781 |
+| W824 | A framework for sonar imaging | 2022 | PPR | S14 | W824 |
+
+Query 3:
+
+| count_star() |
+|---|
+| 20 |
+
+Query 4:
+
+| counts_towards | n |
+|---|---|
+| I12 | 12 |
+| I01 | 5 |
+| I11 | 4 |
+| I09 | 4 |
+
+Query 5:
+
+| count(DISTINCT ci.citing_work_id) |
+|---|
+| 4 |
+
+Query 6:
+
+| cited_work_id | count_star() |
+|---|---|
+| W20 | 13 |
+| W855 | 2 |
+| W428 | 2 |
+
+Query 7:
+
+| citing_work_id | au | i02 | i01 | gb |
+|---|---|---|---|---|
+| W17 | False | False | False | False |
+| W711 | False | False | False | False |
+| W1056 | False | False | False | False |
+| W18 | False | False | False | False |
+| W15 | False | False | False | True |
+| W558 | False | False | False | False |
+| W748 | False | False | True | True |
+| W315 | False | True | True | True |
+| W761 | False | False | False | True |
+| W16 | False | False | False | False |
+| W13 | True | True | True | True |
+| W544 | False | False | True | True |
+| W273 | False | True | True | True |
+| W214 | False | False | False | True |
+| W931 | False | True | True | True |
+| W676 | True | True | True | True |
+| W1048 | True | True | True | True |
+| W349 | False | False | True | True |
+| W890 | False | False | False | False |
+| W12 | True | True | True | True |
+| W812 | False | False | False | True |
+| W14 | False | False | True | True |
+| W833 | True | True | True | True |
+| W843 | True | True | True | True |
+| W598 | True | True | True | True |
+| W535 | False | False | False | True |
+| W889 | False | False | False | True |
+
+Query 8:
+
+| &#x27;q31&#x27; | string_agg(DISTINCT a.citing_work_id, &#x27;,&#x27;) |
+|---|---|
+| q31 | W682,W1042,W396,W801,W895,W50,W338,W546,W337,W51,W52 |
+| q32 | 17 |
+| q37 | I06 |
+| q38 | I04,I02,I01,I03 |
+| q39 | 19 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>**Q1.** 3. A01 covers &quot;Mara Ellison&quot; and &quot;Ellison, Mara J.&quot; (author records A01 A02 A03 A101). &quot;M. Ellison&quot; is two different people, A04 and A102, with different ORCIDs.
+
+**Q2.** 29 works: W01, W03, W04, W05, W06, W07, W1005, W1048, W1050, W12, W19, W206, W238, W271, W374, W449, W464, W555, W676, W763, W813, W817, W843, W869, W905, W936, W949, W972, W984. These are all works credited to A01, whatever their type.
+
+**Q3.** No. W37 is by A05 (I05) and W38 by A06 (I12), and the two have different ORCIDs.
+
+**Q4.** 9, the research works credited to A05.
+
+**Q5.** No. W08 is by A04 and W01 by A01, who have different ORCIDs.
+
+**Q6.** A01, with 19 research works credited to I02 and its units.
+
+**Q7.** 19 research works for A01.
+
+**Q8.** I01. I04 sits under I03, then I02, then I01.
+
+**Q9.** 95.
+
+**Q10.** 140.
+
+**Q11.** 59.
+
+**Q12.** Full counting gives 13 and fractional gives 11.0 for I07 in 2024.
+
+**Q13.** Under full counting I09 has more (16 vs 13). Under fractional counting I07 has more (11.0 vs 4.0).
+
+**Q14.** Full counting gives 46 and fractional gives 42 for GB in 2024.
+
+**Q15.** 25.
+
+**Q16.** 88, summed over 2019–2025 for S01.
+
+**Q17.** W04, W05, W271, W813, W936 and W949, which are editorials and errata. W07, W449 and W763 fail because their sources are delisted, and W374 because it is retracted, so none of those is a document-type exclusion.
+
+**Q18.** 15 for A07. The other Priya Ramanathan (A108) is a different person.
+
+**Q19.** 27 distinct citing works of W03, the merged record of W02 and W03.
+
+**Q20.** None. The PPR works (W1054, W18, W221, W306, W336, W566, W745, W747, W780, W781, W824) each have only their own record ID, so none is merged into or paired with a published version in the data.
+
+**Q21.** 45.
+
+**Q22.** W30 has more in total (16 vs 11). W31 has more within its publication year and the two years after (11 vs 2).
+
+**Q23.** W30 has 16 citations in total and 2 within 2019–2021 (W60 and W988).
+
+**Q24.** 12 research works for A09.
+
+**Q25.** 20 citations in total across A09&#x27;s research works.
+
+**Q26.** No. W23 is retracted, so it is not research output.
+
+**Q27.** I12, with 12 citing works.
+
+**Q28.** 4.
+
+**Q29.** Authors: 7. University of Albury: 10. Countries (GB): 20.
+
+**Q30.** 14.
+
+**Q31.** W682, W1042, W396, W801, W895, W50, W338, W546, W337, W51, W52.
+
+**Q32.** 17.
+
+**Q33.** W20, with 13 citations.
+
+**Q34.** 7.
+
+**Q35.** 25.
+
+**Q36.** 36, summed over 2019–2025 for S06.
+
+**Q37.** I06.
+
+**Q38.** I04, I03, I02, I01. This is the credited institution I04 plus every level above it.
+
+**Q39.** 19, counting I02 works in S01, which is the highest tier (K3, rank 1).
+
+**Q40.** S01.
+
+**Q41.** No. S03 is tier K1 (rank 3), which is lower than S02 at K2 (rank 2).
+
+**Q42.** 0. S04 is delisted, so none of its works is research output.
+
+**Q43.** No. W07 is in S04, which is delisted.
+
+**Q44.** I02, I03, I04, I05, I19, I20. I06 and I21 are affiliates and do not count towards the system.
+
+**Q45.** 16.
+
+**Q46.** I01, going by the parent chain I06 → I02 → I01. I06 is only an affiliate: its works do not count towards I02 or I01.
+
+**Q47.** Kesting&#x27;s 2024 works have mostly Kesting-only author lists, so its fractional share stays high (11 of 13). Rostval&#x27;s 16 works are shared with other institutions&#x27; authors, so its fractional total falls to 4.
+
+**Q48.** W70 is credited to I06, which is an affiliate with no counts_towards link to I02. Its works therefore do not roll up to the University of Albury.
+
+```json
+{&quot;Q1&quot;:{&quot;count&quot;:3},&quot;Q2&quot;:{&quot;works&quot;:[&quot;W01&quot;,&quot;W03&quot;,&quot;W04&quot;,&quot;W05&quot;,&quot;W06&quot;,&quot;W07&quot;,&quot;W1005&quot;,&quot;W1048&quot;,&quot;W1050&quot;,&quot;W12&quot;,&quot;W19&quot;,&quot;W206&quot;,&quot;W238&quot;,&quot;W271&quot;,&quot;W374&quot;,&quot;W449&quot;,&quot;W464&quot;,&quot;W555&quot;,&quot;W676&quot;,&quot;W763&quot;,&quot;W813&quot;,&quot;W817&quot;,&quot;W843&quot;,&quot;W869&quot;,&quot;W905&quot;,&quot;W936&quot;,&quot;W949&quot;,&quot;W972&quot;,&quot;W984&quot;]},&quot;Q3&quot;:{&quot;same&quot;:&quot;no&quot;},&quot;Q4&quot;:{&quot;count&quot;:9},&quot;Q5&quot;:{&quot;same&quot;:&quot;no&quot;},&quot;Q6&quot;:{&quot;author&quot;:&quot;A01&quot;},&quot;Q7&quot;:{&quot;count&quot;:19},&quot;Q8&quot;:{&quot;parent&quot;:&quot;I01&quot;},&quot;Q9&quot;:{&quot;count&quot;:95},&quot;Q10&quot;:{&quot;count&quot;:140},&quot;Q11&quot;:{&quot;count&quot;:59},&quot;Q12&quot;:{&quot;full&quot;:13,&quot;fractional&quot;:11},&quot;Q13&quot;:{&quot;full&quot;:&quot;I09&quot;,&quot;fractional&quot;:&quot;I07&quot;},&quot;Q14&quot;:{&quot;full&quot;:46,&quot;fractional&quot;:42},&quot;Q15&quot;:{&quot;count&quot;:25},&quot;Q16&quot;:{&quot;count&quot;:88},&quot;Q17&quot;:{&quot;works&quot;:[&quot;W04&quot;,&quot;W05&quot;,&quot;W271&quot;,&quot;W813&quot;,&quot;W936&quot;,&quot;W949&quot;]},&quot;Q18&quot;:{&quot;count&quot;:15},&quot;Q19&quot;:{&quot;count&quot;:27},&quot;Q20&quot;:{&quot;works&quot;:[]},&quot;Q21&quot;:{&quot;count&quot;:45},&quot;Q22&quot;:{&quot;more_in_total&quot;:&quot;W30&quot;,&quot;more_in_window&quot;:&quot;W31&quot;},&quot;Q23&quot;:{&quot;total&quot;:16,&quot;in_window&quot;:2},&quot;Q24&quot;:{&quot;count&quot;:12},&quot;Q25&quot;:{&quot;count&quot;:20},&quot;Q26&quot;:{&quot;counts&quot;:&quot;no&quot;},&quot;Q27&quot;:{&quot;institution&quot;:&quot;I12&quot;,&quot;citing_works&quot;:12},&quot;Q28&quot;:{&quot;count&quot;:4},&quot;Q29&quot;:{&quot;author&quot;:7,&quot;institution&quot;:10,&quot;country&quot;:20},&quot;Q30&quot;:{&quot;count&quot;:14},&quot;Q31&quot;:{&quot;works&quot;:[&quot;W682&quot;,&quot;W1042&quot;,&quot;W396&quot;,&quot;W801&quot;,&quot;W895&quot;,&quot;W50&quot;,&quot;W338&quot;,&quot;W546&quot;,&quot;W337&quot;,&quot;W51&quot;,&quot;W52&quot;]},&quot;Q32&quot;:{&quot;count&quot;:17},&quot;Q33&quot;:{&quot;work&quot;:&quot;W20&quot;},&quot;Q34&quot;:{&quot;count&quot;:7},&quot;Q35&quot;:{&quot;count&quot;:25},&quot;Q36&quot;:{&quot;count&quot;:36},&quot;Q37&quot;:{&quot;institution&quot;:&quot;I06&quot;},&quot;Q38&quot;:{&quot;institutions&quot;:[&quot;I04&quot;,&quot;I03&quot;,&quot;I02&quot;,&quot;I01&quot;]},&quot;Q39&quot;:{&quot;count&quot;:19},&quot;Q40&quot;:{&quot;source&quot;:&quot;S01&quot;},&quot;Q41&quot;:{&quot;higher&quot;:&quot;no&quot;},&quot;Q42&quot;:{&quot;count&quot;:0},&quot;Q43&quot;:{&quot;research&quot;:&quot;no&quot;},&quot;Q44&quot;:{&quot;institutions&quot;:[&quot;I02&quot;,&quot;I03&quot;,&quot;I04&quot;,&quot;I05&quot;,&quot;I19&quot;,&quot;I20&quot;]},&quot;Q45&quot;:{&quot;count&quot;:16},&quot;Q46&quot;:{&quot;parent&quot;:&quot;I01&quot;}}
+```</code></pre></div></details>
+
+
+  </main>
+</div>
+</body>
+</html>

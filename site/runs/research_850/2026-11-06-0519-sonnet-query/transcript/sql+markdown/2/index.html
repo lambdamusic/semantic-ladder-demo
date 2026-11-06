@@ -1,0 +1,1020 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>D2 sql+markdown, run 2: the query session · Semantics ladder</title>
+  <link rel="stylesheet" href="../../../../../../static/css/site.css">
+  <script src="../../../../../../static/js/site.js" defer></script>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <a class="brand" href="../../../../../../index.html">Semantics ladder</a>
+    <p class="brand-sub">How much does an LLM gain from being told what data means?</p>
+    <div class="nav-group">The experiment</div>
+    <ul>
+      <li><a class="" href="../../../../../../index.html">Goals</a></li>
+      <li><a class="" href="../../../../../../method/index.html">Method</a></li>
+    </ul>
+    
+    <div class="nav-group">Credit ratings</div>
+    <ul>
+      <li><a class="" href="../../../../../../domains/credit_paths/index.html">Introduction</a></li><li><a class="" href="../../../../../../domains/credit/data/index.html">Data</a></li><li><a class="" href="../../../../../../domains/credit/questions/index.html">Questions and traps</a></li><li><a class="" href="../../../../../../domains/credit/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">Research analytics</div>
+    <ul>
+      <li><a class="" href="../../../../../../domains/research_850/index.html">Introduction</a></li><li><a class="" href="../../../../../../domains/research/data/index.html">Data</a></li><li><a class="" href="../../../../../../domains/research/questions/index.html">Questions and traps</a></li><li><a class="" href="../../../../../../domains/research/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">The results</div>
+    <ul>
+      <li><a class="" href="../../../../../../scores/index.html">Scores</a></li>
+      <li><a class="" href="../../../../../../conclusions/index.html">Conclusions</a></li>
+      <li><a class="" href="../../../../../index.html">Run archive</a></li>
+    </ul>
+    <p class="nav-foot">All data is invented: the companies, LEIs, ratings, works, people and institutions. Nothing here is any rating agency's or bibliographic database's data or definitions.</p>
+  </nav>
+  <main class="content">
+    <h1>D2 sql+markdown, run 2: the query session</h1>
+    
+<p><a href="../../../index.html">← back to the run</a></p>
+<div class="status"><span class="pill ok">27 queries</span><span class="pill ok">0 failed</span><span class="pill ok">6 rounds</span></div>
+
+<details class="source" ><summary>The opening prompt</summary>
+  <div class="code"><pre><code>## The data
+
+You can&#x27;t see the data, but you can query it. It is in DuckDB, in the tables below. Write DuckDB SQL.
+
+To run queries, reply with one or more fenced blocks (```sql), and nothing else is needed:
+each is run and its results sent back to you. You have up to 8 rounds of queries.
+When you have what you need, reply with the final answers and no queries.
+
+All columns are text (VARCHAR); dates are ISO strings.
+
+- `institutions` (31 rows): institution_id, name, ror, country, type, parent_id
+- `authors` (167 rows): author_id, name, orcid
+- `sources` (14 rows): source_id, name, issn, type, tier
+- `works` (850 rows): work_id, title, year, type, source_id, doi, version_of, is_retracted, record_source
+- `authorships` (1532 rows): work_id, author_id, author_position, institution_id, affil_seq
+- `citations` (1067 rows): citing_work_id, cited_work_id
+
+### ontology.md (the vocabulary the data uses)
+
+# Research analytics: a teaching ontology
+
+Works, authors, institutions, sources, authorships, citations and the codes the data uses, each with a definition that states what it means and how to count it. Invented for an experiment; not a model of any real bibliographic database.
+
+## Classes
+
+### Work
+
+A record of something published: an article, review, preprint, editorial, erratum or piece of paratext (work type). Not every work is research output. A research work is a work that (1) is not a test record (see Staging (STG)), (2) is of a research type: an article (ART), a review (REV), a supplement article (SUP) or a preprint (PPR), (3) is not retracted (retracted), and (4) did not appear in a delisted source (Delisted (K0)). Editorials, errata and paratext are never research output. A preprint and its published version (version of) are two records of one research work and count once, under the published version (its year and its source). Every count of works means research works, and citations are counted to research works, unless a question says otherwise.
+
+### Author
+
+An author record: one person as one source spelled them. A person is identified by their ORCID (ORCID), not by their name or record ID. The same person can appear as several author records with differently spelled names: records with the same ORCID are the same person, and every work recorded against any of them is that person&#x27;s. Two records with the same name and different ORCIDs are different people. A record with no ORCID is a person of its own.
+
+### Institution
+
+An organisation that authors are affiliated with: a university system, university, lab, company, government body or affiliated institute (institution type). Institutions form a hierarchy through parent: a lab can sit under a centre, under a university, under a university system. A work credited to a unit is also credited to every institution above it, to any depth, so counting an institution&#x27;s works means counting the works of the institution and all its units, each work once. The exception is an affiliated institute (Affiliated institute (AFF)): its parent link does not make it a unit.
+
+### Source
+
+Where a work appeared: a journal or a repository (source type).
+
+### Authorship
+
+One author&#x27;s place on one work, and one of the institutions they gave for it: one record per author, work and affiliation. An author who gave two affiliations on a work has two authorship records for it, with the same author position and different affiliation sequence. Which one counts is set by affiliation sequence.
+
+### Citation
+
+One work citing another: citing work lists cited work among its references. A citation happens in the citing work&#x27;s year. A work&#x27;s citation count is the number of distinct works, of any type, that cite it, leaving out test records (Staging (STG)) and retracted works. A work citing both a preprint and its published version is one citation of that research work. Citation counts for an author, institution or country add up the counts of their research works. When citations are rolled up to the citing side (which institution or country cites another most), each citing work counts once for each institution credited on it, however many of its authors are from that institution. A self-citation depends on the level: an author self-citation is one where the citing and cited works share at least one author (the same person, whatever the record); an institution self-citation is one where they share a credited institution at the level asked about; a country self-citation is one where they share a country of credited institutions. Each level includes the one below it, so the three are different counts. A citation window counts only the citations made in the cited work&#x27;s publication year and a given number of years after it, so that older and newer works are compared over the same span.
+
+## Properties
+
+### name (CSV column `name`)
+
+The name of an institution, author or source as the record spells it. Names are not identifiers: the same person can be spelled differently, and different people can share a name.
+
+### ROR ID (CSV column `ror`)
+
+The institution&#x27;s Research Organization Registry identifier (invented here).
+
+### country (CSV column `country`)
+
+ISO code of the country where the institution is. A work&#x27;s countries are the countries of the institutions credited on it (see affiliation sequence), not of every affiliation listed.
+
+### institution type (CSV column `type`)
+
+What kind of institution it is: a concept of the scheme Institution types.
+
+### parent (CSV column `parent_id`)
+
+The institution this one is a unit of. Follow it upwards, to any depth, to find the institutions a work is also credited to; the ultimate parent is the institution at the top of the chain, the one with no parent. For an affiliated institute (Affiliated institute (AFF)) the link records an agreement, not membership: do not follow it.
+
+### ORCID (CSV column `orcid`)
+
+The person&#x27;s ORCID identifier (invented here): the identifier that says which person an author record stands for. Same ORCID, same person.
+
+### ISSN (CSV column `issn`)
+
+The journal&#x27;s ISSN (invented here). Repositories have none.
+
+### source type (CSV column `type`)
+
+Whether the source is a journal or a repository: a concept of the scheme Source types.
+
+### tier (CSV column `tier`)
+
+The source&#x27;s tier on this dataset&#x27;s own journal list: a concept of the scheme Journal tiers. The tiers count upwards: K3 is the highest tier and K1 the lowest; K0 is not a tier but a delisting. Repositories have no tier.
+
+### title (CSV column `title`)
+
+The work&#x27;s title. A preprint and its published version often share a title; two works with the same title are not the same work unless version of links them.
+
+### publication year (CSV column `year`)
+
+The year the work was published. A citation&#x27;s year is the citing work&#x27;s publication year.
+
+### work type (CSV column `type`)
+
+What kind of work it is: a concept of the scheme Work types. It decides whether the work is research output (see Work).
+
+### source (CSV column `source_id`)
+
+The journal or repository the work appeared in.
+
+### DOI (CSV column `doi`)
+
+The work&#x27;s DOI (invented here). A preprint and its published version have different DOIs, though they are one research work.
+
+### version of (CSV column `version_of`)
+
+Set on a preprint whose published version is also in the data: it names that published version. The two records are one research work, counted once, under the published version; the authors, institutions and citations of either record belong to that one work.
+
+### retracted (CSV column `is_retracted`)
+
+True if the work has been retracted. A retracted work is not research output: leave it out of every count of works, and its citations out of every count of citations.
+
+### record source (CSV column `record_source`)
+
+The system the work record was loaded from: a concept of the scheme Record sources.
+
+### work (CSV column `work_id`)
+
+The work the authorship is on.
+
+### author (CSV column `author_id`)
+
+The author record: see Author for which person it stands for.
+
+### author position (CSV column `author_position`)
+
+The author&#x27;s place in the byline, from 1. The number of a work&#x27;s authors is the number of distinct people in its byline.
+
+### institution (CSV column `institution_id`)
+
+An institution the author gave on this work.
+
+### affiliation sequence (CSV column `affil_seq`)
+
+The order in which the author listed their affiliations on this work, from 1. House rule: when an author lists several affiliations on one work, the work is credited only to the affiliation listed last, the one with the highest sequence number, for that author; the others are ignored in every count. With one affiliation, that one is credited. Under full counting, a work counts once for each institution credited on it (and for the institutions above it). Under fractional counting, a work is split equally among its authors (distinct people), and each author&#x27;s share goes to the one institution credited for them, and so to its country; an institution&#x27;s fractional count adds up the shares of its own authors and its units&#x27; authors.
+
+### citing work (CSV column `citing_work_id`)
+
+The work that makes the citation.
+
+### cited work (CSV column `cited_work_id`)
+
+The work that is cited.
+
+## Codes
+
+The codes as they appear in the data, grouped by list.
+
+### Work types
+
+- **ART**, Research article: A peer-reviewed research article. Research output.
+- **REV**, Review article: A peer-reviewed article that surveys a field. Research output.
+- **SUP**, Supplement article: In this dataset, SUP does not mean supplementary material. It is a full, peer-reviewed research article published in a supplement issue of a journal, such as a proceedings supplement. It is research output and counts exactly like an article (ART).
+- **PPR**, Preprint: A version posted to a repository before or without peer review. Research output, but if its published version is in the data (version of), the two are one research work, counted once.
+- **EDT**, Editorial: An editor&#x27;s introduction or opinion piece. Not research output.
+- **ERR**, Erratum: A correction notice for an earlier work. Not research output, and not a new version of the work it corrects.
+- **PTX**, Paratext: Front matter, issue information, tables of contents and the like: published with a journal issue, but not a contribution. Not research output.
+
+### Institution types
+
+- **SYS**, University system: A group of universities under one governing body. Its works are the works of all its universities and their units.
+- **UNI**, University: A university or college.
+- **LAB**, Laboratory, centre or institute: A research unit inside its parent institution. Its works are also its parent&#x27;s works, and its parent&#x27;s parent&#x27;s, to the top.
+- **AFF**, Affiliated institute: A legally independent institute linked to a university by an agreement. Its parent link records that agreement and nothing more: an affiliated institute is not a unit of its parent, is not part of the parent&#x27;s system, and its works are never credited to the parent or to anything above it. Its ultimate parent is itself.
+- **CO**, Company: A company.
+- **GOV**, Government body: A government agency or laboratory.
+
+### Source types
+
+- **JOU**, Journal: A peer-reviewed journal, including its proceedings or supplement issues.
+- **REP**, Repository: A preprint server or other repository.
+
+### Journal tiers
+
+- **K3**, Tier K3, the highest: The highest tier: the journals the list ranks first. A higher number is a higher tier, so K3 ranks above K2, and K2 above K1.
+- **K2**, Tier K2, the middle: The middle tier: below K3, above K1.
+- **K1**, Tier K1, the lowest: The lowest tier that is still listed: below K2.
+- **K0**, Delisted source: Not a tier: a source removed from the list for failing its review of editorial practice. Works that appeared in a K0 source are not research output, whatever their type, and are left out of every count of works and citations.
+
+### Record sources
+
+- **FEED**, Bibliographic feed: Loaded from the external bibliographic feed.
+- **CRIS**, Institutional research information system: Entered by an institution in its own research information system. As good as a feed record.
+- **STG**, Staging load: Test records, loaded into staging to check the import and never removed. They describe no real work: ignore an STG work, its authorships and every citation it makes, in every count.
+
+
+## Questions
+
+Answer each question below from the data above. Start each answer on a new line with its
+number in bold, like **Q1.**, give the direct answer first, then at most two sentences of
+reasoning that cite the records (IDs) you relied on.
+
+Then end with one JSON block (```json) holding the structured answer to each question listed
+here, with exactly these fields, shaped like {&quot;Q1&quot;: {&quot;field&quot;: value}, ...}. Name works, authors, institutions and sources by their record ID: the work_id, author_id, institution_id or source_id in the CSV files, or the part of the IRI after res: in the RDF (W01, A07, I02, S03; not their titles or names).
+
+- Q1: count (a number)
+- Q2: works (a list of record IDs)
+- Q3: same (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q4: count (a number)
+- Q5: same (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q6: author (a record ID)
+- Q7: count (a number)
+- Q8: parent (a record ID)
+- Q9: count (a number)
+- Q10: count (a number)
+- Q11: count (a number)
+- Q12: full (a number), fractional (a number)
+- Q13: full (a record ID), fractional (a record ID)
+- Q14: full (a number), fractional (a number)
+- Q15: count (a number)
+- Q16: count (a number)
+- Q17: works (a list of record IDs)
+- Q18: count (a number)
+- Q19: count (a number)
+- Q20: works (a list of record IDs)
+- Q21: count (a number)
+- Q22: more_in_total (a record ID), more_in_window (a record ID)
+- Q23: total (a number), in_window (a number)
+- Q24: count (a number)
+- Q25: count (a number)
+- Q26: counts (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q27: institution (a record ID), citing_works (a number)
+- Q28: count (a number)
+- Q29: author (a number), institution (a number), country (a number)
+- Q30: count (a number)
+- Q31: works (a list of record IDs)
+- Q32: count (a number)
+- Q33: work (a record ID)
+- Q34: count (a number)
+- Q35: count (a number)
+- Q36: count (a number)
+- Q37: institution (a record ID)
+- Q38: institutions (a list of record IDs)
+- Q39: count (a number)
+- Q40: source (a record ID)
+- Q41: higher (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q42: count (a number)
+- Q43: research (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q44: institutions (a list of record IDs)
+- Q45: count (a number)
+- Q46: parent (a record ID)
+
+Q1. How many distinct people do the author records named &quot;Mara Ellison&quot;, &quot;M. Ellison&quot; and &quot;Ellison, Mara J.&quot; stand for?
+Q2. List every work, of any type, that Mara Ellison (A01) is an author of.
+Q3. Is the Jonas Brandt who wrote W37 the same person as the Jonas Brandt who wrote W38?
+Q4. How many research works has the Jonas Brandt of Albury Metropolitan University (A05) authored?
+Q5. Is the M. Ellison who wrote W08 the same person as the Mara Ellison who wrote W01?
+Q6. Which author has the most research works credited to the University of Albury, its units included?
+Q7. How many research works has Mara Ellison authored?
+Q8. What is the ultimate parent of the Tessel Laboratory for Ocean Sensing (I04)?
+Q9. How many research works is the University of Albury (I02) credited with, its units included?
+Q10. How many research works is the Albury University System (I01) credited with, all its units included?
+Q11. How many research works is Kesting University (I07) credited with, its units included?
+Q12. How many research works did Kesting University (I07, units included) publish in 2024, under full counting and under fractional counting (each work split equally among its authors)?
+Q13. In 2024, which had more research works, Kesting University (I07) or Rostval Technical University (I09): under full counting, and under fractional counting?
+Q14. How many research works did GB institutions publish in 2024, under full counting and under fractional counting (each work split equally among its authors, each author&#x27;s share going to their institution&#x27;s country)?
+Q15. How many research works appeared in Ocean Sensing Letters (S02) in 2024?
+Q16. How many research works appeared in the Journal of Marine Autonomy (S01)?
+Q17. Which of Mara Ellison&#x27;s works are not research output because of their document type?
+Q18. How many distinct research works has Priya Ramanathan (A07) authored?
+Q19. How many distinct works cite &quot;Drift-aware mapping with low-cost sonar&quot;, in either of its versions?
+Q20. Which works in the data are preprints of another work that is also in the data?
+Q21. How many research works is Oskel Polytechnic (I14) credited with?
+Q22. Which has more citations, W30 or W31 (counting both versions of each): in total, and within its publication year and the two years after?
+Q23. How many citations has W30 received in total, and how many within its publication year and the two years after?
+Q24. How many research works has Lena Vossberg (A09) authored?
+Q25. What is the total of the citation counts of Lena Vossberg&#x27;s research works?
+Q26. Does W23 count towards Kesting University&#x27;s research output?
+Q27. Which other institution&#x27;s works cite Kesting University&#x27;s research works the most, each citing work counted once per institution, and how many of its works do?
+Q28. How many distinct works from Rostval Technical University (I09) cite Kesting University&#x27;s research works?
+Q29. Of the works citing &quot;Drift-aware mapping with low-cost sonar&quot; (either version), how many are self-citations at the level of authors, of the University of Albury (units included), and of countries?
+Q30. Of the works citing &quot;Drift-aware mapping with low-cost sonar&quot; (either version), how many are self-citations at the level of the Albury University System?
+Q31. Which works cite at least one of the works that cite W01?
+Q32. How many distinct works are within two citation hops of W01 (citing it, or citing a work that cites it)?
+Q33. Which of Kesting University&#x27;s research works has the most citations?
+Q34. How many research works was Kesting University (units included) credited with in 2025?
+Q35. How many research works is the Kesting Institute of Hydrodynamics (I08) credited with?
+Q36. How many research works appeared in the Proceedings of the Hydrodynamics Forum (S06)?
+Q37. Which institution is W70 credited to?
+Q38. Which institutions is W71 credited to, at every level?
+Q39. How many of the University of Albury&#x27;s research works (units included) appeared in a source of the highest tier?
+Q40. Which source is in the highest tier?
+Q41. Is Coastal Engineering Review (S03) in a higher tier than Ocean Sensing Letters (S02)?
+Q42. How many research works appeared in Global Marine Science Reports (S04)?
+Q43. Is W07 research output?
+Q44. Which institutions are part of the Albury University System, at any level below it?
+Q45. How many research works is the Halloran Institute for Coastal Studies (I06) credited with?
+Q46. What is the ultimate parent of the Halloran Institute for Coastal Studies (I06)?
+Q47. Why do Kesting University and Rostval Technical University swap places in 2024 between full and fractional counting?
+Q48. Why is W70 not one of the University of Albury&#x27;s research works, though its author lists the Tessel Laboratory?</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;bash&quot;&gt;
+&lt;parameter name=&quot;command&quot;&gt;echo start&lt;/parameter&gt;
+&lt;/invoke&gt;
+
+```sql
+select * from institutions;
+select * from sources;
+select * from authors order by name;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| author_id | name | orcid |
+|---|---|---|
+| A15 | Aisha Okonjo | 0000-0008-9831-9489 |
+| A179 | Alba Ashdown | 0000-0001-5735-1490 |
+| A194 | Alba Corbridge | 0000-0001-5776-4679 |
+| A30 | Ana Aranda | 0000-0006-1584-6450 |
+| A214 | Anouk Castellan | 0000-0005-5240-8672 |
+| A170 | Bastian Ashdown | 0000-0005-3547-5180 |
+| A183 | Bastian Kerridge | 0000-0007-6448-2483 |
+| A188 | Bastian Tregunna |  |
+| A31 | Ben Fujimura | 0000-0006-0454-1465 |
+| A18 | Bram Kuipers | 0000-0001-6210-5218 |
+| A218 | Bryony Jansma | 0000-0003-3146-5873 |
+| A219 | Bryony Jansma | 0000-0002-4103-1118 |
+| A186 | Carys Tregunna | 0000-0002-3962-9717 |
+| A177 | Carys Uttley | 0000-0008-3085-0372 |
+| A32 | Chiara Kincaid | 0000-0009-0853-8012 |
+| A13 | Claire Fontanet | 0000-0001-8841-3301 |
+| A146 | Cosimo Bellamore | 0000-0002-3308-6027 |
+| A226 | Cosimo Penhallow | 0000-0000-1869-5361 |
+| A227 | Cosimo Penhallow | 0000-0008-9935-6581 |
+| A33 | Daichi Pruitt | 0000-0009-1102-8594 |
+| A127 | Delphine Ashdown | 0000-0000-5148-3260 |
+| A141 | Delphine Bellamore | 0000-0003-0209-4519 |
+| A155 | Delphine Dewhurst |  |
+| A129 | Delphine Ibbotson | 0000-0000-6389-2468 |
+| A199 | Delphine Merriman | 0000-0005-5487-7183 |
+| A10 | Dirk Hallmann | 0000-0003-8222-6468 |
+| A118 | Dorian Bellamore | 0000-0000-4633-9010 |
+| A157 | Dorian Falconer | 0000-0009-2170-6438 |
+| A34 | Elif Esposito | 0000-0000-6925-6663 |
+| A03 | Ellison, Mara J. | 0000-0002-9841-6229 |
+| A178 | Elsa Merriman |  |
+| A151 | Elsa Penhallow | 0000-0008-1093-6341 |
+| A116 | Emrys Bellamore | 0000-0001-3732-2664 |
+| A153 | Emrys Merriman | 0000-0008-9865-6168 |
+| A131 | Emrys Nordahl | 0000-0000-3843-6782 |
+| A35 | Felipe Jaramillo | 0000-0006-3228-0886 |
+| A19 | Femke Hoogeveen | 0000-0005-4914-5244 |
+| A196 | Fenna Gisborne | 0000-0008-9819-5281 |
+| A173 | Fenna Uttley | 0000-0000-4008-7950 |
+| A123 | Florin Penhallow | 0000-0008-6186-9535 |
+| A152 | Florin Whitcombe |  |
+| A228 | Gideon Yelland | 0000-0009-3500-8530 |
+| A229 | Gideon Yelland | 0000-0003-6264-2564 |
+| A36 | Grace Olmedo | 0000-0004-2300-4876 |
+| A156 | Greta Elphick | 0000-0000-1295-1089 |
+| A125 | Greta Ostergaard | 0000-0002-5410-0810 |
+| A142 | Greta Rademaker | 0000-0009-9961-6216 |
+| A109 | Greta Yelland | 0000-0002-6545-4969 |
+| A37 | Haruto Dorsey | 0000-0004-5291-2808 |
+| A113 | Henrik Corbridge | 0000-0001-7569-4541 |
+| A167 | Henrik Haverkamp | 0000-0007-4485-0931 |
+| A181 | Henrik Kerridge | 0000-0009-5689-0994 |
+| A154 | Henrik Lachance | 0000-0000-6078-6579 |
+| A166 | Henrik Sallis | 0000-0003-9677-7161 |
+| A168 | Henrik Yelland | 0000-0001-2141-4246 |
+| A172 | Hester Aldous | 0000-0009-3776-6819 |
+| A201 | Hester Dewhurst | 0000-0002-8179-0448 |
+| A111 | Hester Falconer | 0000-0007-5409-8704 |
+| A220 | Hester Ostergaard | 0000-0008-3455-9598 |
+| A221 | Hester Ostergaard | 0000-0003-8085-8585 |
+(107 more rows not shown)
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>```sql
+select * from institutions order by institution_id;
+select * from sources order by source_id;
+select * from authors where name like &#x27;%Ellison%&#x27; or name like &#x27;%Brandt%&#x27; or name like &#x27;%Ramanathan%&#x27; or name like &#x27;%Vossberg%&#x27; order by name;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| author_id | name | orcid |
+|---|---|---|
+| A03 | Ellison, Mara J. | 0000-0002-9841-6229 |
+| A104 | J. Brandt | 0000-0001-6105-5008 |
+| A05 | Jonas Brandt | 0000-0001-6105-5008 |
+| A06 | Jonas Brandt | 0000-0007-5475-1779 |
+| A105 | Jonas Brandt | 0000-0004-9046-7961 |
+| A103 | L. Vossberg | 0000-0000-8073-7028 |
+| A09 | Lena Vossberg | 0000-0000-8073-7028 |
+| A02 | M. Ellison | 0000-0002-9841-6229 |
+| A04 | M. Ellison | 0000-0004-8662-8360 |
+| A101 | M. Ellison | 0000-0002-9841-6229 |
+| A102 | M. Ellison | 0000-0008-4738-8328 |
+| A01 | Mara Ellison | 0000-0002-9841-6229 |
+| A07 | Priya Ramanathan | 0000-0009-2298-3695 |
+| A108 | Priya Ramanathan | 0000-0007-1802-8393 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>```sql
+select * from institutions order by institution_id;
+```
+```sql
+select * from sources order by source_id;
+```
+```sql
+select work_id,title,year,type,source_id,version_of,is_retracted,record_source from works where work_id in (&#x27;W01&#x27;,&#x27;W07&#x27;,&#x27;W08&#x27;,&#x27;W23&#x27;,&#x27;W30&#x27;,&#x27;W31&#x27;,&#x27;W37&#x27;,&#x27;W38&#x27;,&#x27;W70&#x27;,&#x27;W71&#x27;) or title like &#x27;%Drift-aware%&#x27; or version_of is not null order by work_id;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| institution_id | name | ror | country | type | parent_id |
+|---|---|---|---|---|---|
+| I01 | Albury University System | 0hygr4985 | GB | SYS |  |
+| I02 | University of Albury | 06safhw22 | GB | UNI | I01 |
+| I03 | Albury Centre for Marine Robotics | 06a9yq342 | GB | LAB | I02 |
+| I04 | Tessel Laboratory for Ocean Sensing | 0002ezf81 | GB | LAB | I03 |
+| I05 | Albury Metropolitan University | 0ww7kxb57 | GB | UNI | I01 |
+| I06 | Halloran Institute for Coastal Studies | 0175f3924 | GB | AFF | I02 |
+| I07 | Kesting University | 0593t4875 | DE | UNI |  |
+| I08 | Kesting Institute of Hydrodynamics | 0brjdg570 | DE | LAB | I07 |
+| I09 | Rostval Technical University | 0k8rh7879 | NL | UNI |  |
+| I10 | Marrow Instruments BV | 0t3x83535 | NL | CO |  |
+| I11 | Brevin Ocean Agency | 0wvack776 | FR | GOV |  |
+| I12 | Université de Lorvain | 091pt9775 | FR | UNI |  |
+| I13 | Dunmore College | 095cwy722 | GB | UNI |  |
+| I14 | Oskel Polytechnic | 06t6n5818 | NL | UNI |  |
+| I15 | Carrow State University | 0v91gp428 | US | UNI |  |
+| I16 | Hoshimine Institute of Technology | 06afa6f88 | JP | UNI |  |
+| I17 | Université de Mallois | 0pshcv029 | CA | UNI |  |
+| I18 | Universidad de Ventolera | 0ay9jr885 | ES | UNI |  |
+| I19 | Albury Laboratory for Acoustic Imaging | 0xe2n1515 | GB | LAB | I02 |
+| I20 | Albury Metropolitan Centre for Port Studies | 0bp5b1111 | GB | LAB | I05 |
+| I21 | Wexcombe Institute for Estuary Research | 0ms1zdt74 | GB | AFF | I05 |
+| I22 | Sandhaven Institute for Wave Research | 0rn08b412 | DE | AFF | I07 |
+| I23 | Rostval Laboratory for Offshore Structures | 0zekfva10 | NL | LAB | I09 |
+| I24 | Pellmore University | 0n0j86p46 | US | UNI |  |
+| I25 | Università di Calvessa | 08mz9rf83 | IT | UNI |  |
+| I26 | Tarnowa University of Technology | 0189z6431 | PL | UNI |  |
+| I27 | Kirrabay University | 0wam41j64 | AU | UNI |  |
+| I28 | Nordvik University | 00etvqe29 | NO | UNI |  |
+| I29 | Hanseo Ocean Institute | 0g18r1r20 | KR | GOV |  |
+| I30 | Universidade de Arvela | 0ha4xax60 | PT | UNI |  |
+| I31 | Corrimal Marine Systems Inc | 0nq63kw54 | US | CO |  |
+
+Query 2:
+
+| source_id | name | issn | type | tier |
+|---|---|---|---|---|
+| S01 | Journal of Marine Autonomy | 9866-3925 | JOU | K3 |
+| S02 | Ocean Sensing Letters | 3195-4973 | JOU | K2 |
+| S03 | Coastal Engineering Review | 1154-9679 | JOU | K1 |
+| S04 | Global Marine Science Reports | 8864-5325 | JOU | K0 |
+| S05 | OceanArXiv |  | REP |  |
+| S06 | Proceedings of the Hydrodynamics Forum | 9804-2748 | JOU | K2 |
+| S07 | Journal of Estuarine Dynamics | 1483-2835 | JOU | K2 |
+| S08 | Hydrology Notes | 9832-2482 | JOU | K1 |
+| S09 | Journal of Coastal Hydraulics | 3431-7424 | JOU | K2 |
+| S10 | Marine Technology Bulletin | 7809-8515 | JOU | K1 |
+| S11 | Annals of Ocean Observation | 8324-8964 | JOU | K2 |
+| S12 | Shelf Sea Letters | 8103-2767 | JOU | K1 |
+| S13 | International Journal of Ocean Frontiers | 1765-9671 | JOU | K0 |
+| S14 | CoastRxiv |  | REP |  |
+
+Query 3:
+
+| work_id | title | year | type | source_id | version_of | is_retracted | record_source |
+|---|---|---|---|---|---|---|---|
+| W01 | Adaptive path planning for underwater gliders | 2021 | ART | S01 |  | false | FEED |
+| W02 | Drift-aware mapping with low-cost sonar | 2022 | PPR | S05 | W03 | false | FEED |
+| W03 | Drift-aware mapping with low-cost sonar | 2023 | ART | S02 |  | false | FEED |
+| W05 | Erratum: Drift-aware mapping with low-cost sonar | 2024 | ERR | S02 |  | false | FEED |
+| W07 | Low-cost sonar arrays for coastal monitoring | 2020 | ART | S04 |  | false | FEED |
+| W08 | Turbulent wake modelling behind tidal turbines | 2025 | ART | S01 |  | false | FEED |
+| W1049 | Field measurements of tidal mixing | 2021 | PPR | S14 | W789 | false | FEED |
+| W210 | Low-cost methods for estuarine salinity | 2021 | PPR | S14 | W902 | false | FEED |
+| W219 | Remote sensing of sensor calibration | 2022 | PPR | S05 | W251 | false | FEED |
+| W226 | Uncertainty in estuarine plumes estimates | 2023 | PPR | S05 | W710 | false | FEED |
+| W23 | Anomalous dissipation in estuarine plumes | 2023 | ART | S02 |  | true | FEED |
+| W263 | Low-cost methods for storm surge in shallow channels | 2019 | PPR | S05 | W279 | false | FEED |
+| W30 | Tidal stream resource maps for the Dunmore coast | 2019 | ART | S03 |  | false | FEED |
+| W31 | Machine-learned tidal forecasts | 2023 | ART | S01 |  | false | FEED |
+| W322 | A framework for fleet coordination | 2019 | PPR | S14 | W453 | false | FEED |
+| W37 | Port traffic and seabed disturbance | 2022 | ART | S03 |  | false | FEED |
+| W38 | Seagrass mapping from aerial imagery | 2023 | ART | S02 |  | false | FEED |
+| W407 | Low-cost methods for bed shear stress in fjords: a review | 2023 | PPR | S14 | W1027 | false | FEED |
+| W416 | Uncertainty in turbidity sensing estimates in a semi-enclosed sea | 2020 | PPR | S14 | W640 | false | FEED |
+| W42 | Machine-learned tidal forecasts | 2023 | PPR | S05 | W31 | false | FEED |
+| W432 | Revisiting tidal asymmetry in tidal inlets | 2023 | PPR | S05 | W879 | false | FEED |
+| W460 | Low-cost methods for sensor calibration | 2022 | PPR | S14 | W496 | false | FEED |
+| W506 | Remote sensing of coastal upwelling | 2022 | PPR | S05 | W422 | false | FEED |
+| W522 | Observations of estuarine plumes | 2020 | PPR | S14 | W312 | false | FEED |
+| W524 | Field measurements of harbour seiches in the North Sea | 2020 | PPR | S05 | W807 | false | FEED |
+| W545 | Field measurements of beach profiles | 2019 | PPR | S14 | W742 | false | FEED |
+| W556 | Low-cost methods for marsh accretion | 2019 | PPR | S05 | W1038 | false | FEED |
+| W611 | A framework for wave boundary layers in shallow channels | 2019 | PPR | S05 | W301 | false | FEED |
+| W612 | A model of survey vessel autonomy in mixed-energy coasts | 2023 | PPR | S05 | W869 | false | FEED |
+| W663 | A framework for turbidity sensing | 2021 | PPR | S14 | W464 | false | FEED |
+| W70 | Optical backscatter in turbid estuaries | 2023 | ART | S02 |  | false | FEED |
+| W71 | Low-power optical sensors for gliders | 2024 | ART | S01 |  | false | FEED |
+| W728 | Uncertainty in wave boundary layers estimates | 2019 | PPR | S05 | W665 | false | FEED |
+| W730 | A framework for tidal asymmetry in the Albury estuary | 2020 | PPR | S05 | W303 | false | FEED |
+| W877 | A model of breaking waves in the North Sea | 2023 | PPR | S05 | W965 | false | FEED |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;bash&quot;&gt;
+&lt;parameter name=&quot;command&quot;&gt;echo skip&lt;/parameter&gt;
+&lt;/invoke&gt;
+&lt;/invoke&gt;
+```sql
+create or replace view rw as
+select w.work_id, w.year, w.type, w.source_id, w.title from works w
+join sources s using(source_id)
+where w.record_source&lt;&gt;&#x27;STG&#x27; and w.type in (&#x27;ART&#x27;,&#x27;REV&#x27;,&#x27;SUP&#x27;,&#x27;PPR&#x27;) and w.is_retracted&lt;&gt;&#x27;true&#x27; and coalesce(s.tier,&#x27;&#x27;)&lt;&gt;&#x27;K0&#x27;
+and not (w.version_of is not null and exists(select 1 from works p where p.work_id=w.version_of));
+create or replace view cw as
+select w.work_id, coalesce(p.work_id,w.work_id) canon from works w left join works p on p.work_id=w.version_of;
+create or replace view per as select author_id, coalesce(orcid,&#x27;x&#x27;||author_id) person from authors;
+create or replace view ac as
+select cw.canon work_id, per.person, a.institution_id, a.affil_seq::int sq, a.author_position from authorships a join cw on cw.work_id=a.work_id join per using(author_id);
+create or replace view cred as
+select work_id, person, institution_id from (select *, row_number() over (partition by work_id, person order by sq desc) rn from ac) where rn=1;
+create or replace view anc as
+with recursive r(inst, a) as (select institution_id, institution_id from institutions union all select r.inst, i.parent_id from r join institutions c on c.institution_id=r.a join institutions i on i.institution_id=c.parent_id where c.type&lt;&gt;&#x27;AFF&#x27;)
+select * from r;
+select &#x27;ok&#x27;;
+select inst_count.* from (select 1 x) , (select count(*) n from rw) inst_count;
+select a.a inst, count(distinct c.work_id) n from cred c join anc a on a.inst=c.institution_id join rw using(work_id) where a.a in (&#x27;I01&#x27;,&#x27;I02&#x27;,&#x27;I07&#x27;,&#x27;I08&#x27;,&#x27;I14&#x27;,&#x27;I06&#x27;) group by 1 order by 1;
+select a.a inst, count(distinct c.work_id) n from cred c join anc a on a.inst=c.institution_id join rw using(work_id) where a.a in (&#x27;I07&#x27;,&#x27;I09&#x27;) and rw.year=&#x27;2024&#x27; group by 1;
+select s.source_id, count(*) from rw join sources s using(source_id) where s.source_id in (&#x27;S01&#x27;,&#x27;S04&#x27;,&#x27;S06&#x27;) group by 1;
+select count(*) from rw where source_id=&#x27;S02&#x27; and year=&#x27;2024&#x27;;
+select count(*) from rw where year=&#x27;2025&#x27; and work_id in (select work_id from cred join anc on inst=institution_id where a=&#x27;I07&#x27;);
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| count_star() |
+|---|
+| 6 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>The last round returned only one result, so I&#x27;ll run the remaining queries as separate blocks.
+
+```sql
+select a.a inst, count(distinct c.work_id) n from cred c join anc a on a.inst=c.institution_id join rw using(work_id) where a.a in (&#x27;I01&#x27;,&#x27;I02&#x27;,&#x27;I07&#x27;,&#x27;I08&#x27;,&#x27;I14&#x27;,&#x27;I06&#x27;) group by 1 order by 1;
+```
+```sql
+select a.a inst, count(distinct c.work_id) n from cred c join anc a on a.inst=c.institution_id join rw using(work_id) where a.a in (&#x27;I07&#x27;,&#x27;I09&#x27;) and rw.year=&#x27;2024&#x27; group by 1;
+```
+```sql
+select source_id, count(*) from rw where source_id in (&#x27;S01&#x27;,&#x27;S04&#x27;,&#x27;S06&#x27;) group by 1;
+```
+```sql
+select count(*) from rw where source_id=&#x27;S02&#x27; and year=&#x27;2024&#x27;;
+```
+```sql
+select count(*) from rw where year=&#x27;2025&#x27; and work_id in (select work_id from cred join anc on inst=institution_id where a=&#x27;I07&#x27;);
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| inst | n |
+|---|---|
+| I01 | 72 |
+| I02 | 65 |
+| I06 | 16 |
+| I07 | 48 |
+| I08 | 25 |
+| I14 | 45 |
+
+Query 2:
+
+| inst | n |
+|---|---|
+| I07 | 10 |
+| I09 | 15 |
+
+Query 3:
+
+| source_id | count_star() |
+|---|---|
+| S06 | 36 |
+| S01 | 88 |
+
+Query 4:
+
+| count_star() |
+|---|
+| 25 |
+
+Query 5:
+
+| count_star() |
+|---|
+| 6 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>&lt;invoke name=&quot;bash&quot;&gt;
+&lt;parameter name=&quot;command&quot;&gt;true&lt;/parameter&gt;
+&lt;/invoke&gt;
+```sql
+create or replace view cit as select distinct c.citing_work_id citing, cw.canon cited, w.year cyear from citations c join works w on w.work_id=c.citing_work_id join sources s on s.source_id=w.source_id join cw on cw.work_id=c.cited_work_id where w.record_source&lt;&gt;&#x27;STG&#x27; and w.is_retracted&lt;&gt;&#x27;true&#x27; and coalesce(s.tier,&#x27;&#x27;)&lt;&gt;&#x27;K0&#x27;;
+select &#x27;ok&#x27;;
+```
+```sql
+select distinct a.work_id, w.type, w.source_id from authorships a join authors u using(author_id) join works w using(work_id) where u.orcid=&#x27;0000-0002-9841-6229&#x27; order by 1;
+```
+```sql
+select a.work_id, a.author_id, u.name, u.orcid, a.institution_id from authorships a join authors u using(author_id) where a.work_id in (&#x27;W37&#x27;,&#x27;W38&#x27;,&#x27;W08&#x27;,&#x27;W01&#x27;) and (u.name like &#x27;%Brandt%&#x27; or u.name like &#x27;%Ellison%&#x27;);
+```
+```sql
+select &#x27;brandt&#x27;, count(distinct work_id) from ac join rw using(work_id) where person=&#x27;0000-0001-6105-5008&#x27;
+union all select &#x27;ellison&#x27;, count(distinct work_id) from ac join rw using(work_id) where person=&#x27;0000-0002-9841-6229&#x27;
+union all select &#x27;priya&#x27;, count(distinct work_id) from ac join rw using(work_id) where person=&#x27;0000-0009-2298-3695&#x27;
+union all select &#x27;lena&#x27;, count(distinct work_id) from ac join rw using(work_id) where person=&#x27;0000-0000-8073-7028&#x27;
+union all select &#x27;lenacit&#x27;, count(*) from cit where cited in (select work_id from ac join rw using(work_id) where person=&#x27;0000-0000-8073-7028&#x27;);
+```
+```sql
+select c.person, count(distinct c.work_id) n from cred c join anc a on a.inst=c.institution_id join rw using(work_id) where a.a=&#x27;I02&#x27; group by 1 order by 2 desc limit 4;
+```
+```sql
+select p.work_id from works p join works q on q.work_id=p.version_of where p.version_of is not null order by 1;
+```
+```sql
+with n as (select work_id, count(distinct person) n from ac group by 1),
+x as (select distinct c.work_id, c.person, a.a from cred c join anc a on a.inst=c.institution_id join rw using(work_id) where rw.year=&#x27;2024&#x27;)
+select a, count(distinct x.work_id) full_, sum(1.0/n.n) frac from x join n using(work_id) where a in (&#x27;I07&#x27;,&#x27;I09&#x27;) group by 1;
+```
+```sql
+with n as (select work_id, count(distinct person) n from ac group by 1),
+x as (select distinct c.work_id, c.person, i.country from cred c join institutions i using(institution_id) join rw using(work_id) where rw.year=&#x27;2024&#x27;)
+select count(distinct case when country=&#x27;GB&#x27; then x.work_id end) full_, sum(case when country=&#x27;GB&#x27; then 1.0/n.n end) frac from x join n using(work_id);
+```
+```sql
+select &#x27;W03&#x27;, count(*) from cit where cited=&#x27;W03&#x27;
+union all select &#x27;W30tot&#x27;, count(*) from cit where cited=&#x27;W30&#x27;
+union all select &#x27;W30win&#x27;, count(*) from cit c where cited=&#x27;W30&#x27; and cyear::int&lt;=2021
+union all select &#x27;W31tot&#x27;, count(*) from cit where cited=&#x27;W31&#x27;
+union all select &#x27;W31win&#x27;, count(*) from cit where cited=&#x27;W31&#x27; and cyear::int&lt;=2025;
+```
+```sql
+select &#x27;self_author&#x27;, count(distinct c.citing) from cit c join ac x on x.work_id=(select canon from cw where work_id=c.citing) join ac y on y.work_id=&#x27;W03&#x27; and y.person=x.person where c.cited=&#x27;W03&#x27;
+union all select &#x27;self_I02&#x27;, count(distinct c.citing) from cit c join cred x on x.work_id=(select canon from cw where work_id=c.citing) join anc ax on ax.inst=x.institution_id and ax.a=&#x27;I02&#x27; where c.cited=&#x27;W03&#x27; and exists(select 1 from cred y join anc ay on ay.inst=y.institution_id and ay.a=&#x27;I02&#x27; where y.work_id=&#x27;W03&#x27;)
+union all select &#x27;self_I01&#x27;, count(distinct c.citing) from cit c join cred x on x.work_id=(select canon from cw where work_id=c.citing) join anc ax on ax.inst=x.institution_id and ax.a=&#x27;I01&#x27; where c.cited=&#x27;W03&#x27; and exists(select 1 from cred y join anc ay on ay.inst=y.institution_id and ay.a=&#x27;I01&#x27; where y.work_id=&#x27;W03&#x27;)
+union all select &#x27;self_country&#x27;, count(distinct c.citing) from cit c join cred x on x.work_id=(select canon from cw where work_id=c.citing) join institutions ix on ix.institution_id=x.institution_id where c.cited=&#x27;W03&#x27; and ix.country in (select i.country from cred y join institutions i using(institution_id) where y.work_id=&#x27;W03&#x27;);
+```
+```sql
+select &#x27;hop1&#x27;, count(distinct citing) from cit where cited=&#x27;W01&#x27;
+union all select &#x27;hop2all&#x27;, count(distinct citing) from (select citing from cit where cited=&#x27;W01&#x27; union select citing from cit where cited in (select citing from cit where cited=&#x27;W01&#x27;)) where citing&lt;&gt;&#x27;W01&#x27;;
+```
+```sql
+select distinct citing from cit where cited in (select citing from cit where cited=&#x27;W01&#x27;) order by 1;
+```
+```sql
+select cited, count(*) n from cit where cited in (select work_id from cred join anc on inst=institution_id where a=&#x27;I07&#x27;) group by 1 order by 2 desc limit 3;
+```
+```sql
+select ax.a, count(distinct c.citing) n from cit c join rw on rw.work_id=c.cited join cred y on y.work_id=c.cited join anc ay on ay.inst=y.institution_id and ay.a=&#x27;I07&#x27; join cred x on x.work_id=(select canon from cw where work_id=c.citing) join anc ax on ax.inst=x.institution_id group by 1 order by 2 desc limit 6;
+```
+```sql
+select &#x27;W70&#x27;, work_id, institution_id from cred where work_id=&#x27;W70&#x27; union all select &#x27;W71&#x27;, work_id, institution_id from cred where work_id=&#x27;W71&#x27;;
+```
+```sql
+select count(distinct c.work_id) from cred c join anc a on a.inst=c.institution_id join rw using(work_id) join sources s using(source_id) where a.a=&#x27;I02&#x27; and s.tier=&#x27;K3&#x27;;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| &#x27;ok&#x27; |
+|---|
+| ok |
+
+Query 2:
+
+| work_id | type | source_id |
+|---|---|---|
+| W01 | ART | S01 |
+| W02 | PPR | S05 |
+| W03 | ART | S02 |
+| W04 | EDT | S01 |
+| W05 | ERR | S02 |
+| W06 | ART | S03 |
+| W07 | ART | S04 |
+| W1005 | ART | S02 |
+| W1048 | ART | S10 |
+| W1050 | ART | S09 |
+| W12 | ART | S02 |
+| W19 | ART | S02 |
+| W206 | ART | S01 |
+| W238 | ART | S02 |
+| W271 | EDT | S01 |
+| W374 | ART | S02 |
+| W449 | ART | S04 |
+| W464 | ART | S09 |
+| W555 | ART | S09 |
+| W612 | PPR | S05 |
+| W663 | PPR | S14 |
+| W676 | ART | S02 |
+| W763 | ART | S13 |
+| W813 | ERR | S02 |
+| W817 | ART | S10 |
+| W843 | ART | S02 |
+| W869 | ART | S02 |
+| W905 | ART | S01 |
+| W936 | EDT | S01 |
+| W949 | ERR | S02 |
+| W972 | ART | S02 |
+| W984 | ART | S01 |
+
+Query 3:
+
+| work_id | author_id | name | orcid | institution_id |
+|---|---|---|---|---|
+| W01 | A01 | Mara Ellison | 0000-0002-9841-6229 | I02 |
+| W08 | A04 | M. Ellison | 0000-0004-8662-8360 | I07 |
+| W37 | A05 | Jonas Brandt | 0000-0001-6105-5008 | I05 |
+| W38 | A06 | Jonas Brandt | 0000-0007-5475-1779 | I12 |
+
+Query 4:
+
+| &#x27;brandt&#x27; | count(DISTINCT work_id) |
+|---|---|
+| brandt | 9 |
+| ellison | 19 |
+| priya | 15 |
+| lena | 12 |
+| lenacit | 20 |
+
+Query 5:
+
+| person | n |
+|---|---|
+| 0000-0002-9841-6229 | 19 |
+| 0000-0003-7597-9990 | 14 |
+| 0000-0007-5409-8704 | 10 |
+| 0000-0001-7569-4541 | 8 |
+
+Query 6:
+
+| work_id |
+|---|
+| W02 |
+| W1049 |
+| W210 |
+| W219 |
+| W226 |
+| W263 |
+| W322 |
+| W407 |
+| W416 |
+| W42 |
+| W432 |
+| W460 |
+| W506 |
+| W522 |
+| W524 |
+| W545 |
+| W556 |
+| W611 |
+| W612 |
+| W663 |
+| W728 |
+| W730 |
+| W877 |
+
+Query 7:
+
+| a | full_ | frac |
+|---|---|---|
+| I09 | 15 | 3.75 |
+| I07 | 10 | 6.75 |
+
+Query 8:
+
+| full_ | frac |
+|---|---|
+| 46 | 42.0 |
+
+Query 9:
+
+| &#x27;W03&#x27; | count_star() |
+|---|---|
+| W03 | 27 |
+| W30tot | 16 |
+| W30win | 2 |
+| W31tot | 11 |
+| W31win | 11 |
+
+Query 10:
+
+| &#x27;self_author&#x27; | count(DISTINCT c.citing) |
+|---|---|
+| self_author | 7 |
+| self_I02 | 6 |
+| self_I01 | 5 |
+| self_country | 20 |
+
+Query 11:
+
+| &#x27;hop1&#x27; | count(DISTINCT citing) |
+|---|---|
+| hop1 | 7 |
+| hop2all | 17 |
+
+Query 12:
+
+| citing |
+|---|
+| W1042 |
+| W337 |
+| W338 |
+| W396 |
+| W50 |
+| W51 |
+| W52 |
+| W546 |
+| W682 |
+| W801 |
+| W895 |
+
+Query 13:
+
+| cited | n |
+|---|---|
+| W20 | 13 |
+| W707 | 2 |
+| W417 | 2 |
+
+Query 14:
+
+| a | n |
+|---|---|
+| I12 | 12 |
+| I09 | 4 |
+| I11 | 4 |
+|  | 3 |
+| I14 | 3 |
+| I01 | 2 |
+
+Query 15:
+
+| &#x27;W70&#x27; | work_id | institution_id |
+|---|---|---|
+| W70 | W70 | I06 |
+| W71 | W71 | I04 |
+
+Query 16:
+
+| count(DISTINCT c.work_id) |
+|---|
+| 13 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>**Q1.** 3 people. A01, A03 and A02 share one ORCID (0000-0002-9841-6229), so they are one person. The other records named &quot;M. Ellison&quot; (A04, A102) have different ORCIDs and are different people, so the three names cover at most that person plus A04 and A102 if they are counted.
+
+**Q2.** 32 works: W01, W02, W03, W04, W05, W06, W07, W12, W19, W206, W238, W271, W374, W449, W464, W555, W612, W663, W676, W763, W813, W817, W843, W869, W905, W936, W949, W972, W984, W1005, W1048, W1050. I took every record sharing ORCID 0000-0002-9841-6229.
+
+**Q3.** No. W37 is by A05 (ORCID 0001-6105-5008) and W38 is by A06 (ORCID 0007-5475-1779), so they are different people.
+
+**Q4.** 9. A05 shares an ORCID with A104, so I counted that person&#x27;s research works across both records.
+
+**Q5.** No. W08&#x27;s M. Ellison is A04 (ORCID 0004-8662-8360), while W01&#x27;s Mara Ellison is A01 (ORCID 0002-9841-6229).
+
+**Q6.** A01. This person (ORCID 0002-9841-6229) has 19 research works credited to the University of Albury and its units, the most of any author.
+
+**Q7.** 19.
+
+**Q8.** I01. The chain is I04 → I03 → I02 → I01.
+
+**Q9.** 65.
+
+**Q10.** 72.
+
+**Q11.** 48.
+
+**Q12.** Full 10, fractional 6.75.
+
+**Q13.** Full counting: I09 (15 against 10). Fractional counting: I07 (6.75 against 3.75).
+
+**Q14.** Full 46, fractional 42.0.
+
+**Q15.** 25.
+
+**Q16.** 88.
+
+**Q17.** W04, W271 and W936 (editorials), and W05, W813 and W949 (errata).
+
+**Q18.** 15.
+
+**Q19.** 27. I counted citations of W03, which stands for both W02 and W03.
+
+**Q20.** W02, W42, W210, W219, W226, W263, W322, W407, W416, W432, W460, W506, W522, W524, W545, W556, W611, W612, W663, W728, W730, W877, W1049. Each of these has its published version in the data.
+
+**Q21.** 45.
+
+**Q22.** More in total: W30 (16 against 11). More within the window: W31 (11 against 2).
+
+**Q23.** Total 16, within the window 2.
+
+**Q24.** 12.
+
+**Q25.** 20.
+
+**Q26.** No. W23 is retracted, so it is not research output.
+
+**Q27.** I12, with 12 citing works.
+
+**Q28.** 4.
+
+**Q29.** Author level 7, University of Albury level 6, country level 20.
+
+**Q30.** 5.
+
+**Q31.** W50, W51, W52, W337, W338, W396, W546, W682, W801, W895, W1042.
+
+**Q32.** 17.
+
+**Q33.** W20, with 13 citations.
+
+**Q34.** 6.
+
+**Q35.** 25.
+
+**Q36.** 36.
+
+**Q37.** I06. W70 is credited to the affiliated institute I06, and the data shows the Tessel Laboratory was not the credited affiliation (the last-listed one counts).
+
+**Q38.** I04, I03, I02 and I01. W71 is credited to I04, and its parent chain gives the rest.
+
+**Q39.** 13.
+
+**Q40.** S01.
+
+**Q41.** No. S03 is K1 and S02 is K2, so S03 is lower.
+
+**Q42.** 0. S04 is delisted (K0), so its works are not research output.
+
+**Q43.** No. W07 appeared in S04, which is K0.
+
+**Q44.** I02, I03, I04, I05, I19, I20. The affiliated institutes I06 and I21 are excluded.
+
+**Q45.** 16.
+
+**Q46.** I06. It is an affiliated institute, so its parent link is not followed and its ultimate parent is itself.
+
+**Q47.** Full counting counts each work once per institution. Fractional counting splits each work among its authors, so Rostval&#x27;s 15 works carry few Rostval authors (3.75 in total). Kesting&#x27;s 10 works carry more of their authors (6.75 in total), which reverses the order.
+
+**Q48.** W70&#x27;s author lists the Tessel Laboratory (I04), but the credited affiliation is the one with the highest affiliation sequence, which is I06. I06 is an affiliated institute (AFF), so its parent link to I02 does not make W70 a University of Albury work.
+
+```json
+{&quot;Q1&quot;:{&quot;count&quot;:3},&quot;Q2&quot;:{&quot;works&quot;:[&quot;W01&quot;,&quot;W02&quot;,&quot;W03&quot;,&quot;W04&quot;,&quot;W05&quot;,&quot;W06&quot;,&quot;W07&quot;,&quot;W12&quot;,&quot;W19&quot;,&quot;W206&quot;,&quot;W238&quot;,&quot;W271&quot;,&quot;W374&quot;,&quot;W449&quot;,&quot;W464&quot;,&quot;W555&quot;,&quot;W612&quot;,&quot;W663&quot;,&quot;W676&quot;,&quot;W763&quot;,&quot;W813&quot;,&quot;W817&quot;,&quot;W843&quot;,&quot;W869&quot;,&quot;W905&quot;,&quot;W936&quot;,&quot;W949&quot;,&quot;W972&quot;,&quot;W984&quot;,&quot;W1005&quot;,&quot;W1048&quot;,&quot;W1050&quot;]},&quot;Q3&quot;:{&quot;same&quot;:&quot;no&quot;},&quot;Q4&quot;:{&quot;count&quot;:9},&quot;Q5&quot;:{&quot;same&quot;:&quot;no&quot;},&quot;Q6&quot;:{&quot;author&quot;:&quot;A01&quot;},&quot;Q7&quot;:{&quot;count&quot;:19},&quot;Q8&quot;:{&quot;parent&quot;:&quot;I01&quot;},&quot;Q9&quot;:{&quot;count&quot;:65},&quot;Q10&quot;:{&quot;count&quot;:72},&quot;Q11&quot;:{&quot;count&quot;:48},&quot;Q12&quot;:{&quot;full&quot;:10,&quot;fractional&quot;:6.75},&quot;Q13&quot;:{&quot;full&quot;:&quot;I09&quot;,&quot;fractional&quot;:&quot;I07&quot;},&quot;Q14&quot;:{&quot;full&quot;:46,&quot;fractional&quot;:42.0},&quot;Q15&quot;:{&quot;count&quot;:25},&quot;Q16&quot;:{&quot;count&quot;:88},&quot;Q17&quot;:{&quot;works&quot;:[&quot;W04&quot;,&quot;W05&quot;,&quot;W271&quot;,&quot;W813&quot;,&quot;W936&quot;,&quot;W949&quot;]},&quot;Q18&quot;:{&quot;count&quot;:15},&quot;Q19&quot;:{&quot;count&quot;:27},&quot;Q20&quot;:{&quot;works&quot;:[&quot;W02&quot;,&quot;W42&quot;,&quot;W210&quot;,&quot;W219&quot;,&quot;W226&quot;,&quot;W263&quot;,&quot;W322&quot;,&quot;W407&quot;,&quot;W416&quot;,&quot;W432&quot;,&quot;W460&quot;,&quot;W506&quot;,&quot;W522&quot;,&quot;W524&quot;,&quot;W545&quot;,&quot;W556&quot;,&quot;W611&quot;,&quot;W612&quot;,&quot;W663&quot;,&quot;W728&quot;,&quot;W730&quot;,&quot;W877&quot;,&quot;W1049&quot;]},&quot;Q21&quot;:{&quot;count&quot;:45},&quot;Q22&quot;:{&quot;more_in_total&quot;:&quot;W30&quot;,&quot;more_in_window&quot;:&quot;W31&quot;},&quot;Q23&quot;:{&quot;total&quot;:16,&quot;in_window&quot;:2},&quot;Q24&quot;:{&quot;count&quot;:12},&quot;Q25&quot;:{&quot;count&quot;:20},&quot;Q26&quot;:{&quot;counts&quot;:&quot;no&quot;},&quot;Q27&quot;:{&quot;institution&quot;:&quot;I12&quot;,&quot;citing_works&quot;:12},&quot;Q28&quot;:{&quot;count&quot;:4},&quot;Q29&quot;:{&quot;author&quot;:7,&quot;institution&quot;:6,&quot;country&quot;:20},&quot;Q30&quot;:{&quot;count&quot;:5},&quot;Q31&quot;:{&quot;works&quot;:[&quot;W50&quot;,&quot;W51&quot;,&quot;W52&quot;,&quot;W337&quot;,&quot;W338&quot;,&quot;W396&quot;,&quot;W546&quot;,&quot;W682&quot;,&quot;W801&quot;,&quot;W895&quot;,&quot;W1042&quot;]},&quot;Q32&quot;:{&quot;count&quot;:17},&quot;Q33&quot;:{&quot;work&quot;:&quot;W20&quot;},&quot;Q34&quot;:{&quot;count&quot;:6},&quot;Q35&quot;:{&quot;count&quot;:25},&quot;Q36&quot;:{&quot;count&quot;:36},&quot;Q37&quot;:{&quot;institution&quot;:&quot;I06&quot;},&quot;Q38&quot;:{&quot;institutions&quot;:[&quot;I04&quot;,&quot;I03&quot;,&quot;I02&quot;,&quot;I01&quot;]},&quot;Q39&quot;:{&quot;count&quot;:13},&quot;Q40&quot;:{&quot;source&quot;:&quot;S01&quot;},&quot;Q41&quot;:{&quot;higher&quot;:&quot;no&quot;},&quot;Q42&quot;:{&quot;count&quot;:0},&quot;Q43&quot;:{&quot;research&quot;:&quot;no&quot;},&quot;Q44&quot;:{&quot;institutions&quot;:[&quot;I02&quot;,&quot;I03&quot;,&quot;I04&quot;,&quot;I05&quot;,&quot;I19&quot;,&quot;I20&quot;]},&quot;Q45&quot;:{&quot;count&quot;:16},&quot;Q46&quot;:{&quot;parent&quot;:&quot;I06&quot;}}
+```</code></pre></div></details>
+
+
+  </main>
+</div>
+</body>
+</html>

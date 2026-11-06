@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Credit ratings: questions and traps · Semantics ladder</title>
+  <link rel="stylesheet" href="../../../static/css/site.css">
+  <script src="../../../static/js/site.js" defer></script>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <a class="brand" href="../../../index.html">Semantics ladder</a>
+    <p class="brand-sub">How much does an LLM gain from being told what data means?</p>
+    <div class="nav-group">The experiment</div>
+    <ul>
+      <li><a class="" href="../../../index.html">Goals</a></li>
+      <li><a class="" href="../../../method/index.html">Method</a></li>
+    </ul>
+    
+    <div class="nav-group">Credit ratings</div>
+    <ul>
+      <li><a class="" href="../../credit_paths/index.html">Introduction</a></li><li><a class="" href="../data/index.html">Data</a></li><li><a class="active" href="index.html">Questions and traps</a></li><li><a class="" href="../ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">Research analytics</div>
+    <ul>
+      <li><a class="" href="../../research_850/index.html">Introduction</a></li><li><a class="" href="../../research/data/index.html">Data</a></li><li><a class="" href="../../research/questions/index.html">Questions and traps</a></li><li><a class="" href="../../research/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">The results</div>
+    <ul>
+      <li><a class="" href="../../../scores/index.html">Scores</a></li>
+      <li><a class="" href="../../../conclusions/index.html">Conclusions</a></li>
+      <li><a class="" href="../../../runs/index.html">Run archive</a></li>
+    </ul>
+    <p class="nav-foot">All data is invented: the companies, LEIs, ratings, works, people and institutions. Nothing here is any rating agency's or bibliographic database's data or definitions.</p>
+  </nav>
+  <main class="content">
+    <h1>Credit ratings: questions and traps</h1>
+    
+<div class="prose"><p>Each question looks like a lookup, and each has an obvious wrong answer. Only the question text is sent to the model, which must give its answer as a typed JSON field. The trap and the key are never sent. Keys are computed from the data, and each base key is checked against one written by hand, so the two can't silently disagree. The keys shown are the base data's; the other datasets compute their own.</p>
+<h2 id="the-implicit-meanings">The implicit meanings</h2>
+<table>
+<thead>
+<tr>
+<th>Implicit meaning</th>
+<th>What it says</th>
+<th>Questions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>When</strong></td>
+<td>A rating holds from one action to the next, so "the rating on a date" is the latest action on or before it</td>
+<td>Q1, Q11 to Q16</td>
+</tr>
+<tr>
+<td><strong>Outlook and Watch</strong></td>
+<td>An outlook or a Rating Watch says where a rating may go. Neither is a rating change</td>
+<td>Q2, Q16 to Q19</td>
+</tr>
+<tr>
+<td><strong>Withdrawn isn't defaulted</strong></td>
+<td><code>WD</code> is a withdrawal, often for commercial reasons; <code>RD</code> and <code>D</code> are defaults</td>
+<td>Q8, Q20 to Q22</td>
+</tr>
+<tr>
+<td><strong>What is rated</strong></td>
+<td>Issuer, instrument, short-term, local-currency: each is a different rating</td>
+<td>Q3, Q10, Q23 to Q27</td>
+</tr>
+<tr>
+<td><strong>Ceilings</strong></td>
+<td>A Country Ceiling caps foreign-currency ratings in a country. It isn't the sovereign's rating</td>
+<td>Q6, Q28 to Q31</td>
+</tr>
+<tr>
+<td><strong>Groups and support</strong></td>
+<td>Ownership comes from parent links, not names; guaranteed debt carries the guarantor's risk</td>
+<td>Q5, Q32 to Q36</td>
+</tr>
+<tr>
+<td><strong>Who is who</strong></td>
+<td>Same LEI, same entity; similar names, different entities</td>
+<td>Q4, Q37 to Q40</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-local-meanings">The local meanings</h2>
+<table>
+<thead>
+<tr>
+<th>Local rule</th>
+<th>Questions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>QA records are test data: they and their actions are ignored</td>
+<td>Q41 (also Q9, Q37, Q40)</td>
+</tr>
+<tr>
+<td>Where records disagree, RESEARCH holds for country, RATINGS for name and parent</td>
+<td>Q42, Q43</td>
+</tr>
+<tr>
+<td><code>XVD</code> is the Valdorian dollar, <code>CVK</code> the Corvenian krone: local-currency debt, not capped</td>
+<td>Q44, Q45</td>
+</tr>
+<tr>
+<td><code>CO</code> is a credit opinion, which isn't a rating</td>
+<td>Q46</td>
+</tr>
+<tr>
+<td><code>EX</code> is an expected rating, which isn't a rating until it's assigned</td>
+<td>Q47, Q48</td>
+</tr>
+</tbody>
+</table></div>
+<section class="query trapcard" id="Q1">
+  <div class="qhead"><span class="qchip big">Q1</span><strong>What was Kestrel Energy&#x27;s rating on 1 January 2025?</strong></div>
+  <p class="trap"><b>The trap: Time.</b> A rating holds from one action to the next, so &#x27;the rating on a date&#x27; is the latest action on or before it.</p>
+  <p><b>Expected:</b> <code>rating</code> A- <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q2">
+  <div class="qhead"><span class="qchip big">Q2</span><strong>Has Kestrel Energy been downgraded in 2026?</strong></div>
+  <p class="trap"><b>The trap: Outlook versus rating.</b> An affirmation with a negative outlook is not a rating change.</p>
+  <p><b>Expected:</b> <code>downgraded</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q3">
+  <div class="qhead"><span class="qchip big">Q3</span><strong>Is Kestrel Energy&#x27;s 2031 note investment grade?</strong></div>
+  <p class="trap"><b>The trap: Issuer versus instrument rating.</b> A subordinated instrument is notched below the issuer.</p>
+  <p><b>Expected:</b> <code>investment_grade</code> no, <code>rating</code> BB+ <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q4">
+  <div class="qhead"><span class="qchip big">Q4</span><strong>What is Northwind Holdings&#x27; current outlook?</strong></div>
+  <p class="trap"><b>The trap: Identity.</b> Two records with the same LEI are one entity, whatever their names.</p>
+  <p><b>Expected:</b> <code>outlook</code> positive <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q5">
+  <div class="qhead"><span class="qchip big">Q5</span><strong>Whose credit risk does a holder of the Northwind Finance 2030 notes take, and how is it rated?</strong></div>
+  <p class="trap"><b>The trap: Roles.</b> Issuer versus guarantor; a finance subsidiary&#x27;s guaranteed debt carries the guarantor&#x27;s risk.</p>
+  <p><b>Expected:</b> <code>risk_of</code> E02, <code>rating</code> A <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q6">
+  <div class="qhead"><span class="qchip big">Q6</span><strong>Why is Valdoria Telecom&#x27;s foreign-currency rating lower than its local-currency rating?</strong></div>
+  <p class="trap"><b>The trap: Ceilings.</b> A Country Ceiling is a cap on foreign-currency ratings, not a rating of the sovereign or of the company.</p>
+  <p><b>Graded against a checklist:</b></p><ul><li>Names the Country Ceiling for Valdoria (BB) as the cause</li><li>Says the ceiling caps foreign-currency ratings and not local-currency ones</li></ul>
+</section>
+<section class="query trapcard" id="Q7">
+  <div class="qhead"><span class="qchip big">Q7</span><strong>Which issuers were downgraded in 2026?</strong></div>
+  <p class="trap"><b>The trap: Action types.</b> Outlook changes, Watch placements and withdrawals are not downgrades.</p>
+  <p><b>Expected:</b> <code>issuers</code> [&#x27;E08&#x27;, &#x27;E10&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q8">
+  <div class="qhead"><span class="qchip big">Q8</span><strong>Which entities were in default on 1 October 2026?</strong></div>
+  <p class="trap"><b>The trap: Default semantics.</b> RD is a default; WD (withdrawn) is not a credit event.</p>
+  <p><b>Expected:</b> <code>entities</code> [&#x27;E08&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q9">
+  <div class="qhead"><span class="qchip big">Q9</span><strong>As of 1 October 2026, how many distinct issuers hold an issuer rating?</strong></div>
+  <p class="trap"><b>The trap: Everything at once.</b> Identity, withdrawal, instrument versus issuer, ceiling versus rating.</p>
+  <p><b>Expected:</b> <code>count</code> 12 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q10">
+  <div class="qhead"><span class="qchip big">Q10</span><strong>Is Valdoria Telecom investment grade?</strong></div>
+  <p class="trap"><b>The trap: Ambiguity.</b> &#x27;the rating&#x27; of a company is several ratings; the investment-grade line is BBB-.</p>
+  <p><b>Expected:</b> <code>investment_grade</code> depends <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q11">
+  <div class="qhead"><span class="qchip big">Q11</span><strong>What was Marlow Utilities&#x27; rating on 1 June 2025?</strong></div>
+  <p class="trap"><b>The trap: Time.</b> Marlow&#x27;s actions are not in date order in the file.</p>
+  <p><b>Expected:</b> <code>rating</code> BBB+ <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q12">
+  <div class="qhead"><span class="qchip big">Q12</span><strong>What was Marlow Utilities&#x27; rating on 1 January 2024?</strong></div>
+  <p class="trap"><b>The trap: Time.</b> The rating on a date before a later downgrade.</p>
+  <p><b>Expected:</b> <code>rating</code> A- <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q13">
+  <div class="qhead"><span class="qchip big">Q13</span><strong>How many times has Marlow Utilities been downgraded?</strong></div>
+  <p class="trap"><b>The trap: Action types over time.</b> A Watch placement and an affirmation are not downgrades.</p>
+  <p><b>Expected:</b> <code>count</code> 1 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q14">
+  <div class="qhead"><span class="qchip big">Q14</span><strong>What was Halden Foods&#x27; rating on 1 January 2024?</strong></div>
+  <p class="trap"><b>The trap: Time.</b> Before its first action, an entity has no rating.</p>
+  <p><b>Expected:</b> <code>rating</code> none <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q15">
+  <div class="qhead"><span class="qchip big">Q15</span><strong>What was Halden Bank&#x27;s rating on 1 January 2026?</strong></div>
+  <p class="trap"><b>The trap: Time.</b> The downgrade came later in 2026.</p>
+  <p><b>Expected:</b> <code>rating</code> A- <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q16">
+  <div class="qhead"><span class="qchip big">Q16</span><strong>Has Marlow Utilities&#x27; rating changed since 1 January 2025?</strong></div>
+  <p class="trap"><b>The trap: Watch versus rating.</b> A Watch placement and an affirmation leave the rating where it was.</p>
+  <p><b>Expected:</b> <code>changed</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q17">
+  <div class="qhead"><span class="qchip big">Q17</span><strong>Was Orrin Bank downgraded in 2026?</strong></div>
+  <p class="trap"><b>The trap: Watch versus rating.</b> Rating Watch Negative is not a downgrade.</p>
+  <p><b>Expected:</b> <code>downgraded</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q18">
+  <div class="qhead"><span class="qchip big">Q18</span><strong>Which issuers were on Rating Watch Negative on 1 October 2026?</strong></div>
+  <p class="trap"><b>The trap: Watch over time.</b> Marlow&#x27;s Watch ended with its 2026 affirmation.</p>
+  <p><b>Expected:</b> <code>issuers</code> [&#x27;E06&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q19">
+  <div class="qhead"><span class="qchip big">Q19</span><strong>Which issuers had a Negative outlook on 1 October 2026?</strong></div>
+  <p class="trap"><b>The trap: Outlooks.</b> Set by affirmations, without a rating change.</p>
+  <p><b>Expected:</b> <code>issuers</code> [&#x27;E01&#x27;, &#x27;E09&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q20">
+  <div class="qhead"><span class="qchip big">Q20</span><strong>Is Pellam Retail in default?</strong></div>
+  <p class="trap"><b>The trap: Withdrawn is not defaulted..</b> </p>
+  <p><b>Expected:</b> <code>in_default</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q21">
+  <div class="qhead"><span class="qchip big">Q21</span><strong>Which entities had an issuer rating at some point but no longer had one on 1 October 2026?</strong></div>
+  <p class="trap"><b>The trap: Withdrawals.</b> A withdrawn rating is no rating.</p>
+  <p><b>Expected:</b> <code>entities</code> [&#x27;E07&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q22">
+  <div class="qhead"><span class="qchip big">Q22</span><strong>Which entities have ever been in default?</strong></div>
+  <p class="trap"><b>The trap: Default semantics.</b> RD is a default; WD is not.</p>
+  <p><b>Expected:</b> <code>entities</code> [&#x27;E08&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q23">
+  <div class="qhead"><span class="qchip big">Q23</span><strong>What is Kestrel Energy&#x27;s short-term rating?</strong></div>
+  <p class="trap"><b>The trap: Rating types.</b> The short-term rating is a different rating, on a different scale.</p>
+  <p><b>Expected:</b> <code>rating</code> F2 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q24">
+  <div class="qhead"><span class="qchip big">Q24</span><strong>Is Kestrel Energy&#x27;s issuer rating investment grade?</strong></div>
+  <p class="trap"><b>The trap: Issuer versus instrument.</b> BBB, at the issuer, even though one note is below investment grade.</p>
+  <p><b>Expected:</b> <code>investment_grade</code> yes <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q25">
+  <div class="qhead"><span class="qchip big">Q25</span><strong>How many instruments held an investment-grade rating on 1 October 2026?</strong></div>
+  <p class="trap"><b>The trap: Instrument ratings.</b> Counted on the instrument&#x27;s own rating, not its issuer&#x27;s.</p>
+  <p><b>Expected:</b> <code>count</code> 5 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q26">
+  <div class="qhead"><span class="qchip big">Q26</span><strong>What is Corvenia Power&#x27;s local-currency rating?</strong></div>
+  <p class="trap"><b>The trap: Currency basis.</b> The local-currency rating is a separate rating.</p>
+  <p><b>Expected:</b> <code>rating</code> A+ <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q27">
+  <div class="qhead"><span class="qchip big">Q27</span><strong>How is Corvenia Power&#x27;s 2032 note rated?</strong></div>
+  <p class="trap"><b>The trap: Instrument versus issuer.</b> The subordinated note sits below the issuer.</p>
+  <p><b>Expected:</b> <code>rating</code> A- <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q28">
+  <div class="qhead"><span class="qchip big">Q28</span><strong>What is the Republic of Corvenia&#x27;s foreign-currency issuer rating?</strong></div>
+  <p class="trap"><b>The trap: Ceiling versus sovereign rating.</b> Corvenia&#x27;s ceiling (A) is not its rating (BBB+).</p>
+  <p><b>Expected:</b> <code>rating</code> BBB+ <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q29">
+  <div class="qhead"><span class="qchip big">Q29</span><strong>What is the Republic of Valdoria&#x27;s issuer rating?</strong></div>
+  <p class="trap"><b>The trap: Ceilings.</b> Valdoria has a Country Ceiling and no issuer rating.</p>
+  <p><b>Expected:</b> <code>rating</code> none <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q30">
+  <div class="qhead"><span class="qchip big">Q30</span><strong>Which entities had a foreign-currency issuer rating exactly at their country&#x27;s ceiling on 1 October 2026?</strong></div>
+  <p class="trap"><b>The trap: Ceilings.</b> Which ratings the cap binds.</p>
+  <p><b>Expected:</b> <code>entities</code> [&#x27;E05&#x27;, &#x27;E15&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q31">
+  <div class="qhead"><span class="qchip big">Q31</span><strong>Did any company have a foreign-currency issuer rating above its country&#x27;s ceiling on 1 October 2026?</strong></div>
+  <p class="trap"><b>The trap: Ceilings.</b> The sovereign&#x27;s own rating can be below its ceiling, and a local-currency rating above it.</p>
+  <p><b>Expected:</b> <code>any</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q32">
+  <div class="qhead"><span class="qchip big">Q32</span><strong>Who is Halden Leasing&#x27;s ultimate parent?</strong></div>
+  <p class="trap"><b>The trap: Groups.</b> The chain of parents, two levels up.</p>
+  <p><b>Expected:</b> <code>parent</code> E09 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q33">
+  <div class="qhead"><span class="qchip big">Q33</span><strong>Whose credit risk does a holder of the Halden Leasing 2028 notes take, and how is it rated?</strong></div>
+  <p class="trap"><b>The trap: Roles.</b> The guarantor is the parent, not the ultimate parent.</p>
+  <p><b>Expected:</b> <code>risk_of</code> E10, <code>rating</code> BBB+ <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q34">
+  <div class="qhead"><span class="qchip big">Q34</span><strong>Is Halden Foods part of the same group as Halden Bank?</strong></div>
+  <p class="trap"><b>The trap: Groups.</b> A shared name is not a shared group.</p>
+  <p><b>Expected:</b> <code>same_group</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q35">
+  <div class="qhead"><span class="qchip big">Q35</span><strong>How many entities are in the Halden group, the parent included?</strong></div>
+  <p class="trap"><b>The trap: Groups.</b> Membership comes from parent links, not names.</p>
+  <p><b>Expected:</b> <code>count</code> 3 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q36">
+  <div class="qhead"><span class="qchip big">Q36</span><strong>How many entities are in the Northwind group, the parent included?</strong></div>
+  <p class="trap"><b>The trap: Groups and identity.</b> Two records of the parent are one entity.</p>
+  <p><b>Expected:</b> <code>count</code> 2 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q37">
+  <div class="qhead"><span class="qchip big">Q37</span><strong>How many distinct legal entities does the data describe?</strong></div>
+  <p class="trap"><b>The trap: Identity.</b> Records with the same LEI are one entity.</p>
+  <p><b>Expected:</b> <code>count</code> 16 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q38">
+  <div class="qhead"><span class="qchip big">Q38</span><strong>Are Orrin Bank AG and Orrin Bancorp Inc the same entity?</strong></div>
+  <p class="trap"><b>The trap: Identity.</b> Similar names, different LEIs.</p>
+  <p><b>Expected:</b> <code>same</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q39">
+  <div class="qhead"><span class="qchip big">Q39</span><strong>What is Northwind Holdings&#x27; current rating?</strong></div>
+  <p class="trap"><b>The trap: Identity.</b> The latest action sits on the other record.</p>
+  <p><b>Expected:</b> <code>rating</code> A <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q40">
+  <div class="qhead"><span class="qchip big">Q40</span><strong>How many distinct issuers domiciled in GB held an issuer rating on 1 October 2026?</strong></div>
+  <p class="trap"><b>The trap: Identity and withdrawal.</b> Northwind counted once, Pellam not at all, the QA record ignored.</p>
+  <p><b>Expected:</b> <code>count</code> 5 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q41">
+  <div class="qhead"><span class="qchip big">Q41</span><strong>What is Brindle Capital&#x27;s current rating?</strong></div>
+  <p class="trap"><b>The trap: Local rule.</b> QA records are test data and describe no real entity.</p>
+  <p><b>Expected:</b> <code>rating</code> none <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q42">
+  <div class="qhead"><span class="qchip big">Q42</span><strong>In which country is Halden Bank domiciled?</strong></div>
+  <p class="trap"><b>The trap: Local rule.</b> Where records disagree on country, the RESEARCH record holds.</p>
+  <p><b>Expected:</b> <code>country</code> LU <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q43">
+  <div class="qhead"><span class="qchip big">Q43</span><strong>How many distinct entities are domiciled in Luxembourg (LU)?</strong></div>
+  <p class="trap"><b>The trap: Local rule.</b> The RESEARCH record&#x27;s country holds over the RATINGS record&#x27;s, so Halden Bank is in LU.</p>
+  <p><b>Expected:</b> <code>count</code> 1 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q44">
+  <div class="qhead"><span class="qchip big">Q44</span><strong>Is Valdoria Telecom&#x27;s 2027 note a local-currency obligation?</strong></div>
+  <p class="trap"><b>The trap: Local codes.</b> XVD is the Valdorian dollar.</p>
+  <p><b>Expected:</b> <code>local_currency</code> yes <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q45">
+  <div class="qhead"><span class="qchip big">Q45</span><strong>Is Valdoria Telecom&#x27;s 2027 note rated above what Valdoria&#x27;s Country Ceiling allows?</strong></div>
+  <p class="trap"><b>The trap: Local codes and ceilings.</b> Local-currency debt is not capped, so BBB- above a BB ceiling is allowed.</p>
+  <p><b>Expected:</b> <code>above_ceiling</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q46">
+  <div class="qhead"><span class="qchip big">Q46</span><strong>Does Halden Leasing have an issuer rating?</strong></div>
+  <p class="trap"><b>The trap: Local type.</b> A credit opinion (CO) is not a rating.</p>
+  <p><b>Expected:</b> <code>issuer_rating</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q47">
+  <div class="qhead"><span class="qchip big">Q47</span><strong>How is Corvenia Power&#x27;s 2034 note rated?</strong></div>
+  <p class="trap"><b>The trap: Local action.</b> An expected rating (EX) is not a rating until assigned.</p>
+  <p><b>Expected:</b> <code>rating</code> none <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q48">
+  <div class="qhead"><span class="qchip big">Q48</span><strong>How many instruments held a rating on 1 October 2026?</strong></div>
+  <p class="trap"><b>The trap: Local action.</b> The expected rating doesn&#x27;t count.</p>
+  <p><b>Expected:</b> <code>count</code> 7 <span class="dim">· graded by code</span></p>
+  
+</section>
+
+
+<h2 id="credit_paths">Asked of ownership paths only</h2>
+<div class="prose"><p>The ownership paths dataset asks the 48 questions above, keyed on its own data, and 13 more that follow links. Their keys below are computed from that dataset.</p>
+<table>
+<thead>
+<tr>
+<th>What they ask</th>
+<th>Questions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ultimate parent, and the number of levels to it, across a RESEARCH record</td>
+<td>Q49, Q50</td>
+</tr>
+<tr>
+<td>Group size, with the QA record and a stale parent claim left out</td>
+<td>Q51, Q52, Q53</td>
+</tr>
+<tr>
+<td>Members domiciled in VD, by the domicile rule</td>
+<td>Q54</td>
+</tr>
+<tr>
+<td>Exposure: rated entities with a VD entity anywhere above them</td>
+<td>Q55</td>
+</tr>
+<tr>
+<td>The lowest rating anywhere in a group</td>
+<td>Q56</td>
+</tr>
+<tr>
+<td>Nearest common ancestor of two members</td>
+<td>Q57</td>
+</tr>
+<tr>
+<td>Guarantees that cross groups, and whose risk a note carries</td>
+<td>Q58, Q60</td>
+</tr>
+<tr>
+<td>Depth in the tree, and below-investment-grade members of a group</td>
+<td>Q59, Q61</td>
+</tr>
+</tbody>
+</table></div>
+<section class="query trapcard" id="Q49">
+  <div class="qhead"><span class="qchip big">Q49</span><strong>Who is Cerid Rosor Holdings SA&#x27;s ultimate parent?</strong></div>
+  <p class="trap"><b>The trap: Paths and identity.</b> A chain of parents several levels long, with one link naming a RESEARCH record of the parent.</p>
+  <p><b>Expected:</b> <code>parent</code> E5001 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q50">
+  <div class="qhead"><span class="qchip big">Q50</span><strong>How many levels of ownership separate Cerid Rosor Holdings SA from its ultimate parent?</strong></div>
+  <p class="trap"><b>The trap: Paths.</b> The length of the chain, counted across the RESEARCH record.</p>
+  <p><b>Expected:</b> <code>count</code> 6 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q51">
+  <div class="qhead"><span class="qchip big">Q51</span><strong>How many entities are in the Cerid Group plc group, the parent included?</strong></div>
+  <p class="trap"><b>The trap: Paths.</b> Every level of the tree, the QA record under the top left out, the RESEARCH record not counted twice.</p>
+  <p><b>Expected:</b> <code>count</code> 58 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q52">
+  <div class="qhead"><span class="qchip big">Q52</span><strong>How many entities are in the Rotam Group Inc group, the parent included?</strong></div>
+  <p class="trap"><b>The trap: Paths and sources.</b> A RESEARCH record names this top as a parent, but RATINGS holds for parent links.</p>
+  <p><b>Expected:</b> <code>count</code> 19 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q53">
+  <div class="qhead"><span class="qchip big">Q53</span><strong>Are Belir Mining SA and Rotam Group Inc in the same group?</strong></div>
+  <p class="trap"><b>The trap: Sources.</b> The stale parent from RESEARCH is overruled by the RATINGS record.</p>
+  <p><b>Expected:</b> <code>same_group</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q54">
+  <div class="qhead"><span class="qchip big">Q54</span><strong>Which members of the Wonod Group SA group are domiciled in Valdoria (VD)?</strong></div>
+  <p class="trap"><b>The trap: Paths and the domicile rule.</b> One member is in VD by its RESEARCH record, which holds for country.</p>
+  <p><b>Expected:</b> <code>entities</code> [&#x27;E5106&#x27;, &#x27;E5124&#x27;, &#x27;E5130&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q55">
+  <div class="qhead"><span class="qchip big">Q55</span><strong>If Valdoria (VD) came under stress, how many entities with an issuer rating in force have an entity domiciled in VD somewhere above them in their chain of parents?</strong></div>
+  <p class="trap"><b>The trap: Exposure through ownership.</b> Walk up every chain, with domicile by the RESEARCH rule.</p>
+  <p><b>Expected:</b> <code>count</code> 31 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q56">
+  <div class="qhead"><span class="qchip big">Q56</span><strong>What is the lowest current foreign-currency issuer rating held by any member of the Vesol Group BV group?</strong></div>
+  <p class="trap"><b>The trap: Paths and time.</b> The whole tree, each member&#x27;s latest action.</p>
+  <p><b>Expected:</b> <code>rating</code> BB- <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q57">
+  <div class="qhead"><span class="qchip big">Q57</span><strong>Which is the nearest entity that Cerid Guven Energy SA and Cerid Telecom SA both have in their chains of parents?</strong></div>
+  <p class="trap"><b>The trap: Paths.</b> The nearest common ancestor, below the top of the group.</p>
+  <p><b>Expected:</b> <code>entity</code> E5002 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q58">
+  <div class="qhead"><span class="qchip big">Q58</span><strong>Which entities guarantee a note issued by an entity outside their own group?</strong></div>
+  <p class="trap"><b>The trap: Paths and roles.</b> Guarantee links compared with ownership chains.</p>
+  <p><b>Expected:</b> <code>entities</code> [&#x27;E5145&#x27;] <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q59">
+  <div class="qhead"><span class="qchip big">Q59</span><strong>How many entities in the Cerid Group plc group sit exactly three levels below the top?</strong></div>
+  <p class="trap"><b>The trap: Paths.</b> Depth in the tree, across the RESEARCH record.</p>
+  <p><b>Expected:</b> <code>count</code> 12 <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q60">
+  <div class="qhead"><span class="qchip big">Q60</span><strong>Whose credit risk does a holder of the Cross-group 4.75% notes due 2031 take, and is that entity in the same group as the issuer?</strong></div>
+  <p class="trap"><b>The trap: Roles across groups.</b> The guarantor belongs to another group.</p>
+  <p><b>Expected:</b> <code>risk_of</code> E5145, <code>same_group</code> no <span class="dim">· graded by code</span></p>
+  
+</section>
+<section class="query trapcard" id="Q61">
+  <div class="qhead"><span class="qchip big">Q61</span><strong>How many members of the Cerid Group plc group, the top included, hold a foreign-currency issuer rating below investment grade?</strong></div>
+  <p class="trap"><b>The trap: Paths and test data.</b> The QA record under the top has a B- rating, and is ignored.</p>
+  <p><b>Expected:</b> <code>count</code> 19 <span class="dim">· graded by code</span></p>
+  
+</section>
+
+
+
+  </main>
+</div>
+</body>
+</html>
