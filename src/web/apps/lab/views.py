@@ -27,7 +27,7 @@ def method(request):
 
 
 def conclusions(request):
-    return render(request, "lab/doc.html", {"title": "Conclusions", "body": files.page("conclusions")})
+    return render(request, "lab/doc.html", {"title": "Conclusions", "body": files.page("conclusions"), "heat": True})
 
 
 def scores(request):
