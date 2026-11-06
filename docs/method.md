@@ -63,3 +63,20 @@ The SPARQL conditions can also run on [GraphDB](https://graphdb.ontotext.com/) (
 | `sparql+axioms` | the graph after the SHACL rules have run, holding what they derive (on credit, one entity per LEI, ancestors and the ultimate parent; on research, one person per ORCID, credited institutions and the citations that count), with no definitions | rules run in the graph, against `sql+executed` |
 
 Read across, D1 against D4, D2 against D5 and D3 against D6 compare SQL with SPARQL given the same meaning.
+
+## What the runs cost, and how long they took
+
+Every model call went through the `claude` command line in print mode, on a Claude subscription, so the runs cost nothing beyond the subscription. They did count against its usage limits, which stopped one run for about an hour.
+
+At the API's list prices, the same calls would cost roughly **$45**, almost all of it Sonnet:
+
+| | Sessions | Input | Output | At list prices |
+|---|---|---|---|---|
+| Claude Sonnet 5.5 ($2 / $10 per million tokens) | 563 | about 15.5M tokens | about 1.2M tokens | about $43 |
+| Claude Haiku 5.5 ($0.10 / $0.50) | 290 | about 4.4M tokens | about 0.5M tokens | about $1 |
+
+These are estimates from the saved prompts, answers and query transcripts, at about four characters a token, with each round of a querying session counted with the conversation before it. They leave out the thinking the models do before answering, which is billed as output but not saved, the grader's calls on the few questions it grades, and any saving from prompt caching. So read them as an order of magnitude.
+
+The 35 runs on these pages ran between 4 and 6 November 2026: 853 sessions in all. Added up, the runs took about 40 hours. Since two or three ran at once, something was running for about 23 hours of those three days. A reading run on the base data takes 10 to 40 minutes, a querying run with six conditions about an hour, and the runs on the larger datasets two to four hours each.
+
+`tools/rebuild` regenerates every dataset, question, key and executed table from the scripts, and every grade and report from the saved answers, in about a minute and with no model calls. `tools/rebuild --check` does it in a scratch copy and lists anything that differs from the repo.

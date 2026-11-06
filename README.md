@@ -95,3 +95,18 @@ tools/site-dump      # the same pages as a static site in site/, for GitHub Page
 It runs its own server on port 8031, mirrors every page with wget, and syncs the result into
 `site/`. It doesn't commit: check `site/` and commit it. On a push to `main`, `.github/workflows/pages.yml`
 publishes `site/` to GitHub Pages. `docs/` holds the pages' text, in Markdown.
+
+## Rebuilding and checking
+
+```
+tools/rebuild --check   # rebuild every table in a scratch copy and list anything that differs
+tools/rebuild           # rebuild in place
+```
+
+It regenerates each domain's data, RDF, Markdown ontology, questions, keys and executed tables, then every
+run's grades and report from its saved answers. No model is called. What the runs cost and how long they
+took is on the Method page (`docs/method.md`).
+
+## Licence
+
+MIT: see `LICENSE`. All the data is invented.
