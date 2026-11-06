@@ -277,3 +277,25 @@ Haiku's run is `results/credit/2026-11-04-2028-haiku/`.
 - **The poor SPARQL sessions come from the model, not the store.** In `sparql+ontology` run 3 it stopped after three of eight rounds, saying later results were malformed when no query had failed, and left every path answer empty. In run 5 it reran the same entity query in several rounds and ran out before the paths. In `sparql+axioms` run 2 it spent all eight rounds fetching whole classes 60 rows at a time and saw only part of the 540 entities.
 - **So the gap between SQL and SPARQL here is how the model works in the query loop.** With SQL it asks for what each question needs. With SPARQL it more often pages through the graph first. More rounds, or a larger row limit, might close the gap, if SQL gets the same.
 
+
+## 6 November 2026: credit at 300 issuers, version 2, every reading condition, Sonnet and Haiku
+
+`results/credit_300/2026-11-05-2135-sonnet/` and `2026-11-05-2135-haiku/`: R1 to R10, five repeats, on the 300-issuer data rebuilt on the version 2 rules. One Haiku session (`csv+neutral` run 2) came back with only the second half of its answer and was asked again on resume.
+
+| Condition | Sonnet | Haiku |
+|---|---|---|
+| `csv` | 81% | 74% |
+| `rdf` | 77% (−4, −8 to −0) | 63% (−10, −17 to −4) |
+| `csv+padding` | 81% (+0) | 69% (−4, −8 to −1) |
+| `csv+markdown` | 93% (+12) | 87% (+13) |
+| `csv+ontology` | 92% (+11) | 89% (+15) |
+| `rdf+ontology` | 94% (+13) | 83% (+10) |
+| `csv+neutral` | 95% (+14) | 88% (+15) |
+| `csv+axioms` | 92% (+11) | 88% (+14) |
+| `csv+axioms+markdown` | 94% (+12) | 85% (+11) |
+| `executed` | 94% (+13) | 91% (+17) |
+
+- **The gain from the definitions holds at scale:** +11 to +14 for Sonnet and +10 to +17 for Haiku, about what it is on the base data.
+- **The ceiling drops:** 92–95% for Sonnet and 83–91% for Haiku with the definitions, against 96–100% for both on the base data. So the two models no longer end level. Most of the loss is on long lists of 28 to 31 issuers (Q7, Q18, Q19), graded strictly.
+- **RDF alone costs more here:** −4 for Sonnet and −10 for Haiku. The decoy costs Haiku 4 points (−8 to −1).
+- **Q18's key is too narrow.** `build_questions.py` reads the Watch from the foreign-currency issuer rating only. E1019 and E1059 are on Watch Negative on their local-currency rating, and every session lists them, so Q18 is wrong in every condition for both models. Counting both bases would make the key 32 issuers here and in `credit_paths`, and leave the base data's unchanged. Q19, the Negative outlooks, is the same either way.

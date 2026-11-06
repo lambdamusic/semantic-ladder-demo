@@ -1,0 +1,11675 @@
+<!-- system: You answer questions about a credit-ratings dataset. Use only the data you are given and what it tells you about its own meaning. If a question is ambiguous, or the data cannot settle it, say so. Be concise. -->
+
+## The data
+
+### facts.ttl (RDF, Turtle)
+```turtle
+@prefix lad: <https://example.org/ladder/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+lad:A01 a lad:RatingAction ;
+    rdfs:label "E01 AS A- 2024-03-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-03-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E01 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A02 a lad:RatingAction ;
+    rdfs:label "E01 DG BBB 2025-06-20" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "weaker cash flow after asset sale" ;
+    lad:date "2025-06-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E01 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A03 a lad:RatingAction ;
+    rdfs:label "E01 AF BBB 2026-02-10" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-10"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E01 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A04 a lad:RatingAction ;
+    rdfs:label "E01 AF F2 2026-02-10" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-10"^^xsd:date ;
+    lad:ratedThing lad:E01 ;
+    lad:rating "F2" ;
+    lad:ratingType lad:type-STIDR .
+
+lad:A05 a lad:RatingAction ;
+    rdfs:label "I01 AS A- 2024-03-12" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-03-12"^^xsd:date ;
+    lad:ratedThing lad:I01 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A06 a lad:RatingAction ;
+    rdfs:label "I01 DG BBB 2025-06-20" ;
+    lad:action lad:action-DG ;
+    lad:date "2025-06-20"^^xsd:date ;
+    lad:ratedThing lad:I01 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A07 a lad:RatingAction ;
+    rdfs:label "I02 DG BB+ 2025-06-20" ;
+    lad:action lad:action-DG ;
+    lad:date "2025-06-20"^^xsd:date ;
+    lad:ratedThing lad:I02 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A08 a lad:RatingAction ;
+    rdfs:label "E02 AS A 2023-11-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-11-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E02 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A09 a lad:RatingAction ;
+    rdfs:label "E03 AF A 2025-09-15" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-15"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E03 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A10 a lad:RatingAction ;
+    rdfs:label "I03 AS A 2023-11-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-11-01"^^xsd:date ;
+    lad:ratedThing lad:I03 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1001 a lad:RatingAction ;
+    rdfs:label "E1002 AS A+ 2022-08-18" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-08-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1002 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1002 a lad:RatingAction ;
+    rdfs:label "E1002 WD WD 2025-07-20" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-07-20"^^xsd:date ;
+    lad:ratedThing lad:E1002 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1003 a lad:RatingAction ;
+    rdfs:label "E1003 AS A 2024-07-05" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-07-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1003 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1004 a lad:RatingAction ;
+    rdfs:label "E1004 AS BB 2023-05-02" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1004 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1005 a lad:RatingAction ;
+    rdfs:label "E1005 AS BBB- 2022-05-02" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-05-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1005 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1006 a lad:RatingAction ;
+    rdfs:label "E1005 DG BB+ 2023-03-19" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-03-19"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1005 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1007 a lad:RatingAction ;
+    rdfs:label "E1005 DG BB 2025-08-02" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-02"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1005 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1008 a lad:RatingAction ;
+    rdfs:label "E1006 AS AA- 2025-08-26" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1006 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1009 a lad:RatingAction ;
+    rdfs:label "E1006 UG AA 2026-04-15" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-04-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1006 ;
+    lad:rating "AA" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1010 a lad:RatingAction ;
+    rdfs:label "E1006 RW AA 2026-06-17" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-17"^^xsd:date ;
+    lad:ratedThing lad:E1006 ;
+    lad:rating "AA" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1011 a lad:RatingAction ;
+    rdfs:label "I1001 EX A+ 2026-11-17" ;
+    lad:action lad:action-EX ;
+    lad:date "2026-11-17"^^xsd:date ;
+    lad:ratedThing lad:I1001 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1012 a lad:RatingAction ;
+    rdfs:label "E1007 AS BB- 2023-06-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-06-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1007 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1013 a lad:RatingAction ;
+    rdfs:label "E1007 WD WD 2026-06-27" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2026-06-27"^^xsd:date ;
+    lad:ratedThing lad:E1007 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1014 a lad:RatingAction ;
+    rdfs:label "I1002 AS BB- 2023-06-03" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-06-03"^^xsd:date ;
+    lad:ratedThing lad:I1002 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1015 a lad:RatingAction ;
+    rdfs:label "E1008 AS BBB- 2022-12-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-12-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1008 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1016 a lad:RatingAction ;
+    rdfs:label "I1003 AS BBB- 2022-12-09" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-12-09"^^xsd:date ;
+    lad:ratedThing lad:I1003 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1017 a lad:RatingAction ;
+    rdfs:label "E1009 AS A 2022-05-02" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-05-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1009 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1018 a lad:RatingAction ;
+    rdfs:label "I1004 AS A 2022-05-02" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-05-02"^^xsd:date ;
+    lad:ratedThing lad:I1004 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1019 a lad:RatingAction ;
+    rdfs:label "E1010 AS BBB- 2023-08-18" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-08-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1010 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1020 a lad:RatingAction ;
+    rdfs:label "E1011 AS B+ 2025-12-13" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-12-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1011 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1021 a lad:RatingAction ;
+    rdfs:label "E1012 AS BB 2024-11-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-11-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1012 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1022 a lad:RatingAction ;
+    rdfs:label "E1012 RW BB 2025-04-03" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-04-03"^^xsd:date ;
+    lad:ratedThing lad:E1012 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1023 a lad:RatingAction ;
+    rdfs:label "E1012 UG BB+ 2026-02-06" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-06"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1012 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1024 a lad:RatingAction ;
+    rdfs:label "I1005 AS BB 2024-11-09" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-11-09"^^xsd:date ;
+    lad:ratedThing lad:I1005 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1025 a lad:RatingAction ;
+    rdfs:label "E1013 AS BB- 2022-06-02" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1013 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1026 a lad:RatingAction ;
+    rdfs:label "E1013 RW BB- 2025-07-09" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-09"^^xsd:date ;
+    lad:ratedThing lad:E1013 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1027 a lad:RatingAction ;
+    rdfs:label "I1006 AS B+ 2022-06-02" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-06-02"^^xsd:date ;
+    lad:ratedThing lad:I1006 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1028 a lad:RatingAction ;
+    rdfs:label "E1014 AS AA- 2025-07-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1014 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1029 a lad:RatingAction ;
+    rdfs:label "I1007 EX AA- 2026-11-11" ;
+    lad:action lad:action-EX ;
+    lad:date "2026-11-11"^^xsd:date ;
+    lad:ratedThing lad:I1007 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1030 a lad:RatingAction ;
+    rdfs:label "E1015 AS BBB+ 2025-11-24" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-24"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1015 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1031 a lad:RatingAction ;
+    rdfs:label "E1016 AS B+ 2022-06-10" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1016 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1032 a lad:RatingAction ;
+    rdfs:label "E1016 AF B+ 2025-06-28" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-06-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1016 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1033 a lad:RatingAction ;
+    rdfs:label "I1008 EX B+ 2026-05-23" ;
+    lad:action lad:action-EX ;
+    lad:date "2026-05-23"^^xsd:date ;
+    lad:ratedThing lad:I1008 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1034 a lad:RatingAction ;
+    rdfs:label "E1017 AS AA- 2022-03-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-03-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1017 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1035 a lad:RatingAction ;
+    rdfs:label "E1017 UG AA 2024-08-09" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-08-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1017 ;
+    lad:rating "AA" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1036 a lad:RatingAction ;
+    rdfs:label "E1017 AF AA 2025-04-20" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-04-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1017 ;
+    lad:rating "AA" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1037 a lad:RatingAction ;
+    rdfs:label "E1018 AS A 2025-08-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1018 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1038 a lad:RatingAction ;
+    rdfs:label "I1009 AS A- 2025-08-11" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-08-11"^^xsd:date ;
+    lad:ratedThing lad:I1009 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1039 a lad:RatingAction ;
+    rdfs:label "E1019 AS BB+ 2022-12-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-12-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1019 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1040 a lad:RatingAction ;
+    rdfs:label "E1019 AS BBB- 2022-12-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2022-12-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1019 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1041 a lad:RatingAction ;
+    rdfs:label "E1019 RW BBB- 2024-02-08" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-02-08"^^xsd:date ;
+    lad:ratedThing lad:E1019 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1042 a lad:RatingAction ;
+    rdfs:label "E1019 RW BBB- 2024-03-20" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-03-20"^^xsd:date ;
+    lad:ratedThing lad:E1019 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1043 a lad:RatingAction ;
+    rdfs:label "E1020 AS A- 2024-06-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-06-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1020 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1044 a lad:RatingAction ;
+    rdfs:label "I1010 AS A- 2024-06-15" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-06-15"^^xsd:date ;
+    lad:ratedThing lad:I1010 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1045 a lad:RatingAction ;
+    rdfs:label "E1021 AS BBB- 2022-06-19" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1021 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1046 a lad:RatingAction ;
+    rdfs:label "E1021 WD WD 2025-11-08" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-11-08"^^xsd:date ;
+    lad:ratedThing lad:E1021 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1047 a lad:RatingAction ;
+    rdfs:label "I1011 AS BBB- 2022-06-19" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-06-19"^^xsd:date ;
+    lad:ratedThing lad:I1011 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1048 a lad:RatingAction ;
+    rdfs:label "E1023 AS A- 2022-06-05" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1023 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1049 a lad:RatingAction ;
+    rdfs:label "E1023 DG BBB+ 2023-03-02" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-03-02"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1023 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1050 a lad:RatingAction ;
+    rdfs:label "E1023 DG BBB 2023-03-24" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-03-24"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1023 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1051 a lad:RatingAction ;
+    rdfs:label "I1012 EX A- 2026-07-22" ;
+    lad:action lad:action-EX ;
+    lad:date "2026-07-22"^^xsd:date ;
+    lad:ratedThing lad:I1012 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1052 a lad:RatingAction ;
+    rdfs:label "E1024 AS B+ 2022-06-18" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1024 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1053 a lad:RatingAction ;
+    rdfs:label "E1025 AS BB- 2022-07-17" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-07-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1025 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1054 a lad:RatingAction ;
+    rdfs:label "E1026 AS AA- 2025-05-04" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1026 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1055 a lad:RatingAction ;
+    rdfs:label "E1027 AS BBB- 2022-09-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-09-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1027 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1056 a lad:RatingAction ;
+    rdfs:label "E1028 AS BB 2025-09-08" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-08"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1028 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1057 a lad:RatingAction ;
+    rdfs:label "E1028 AF BB 2025-12-16" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-12-16"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1028 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1058 a lad:RatingAction ;
+    rdfs:label "E1028 UG BB 2025-12-25" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-12-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1028 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1059 a lad:RatingAction ;
+    rdfs:label "E1028 AS BBB- 2025-09-08" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2025-09-08"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1028 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1060 a lad:RatingAction ;
+    rdfs:label "E1028 UG BBB 2025-12-05" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2025-12-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1028 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1061 a lad:RatingAction ;
+    rdfs:label "E1029 AS BBB+ 2022-11-21" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-11-21"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1029 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1062 a lad:RatingAction ;
+    rdfs:label "E1029 UG A- 2025-08-08" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-08"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1029 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1063 a lad:RatingAction ;
+    rdfs:label "E1031 AS BB+ 2025-12-06" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-12-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1031 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1064 a lad:RatingAction ;
+    rdfs:label "E1031 AF BB+ 2026-06-17" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1031 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1065 a lad:RatingAction ;
+    rdfs:label "I1013 AS BB+ 2025-12-06" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-12-06"^^xsd:date ;
+    lad:ratedThing lad:I1013 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1066 a lad:RatingAction ;
+    rdfs:label "E1032 AS A+ 2025-11-08" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-08"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1032 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1067 a lad:RatingAction ;
+    rdfs:label "E1032 WD WD 2026-09-15" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2026-09-15"^^xsd:date ;
+    lad:ratedThing lad:E1032 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1068 a lad:RatingAction ;
+    rdfs:label "E1033 AS A+ 2024-08-26" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-08-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1033 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1069 a lad:RatingAction ;
+    rdfs:label "E1034 AS A- 2025-03-28" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-03-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1034 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1070 a lad:RatingAction ;
+    rdfs:label "E1034 DG BBB+ 2026-05-02" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-05-02"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1034 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1071 a lad:RatingAction ;
+    rdfs:label "E1035 AS A- 2022-10-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-10-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1035 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1072 a lad:RatingAction ;
+    rdfs:label "E1035 AF A- 2024-05-04" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-05-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1035 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1073 a lad:RatingAction ;
+    rdfs:label "I1014 AS A- 2022-10-23" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-10-23"^^xsd:date ;
+    lad:ratedThing lad:I1014 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1074 a lad:RatingAction ;
+    rdfs:label "E1036 AS AA- 2022-06-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1036 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1075 a lad:RatingAction ;
+    rdfs:label "E1037 AS A 2022-03-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-03-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1037 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1076 a lad:RatingAction ;
+    rdfs:label "E1037 RW A 2022-05-07" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-05-07"^^xsd:date ;
+    lad:ratedThing lad:E1037 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1077 a lad:RatingAction ;
+    rdfs:label "E1038 AS BB- 2024-10-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-10-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1038 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1078 a lad:RatingAction ;
+    rdfs:label "I1015 EX B+ 2026-12-17" ;
+    lad:action lad:action-EX ;
+    lad:date "2026-12-17"^^xsd:date ;
+    lad:ratedThing lad:I1015 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1079 a lad:RatingAction ;
+    rdfs:label "E1039 AS A 2025-11-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1039 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1080 a lad:RatingAction ;
+    rdfs:label "E1039 RW A 2025-12-09" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-12-09"^^xsd:date ;
+    lad:ratedThing lad:E1039 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1081 a lad:RatingAction ;
+    rdfs:label "E1039 AS AA- 2025-11-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2025-11-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1039 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1082 a lad:RatingAction ;
+    rdfs:label "E1040 AS A+ 2024-12-16" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-12-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1040 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1083 a lad:RatingAction ;
+    rdfs:label "E1041 AS A+ 2023-01-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-01-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1041 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1084 a lad:RatingAction ;
+    rdfs:label "E1041 RW A+ 2023-04-08" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-04-08"^^xsd:date ;
+    lad:ratedThing lad:E1041 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1085 a lad:RatingAction ;
+    rdfs:label "E1041 WD WD 2024-04-09" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2024-04-09"^^xsd:date ;
+    lad:ratedThing lad:E1041 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1086 a lad:RatingAction ;
+    rdfs:label "I1016 AS A+ 2023-01-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-01-01"^^xsd:date ;
+    lad:ratedThing lad:I1016 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1087 a lad:RatingAction ;
+    rdfs:label "E1042 AS A- 2024-10-18" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-10-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1042 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1088 a lad:RatingAction ;
+    rdfs:label "E1043 AS BBB- 2022-11-19" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-11-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1043 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1089 a lad:RatingAction ;
+    rdfs:label "E1044 AS BB+ 2024-12-21" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-12-21"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1044 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1090 a lad:RatingAction ;
+    rdfs:label "E1045 AS A+ 2022-06-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1045 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1091 a lad:RatingAction ;
+    rdfs:label "E1046 AS A+ 2023-07-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1046 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1092 a lad:RatingAction ;
+    rdfs:label "E1046 UG AA- 2025-05-28" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-28"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1046 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1093 a lad:RatingAction ;
+    rdfs:label "E1047 AS BBB- 2025-11-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1047 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1094 a lad:RatingAction ;
+    rdfs:label "E1048 AS BB 2022-12-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-12-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1048 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1095 a lad:RatingAction ;
+    rdfs:label "E1048 WD WD 2023-04-15" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2023-04-15"^^xsd:date ;
+    lad:ratedThing lad:E1048 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1096 a lad:RatingAction ;
+    rdfs:label "I1017 AS BB 2022-12-22" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-12-22"^^xsd:date ;
+    lad:ratedThing lad:I1017 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1097 a lad:RatingAction ;
+    rdfs:label "E1049 AS BBB- 2022-04-18" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-04-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1049 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1098 a lad:RatingAction ;
+    rdfs:label "I1018 AS BB+ 2022-04-18" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-04-18"^^xsd:date ;
+    lad:ratedThing lad:I1018 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1099 a lad:RatingAction ;
+    rdfs:label "E1050 AS BBB- 2025-09-02" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1050 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A11 a lad:RatingAction ;
+    rdfs:label "I03 AF A 2025-09-15" ;
+    lad:action lad:action-AF ;
+    lad:date "2025-09-15"^^xsd:date ;
+    lad:ratedThing lad:I03 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1100 a lad:RatingAction ;
+    rdfs:label "I1019 AS BB+ 2025-09-02" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-09-02"^^xsd:date ;
+    lad:ratedThing lad:I1019 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1101 a lad:RatingAction ;
+    rdfs:label "E1051 AS AA- 2025-08-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1051 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1102 a lad:RatingAction ;
+    rdfs:label "E1051 DG A+ 2026-04-05" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-04-05"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1051 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1103 a lad:RatingAction ;
+    rdfs:label "E1051 UG AA- 2026-09-20" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-09-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1051 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1104 a lad:RatingAction ;
+    rdfs:label "E1051 DG A+ 2026-06-01" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-01"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1051 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1105 a lad:RatingAction ;
+    rdfs:label "E1052 AS BB+ 2024-03-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-03-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1052 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1106 a lad:RatingAction ;
+    rdfs:label "E1052 DG BB 2025-01-23" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-23"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1052 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1107 a lad:RatingAction ;
+    rdfs:label "I1020 AS BB+ 2024-03-25" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-03-25"^^xsd:date ;
+    lad:ratedThing lad:I1020 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1108 a lad:RatingAction ;
+    rdfs:label "E1053 AS BB+ 2025-08-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1053 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1109 a lad:RatingAction ;
+    rdfs:label "E1053 DG BB 2026-03-20" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-03-20"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1053 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1110 a lad:RatingAction ;
+    rdfs:label "E1053 UG BB+ 2026-07-09" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-07-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1053 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1111 a lad:RatingAction ;
+    rdfs:label "E1054 AS BBB+ 2023-05-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1054 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1112 a lad:RatingAction ;
+    rdfs:label "E1054 AF BBB+ 2023-07-20" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1054 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1113 a lad:RatingAction ;
+    rdfs:label "E1054 UG A- 2025-07-27" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-27"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1054 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1114 a lad:RatingAction ;
+    rdfs:label "E1054 AF A- 2025-01-13" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-13"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1054 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1115 a lad:RatingAction ;
+    rdfs:label "E1055 AS BBB- 2022-01-02" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-01-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1055 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1116 a lad:RatingAction ;
+    rdfs:label "E1055 DG BB+ 2024-01-01" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1055 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1117 a lad:RatingAction ;
+    rdfs:label "E1055 UG BBB- 2024-12-04" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-12-04"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1055 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1118 a lad:RatingAction ;
+    rdfs:label "E1056 AS AA- 2022-12-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-12-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1056 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1119 a lad:RatingAction ;
+    rdfs:label "E1056 DG A+ 2023-01-01" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-01-01"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1056 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1120 a lad:RatingAction ;
+    rdfs:label "I1021 EX AA- 2026-09-18" ;
+    lad:action lad:action-EX ;
+    lad:date "2026-09-18"^^xsd:date ;
+    lad:ratedThing lad:I1021 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1121 a lad:RatingAction ;
+    rdfs:label "E1057 AS BB+ 2025-02-21" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-21"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1057 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1122 a lad:RatingAction ;
+    rdfs:label "E1057 DG BB 2026-06-25" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1057 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1123 a lad:RatingAction ;
+    rdfs:label "E1057 AF BB 2026-09-08" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-09-08"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1057 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1124 a lad:RatingAction ;
+    rdfs:label "E1057 WD WD 2026-09-19" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2026-09-19"^^xsd:date ;
+    lad:ratedThing lad:E1057 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1125 a lad:RatingAction ;
+    rdfs:label "E1058 AS BBB 2023-02-28" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-02-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1058 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1126 a lad:RatingAction ;
+    rdfs:label "E1058 AF BBB 2025-07-26" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1058 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1127 a lad:RatingAction ;
+    rdfs:label "E1058 DG BBB- 2026-07-14" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-07-14"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1058 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1128 a lad:RatingAction ;
+    rdfs:label "E1060 AS BB- 2024-01-13" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1060 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1129 a lad:RatingAction ;
+    rdfs:label "E1060 AF BB- 2025-02-16" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-16"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1060 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1130 a lad:RatingAction ;
+    rdfs:label "E1059 AS BB 2024-01-13" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-01-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1059 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1131 a lad:RatingAction ;
+    rdfs:label "E1059 DG BB- 2025-07-07" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2025-07-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1059 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1132 a lad:RatingAction ;
+    rdfs:label "E1059 RW BB- 2026-02-23" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2026-02-23"^^xsd:date ;
+    lad:ratedThing lad:E1059 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1133 a lad:RatingAction ;
+    rdfs:label "E1061 AS A 2024-04-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-04-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1061 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1134 a lad:RatingAction ;
+    rdfs:label "E1061 RW A 2025-06-06" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-06-06"^^xsd:date ;
+    lad:ratedThing lad:E1061 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1135 a lad:RatingAction ;
+    rdfs:label "E1062 AS BBB- 2023-05-26" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1062 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1136 a lad:RatingAction ;
+    rdfs:label "E1062 WD WD 2025-03-28" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-03-28"^^xsd:date ;
+    lad:ratedThing lad:E1062 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1137 a lad:RatingAction ;
+    rdfs:label "E1063 AS BB- 2023-07-05" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1063 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1138 a lad:RatingAction ;
+    rdfs:label "E1063 WD WD 2025-01-12" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-01-12"^^xsd:date ;
+    lad:ratedThing lad:E1063 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1139 a lad:RatingAction ;
+    rdfs:label "E1064 AS A- 2024-01-16" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1064 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1140 a lad:RatingAction ;
+    rdfs:label "E1064 DG BBB+ 2026-03-04" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-03-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1064 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1141 a lad:RatingAction ;
+    rdfs:label "E1064 AF BBB+ 2026-02-02" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-02"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1064 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1142 a lad:RatingAction ;
+    rdfs:label "E1064 UG A- 2026-06-03" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-03"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1064 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1143 a lad:RatingAction ;
+    rdfs:label "E1065 AS A+ 2024-11-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-11-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1065 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1144 a lad:RatingAction ;
+    rdfs:label "E1066 AS A- 2025-01-13" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1066 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1145 a lad:RatingAction ;
+    rdfs:label "E1066 RW A- 2026-05-03" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-05-03"^^xsd:date ;
+    lad:ratedThing lad:E1066 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1146 a lad:RatingAction ;
+    rdfs:label "E1067 AS BBB- 2022-07-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-07-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1067 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1147 a lad:RatingAction ;
+    rdfs:label "I1022 AS BB+ 2022-07-09" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-07-09"^^xsd:date ;
+    lad:ratedThing lad:I1022 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1148 a lad:RatingAction ;
+    rdfs:label "E1068 AS BB- 2025-12-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-12-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1068 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1149 a lad:RatingAction ;
+    rdfs:label "E1069 AS BB+ 2024-03-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-03-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1069 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1150 a lad:RatingAction ;
+    rdfs:label "E1069 AF BB+ 2025-03-14" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-03-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1069 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1151 a lad:RatingAction ;
+    rdfs:label "E1070 AS A+ 2025-10-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1070 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1152 a lad:RatingAction ;
+    rdfs:label "E1071 AS B+ 2023-01-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-01-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1071 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1153 a lad:RatingAction ;
+    rdfs:label "I1023 AS B 2023-01-11" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-01-11"^^xsd:date ;
+    lad:ratedThing lad:I1023 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1154 a lad:RatingAction ;
+    rdfs:label "E1072 AS BB- 2025-07-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1072 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1155 a lad:RatingAction ;
+    rdfs:label "E1072 AF BB- 2026-01-06" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-01-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1072 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1156 a lad:RatingAction ;
+    rdfs:label "E1072 AF BB- 2026-02-07" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-07"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1072 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1157 a lad:RatingAction ;
+    rdfs:label "E1073 AS A 2025-08-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1073 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1158 a lad:RatingAction ;
+    rdfs:label "E1074 AS A+ 2023-08-14" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-08-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1074 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1159 a lad:RatingAction ;
+    rdfs:label "E1075 AS B+ 2023-02-08" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-02-08"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1075 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1160 a lad:RatingAction ;
+    rdfs:label "E1076 AS B+ 2022-10-24" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-10-24"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1076 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1161 a lad:RatingAction ;
+    rdfs:label "E1076 WD WD 2024-04-28" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2024-04-28"^^xsd:date ;
+    lad:ratedThing lad:E1076 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1162 a lad:RatingAction ;
+    rdfs:label "E1077 AS BB 2022-05-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-05-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1077 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1163 a lad:RatingAction ;
+    rdfs:label "E1077 DG BB- 2022-07-03" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-07-03"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1077 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1164 a lad:RatingAction ;
+    rdfs:label "E1077 AF BB- 2023-07-07" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1077 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1165 a lad:RatingAction ;
+    rdfs:label "I1024 AS BB 2022-05-09" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-05-09"^^xsd:date ;
+    lad:ratedThing lad:I1024 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1166 a lad:RatingAction ;
+    rdfs:label "E1078 AS BBB- 2022-02-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-02-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1078 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1167 a lad:RatingAction ;
+    rdfs:label "E1078 AF BBB- 2026-04-19" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-04-19"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1078 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1168 a lad:RatingAction ;
+    rdfs:label "I1025 AS BB+ 2022-02-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-02-01"^^xsd:date ;
+    lad:ratedThing lad:I1025 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1169 a lad:RatingAction ;
+    rdfs:label "E1079 AS BB+ 2022-06-05" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1079 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1170 a lad:RatingAction ;
+    rdfs:label "E1079 AF BB+ 2023-07-25" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-25"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1079 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1171 a lad:RatingAction ;
+    rdfs:label "E1079 AF BB+ 2024-01-26" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-26"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1079 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1172 a lad:RatingAction ;
+    rdfs:label "I1026 AS BB+ 2022-06-05" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-06-05"^^xsd:date ;
+    lad:ratedThing lad:I1026 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1173 a lad:RatingAction ;
+    rdfs:label "E1080 AS A 2025-10-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1080 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1174 a lad:RatingAction ;
+    rdfs:label "E1080 DG A- 2026-02-14" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-14"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1080 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1175 a lad:RatingAction ;
+    rdfs:label "E1081 AS BB- 2022-12-08" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-12-08"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1081 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1176 a lad:RatingAction ;
+    rdfs:label "E1082 AS BBB+ 2024-12-28" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-12-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1082 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1177 a lad:RatingAction ;
+    rdfs:label "I1027 AS BBB 2024-12-28" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-12-28"^^xsd:date ;
+    lad:ratedThing lad:I1027 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1178 a lad:RatingAction ;
+    rdfs:label "E1083 AS BBB 2024-07-14" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-07-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1083 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1179 a lad:RatingAction ;
+    rdfs:label "E1084 AS BB 2025-06-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-06-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1084 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1180 a lad:RatingAction ;
+    rdfs:label "E1084 WD WD 2025-08-02" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-08-02"^^xsd:date ;
+    lad:ratedThing lad:E1084 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1181 a lad:RatingAction ;
+    rdfs:label "E1085 AS A- 2022-04-17" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-04-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1085 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1182 a lad:RatingAction ;
+    rdfs:label "E1085 AF A- 2022-05-19" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-05-19"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1085 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1183 a lad:RatingAction ;
+    rdfs:label "I1028 AS A- 2022-04-17" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-04-17"^^xsd:date ;
+    lad:ratedThing lad:I1028 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1184 a lad:RatingAction ;
+    rdfs:label "E1086 AS AA- 2025-02-24" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-24"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1086 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1185 a lad:RatingAction ;
+    rdfs:label "I1029 AS A+ 2025-02-24" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-02-24"^^xsd:date ;
+    lad:ratedThing lad:I1029 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1186 a lad:RatingAction ;
+    rdfs:label "E1087 AS BBB- 2024-10-14" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-10-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1087 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1187 a lad:RatingAction ;
+    rdfs:label "E1087 DG BB+ 2024-12-06" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-12-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1087 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1188 a lad:RatingAction ;
+    rdfs:label "I1030 AS BBB- 2024-10-14" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-10-14"^^xsd:date ;
+    lad:ratedThing lad:I1030 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1189 a lad:RatingAction ;
+    rdfs:label "E1088 AS B+ 2022-07-14" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-07-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1088 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1190 a lad:RatingAction ;
+    rdfs:label "E1088 RW B+ 2024-01-16" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-16"^^xsd:date ;
+    lad:ratedThing lad:E1088 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1191 a lad:RatingAction ;
+    rdfs:label "I1031 AS B 2022-07-14" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-07-14"^^xsd:date ;
+    lad:ratedThing lad:I1031 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1192 a lad:RatingAction ;
+    rdfs:label "E1089 AS A+ 2023-04-17" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-04-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1089 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1193 a lad:RatingAction ;
+    rdfs:label "E1089 UG AA- 2025-02-13" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1089 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1194 a lad:RatingAction ;
+    rdfs:label "E1090 AS BB- 2024-07-05" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-07-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1090 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1195 a lad:RatingAction ;
+    rdfs:label "I1032 AS BB- 2024-07-05" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-07-05"^^xsd:date ;
+    lad:ratedThing lad:I1032 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1196 a lad:RatingAction ;
+    rdfs:label "E1091 AS A 2025-05-06" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1091 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1197 a lad:RatingAction ;
+    rdfs:label "E1091 AF A 2025-10-20" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1091 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1198 a lad:RatingAction ;
+    rdfs:label "E1091 AF A 2025-08-27" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-27"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1091 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1199 a lad:RatingAction ;
+    rdfs:label "E1091 RW A 2025-08-19" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-19"^^xsd:date ;
+    lad:ratedThing lad:E1091 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A12 a lad:RatingAction ;
+    rdfs:label "VD AS BB 2025-04-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-04-01"^^xsd:date ;
+    lad:ratedThing lad:VD ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-CC .
+
+lad:A1200 a lad:RatingAction ;
+    rdfs:label "E1092 AS B+ 2022-10-24" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-10-24"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1092 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1201 a lad:RatingAction ;
+    rdfs:label "E1093 AS B+ 2024-07-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-07-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1093 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1202 a lad:RatingAction ;
+    rdfs:label "E1093 DG B 2026-07-25" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-07-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1093 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1203 a lad:RatingAction ;
+    rdfs:label "E1094 AS BBB+ 2022-09-02" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-09-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1094 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1204 a lad:RatingAction ;
+    rdfs:label "E1095 AS A 2023-12-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-12-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1095 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1205 a lad:RatingAction ;
+    rdfs:label "E1095 DG A- 2025-11-08" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-08"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1095 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1206 a lad:RatingAction ;
+    rdfs:label "E1095 RW A- 2025-02-18" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-18"^^xsd:date ;
+    lad:ratedThing lad:E1095 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1207 a lad:RatingAction ;
+    rdfs:label "E1096 AS BBB 2024-04-04" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-04-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1096 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1208 a lad:RatingAction ;
+    rdfs:label "E1096 AS BBB+ 2024-04-04" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-04-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1096 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1209 a lad:RatingAction ;
+    rdfs:label "E1096 AF BBB+ 2025-02-17" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2025-02-17"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1096 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1210 a lad:RatingAction ;
+    rdfs:label "E1098 AS BBB- 2025-02-13" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1098 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1211 a lad:RatingAction ;
+    rdfs:label "E1098 RW BBB- 2026-04-28" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-04-28"^^xsd:date ;
+    lad:ratedThing lad:E1098 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1212 a lad:RatingAction ;
+    rdfs:label "E1098 RW BBB- 2026-03-05" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-03-05"^^xsd:date ;
+    lad:ratedThing lad:E1098 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1213 a lad:RatingAction ;
+    rdfs:label "E1099 AS BB+ 2023-07-27" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-27"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1099 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1214 a lad:RatingAction ;
+    rdfs:label "E1099 RW BB+ 2023-11-05" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-11-05"^^xsd:date ;
+    lad:ratedThing lad:E1099 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1215 a lad:RatingAction ;
+    rdfs:label "E1100 AS B+ 2023-05-10" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1100 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1216 a lad:RatingAction ;
+    rdfs:label "E1100 DG B 2024-09-18" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-09-18"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1100 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1217 a lad:RatingAction ;
+    rdfs:label "E1100 UG B+ 2025-02-07" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-07"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1100 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1218 a lad:RatingAction ;
+    rdfs:label "E1100 AF B+ 2025-10-12" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1100 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1219 a lad:RatingAction ;
+    rdfs:label "E1101 AS BB 2022-10-26" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-10-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1101 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1220 a lad:RatingAction ;
+    rdfs:label "E1101 AS BB+ 2022-10-26" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2022-10-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1101 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1221 a lad:RatingAction ;
+    rdfs:label "E1102 AS AA- 2024-04-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-04-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1102 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1222 a lad:RatingAction ;
+    rdfs:label "E1102 UG AA 2025-05-28" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1102 ;
+    lad:rating "AA" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1223 a lad:RatingAction ;
+    rdfs:label "E1104 AS B+ 2024-12-05" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-12-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1104 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1224 a lad:RatingAction ;
+    rdfs:label "I1033 AS B 2024-12-05" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-12-05"^^xsd:date ;
+    lad:ratedThing lad:I1033 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1225 a lad:RatingAction ;
+    rdfs:label "E1105 AS A 2024-01-02" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1105 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1226 a lad:RatingAction ;
+    rdfs:label "E1105 UG A+ 2024-01-13" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-13"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1105 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1227 a lad:RatingAction ;
+    rdfs:label "E1105 DG A 2024-01-04" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1105 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1228 a lad:RatingAction ;
+    rdfs:label "E1106 AS B+ 2024-10-26" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-10-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1106 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1229 a lad:RatingAction ;
+    rdfs:label "E1106 AS BB 2024-10-26" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-10-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1106 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1230 a lad:RatingAction ;
+    rdfs:label "E1106 WD WD 2025-08-10" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-08-10"^^xsd:date ;
+    lad:ratedThing lad:E1106 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1231 a lad:RatingAction ;
+    rdfs:label "E1107 AS B+ 2023-05-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1107 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1232 a lad:RatingAction ;
+    rdfs:label "E1107 DG B 2024-03-27" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-03-27"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1107 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1233 a lad:RatingAction ;
+    rdfs:label "E1107 WD WD 2024-10-16" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2024-10-16"^^xsd:date ;
+    lad:ratedThing lad:E1107 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1234 a lad:RatingAction ;
+    rdfs:label "E1108 AS A- 2025-03-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-03-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1108 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1235 a lad:RatingAction ;
+    rdfs:label "I1034 AS A- 2025-03-25" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-03-25"^^xsd:date ;
+    lad:ratedThing lad:I1034 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1236 a lad:RatingAction ;
+    rdfs:label "E1109 AS A+ 2024-02-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-02-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1109 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1237 a lad:RatingAction ;
+    rdfs:label "E1109 RW A+ 2025-12-25" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-12-25"^^xsd:date ;
+    lad:ratedThing lad:E1109 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1238 a lad:RatingAction ;
+    rdfs:label "E1109 DG A 2025-06-25" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-06-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1109 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1239 a lad:RatingAction ;
+    rdfs:label "E1110 AS BBB 2022-04-17" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-04-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1110 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1240 a lad:RatingAction ;
+    rdfs:label "E1110 DG BBB- 2025-10-19" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1110 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1241 a lad:RatingAction ;
+    rdfs:label "E1111 AS BB 2025-10-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1111 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1242 a lad:RatingAction ;
+    rdfs:label "E1112 AS BBB+ 2023-04-10" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-04-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1112 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1243 a lad:RatingAction ;
+    rdfs:label "E1112 AF BBB+ 2025-05-23" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1112 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1244 a lad:RatingAction ;
+    rdfs:label "E1112 DG BBB 2026-02-20" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-20"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1112 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1245 a lad:RatingAction ;
+    rdfs:label "E1113 AS AA- 2022-03-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-03-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1113 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1246 a lad:RatingAction ;
+    rdfs:label "E1114 AS BB 2024-09-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-09-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1114 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1247 a lad:RatingAction ;
+    rdfs:label "E1114 AF BB 2026-02-20" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1114 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1248 a lad:RatingAction ;
+    rdfs:label "I1035 AS BB 2024-09-12" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-09-12"^^xsd:date ;
+    lad:ratedThing lad:I1035 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1249 a lad:RatingAction ;
+    rdfs:label "E1115 AS A+ 2022-09-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-09-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1115 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1250 a lad:RatingAction ;
+    rdfs:label "E1115 UG AA- 2025-08-06" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1115 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1251 a lad:RatingAction ;
+    rdfs:label "E1115 WD WD 2025-06-28" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-06-28"^^xsd:date ;
+    lad:ratedThing lad:E1115 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1252 a lad:RatingAction ;
+    rdfs:label "I1036 AS A+ 2022-09-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-09-01"^^xsd:date ;
+    lad:ratedThing lad:I1036 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1253 a lad:RatingAction ;
+    rdfs:label "E1117 AS A+ 2022-12-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-12-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1117 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1254 a lad:RatingAction ;
+    rdfs:label "E1118 AS BBB- 2022-10-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-10-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1118 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1255 a lad:RatingAction ;
+    rdfs:label "E1118 DG BB+ 2025-07-14" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-14"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1118 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1256 a lad:RatingAction ;
+    rdfs:label "I1037 AS BBB- 2022-10-15" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-10-15"^^xsd:date ;
+    lad:ratedThing lad:I1037 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1257 a lad:RatingAction ;
+    rdfs:label "E1119 AS BBB 2025-01-18" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1119 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1258 a lad:RatingAction ;
+    rdfs:label "E1119 DG BBB- 2025-02-04" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1119 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1259 a lad:RatingAction ;
+    rdfs:label "E1119 DG BB+ 2025-04-28" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-04-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1119 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1260 a lad:RatingAction ;
+    rdfs:label "E1120 AS A+ 2024-08-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-08-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1120 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1261 a lad:RatingAction ;
+    rdfs:label "E1121 AS A 2024-01-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1121 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1262 a lad:RatingAction ;
+    rdfs:label "E1121 RW A 2024-04-24" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-04-24"^^xsd:date ;
+    lad:ratedThing lad:E1121 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1263 a lad:RatingAction ;
+    rdfs:label "E1121 WD WD 2024-10-23" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2024-10-23"^^xsd:date ;
+    lad:ratedThing lad:E1121 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1264 a lad:RatingAction ;
+    rdfs:label "E1122 AS BB- 2025-06-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-06-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1122 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1265 a lad:RatingAction ;
+    rdfs:label "E1122 AF BB- 2025-07-12" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1122 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1266 a lad:RatingAction ;
+    rdfs:label "E1123 AS BB- 2023-05-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1123 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1267 a lad:RatingAction ;
+    rdfs:label "E1124 AS B+ 2022-10-10" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-10-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1124 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1268 a lad:RatingAction ;
+    rdfs:label "E1124 WD WD 2024-06-15" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2024-06-15"^^xsd:date ;
+    lad:ratedThing lad:E1124 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1269 a lad:RatingAction ;
+    rdfs:label "E1125 AS AA- 2022-06-27" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-27"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1125 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1270 a lad:RatingAction ;
+    rdfs:label "E1125 UG AA 2026-01-18" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-01-18"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1125 ;
+    lad:rating "AA" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1271 a lad:RatingAction ;
+    rdfs:label "E1126 AS BB 2024-04-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-04-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1126 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1272 a lad:RatingAction ;
+    rdfs:label "E1126 RW BB 2025-07-10" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-10"^^xsd:date ;
+    lad:ratedThing lad:E1126 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1273 a lad:RatingAction ;
+    rdfs:label "E1126 AS BBB- 2024-04-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-04-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1126 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1274 a lad:RatingAction ;
+    rdfs:label "E1127 AS BB 2022-05-17" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-05-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1127 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1275 a lad:RatingAction ;
+    rdfs:label "E1127 AF BB 2026-06-03" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1127 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1276 a lad:RatingAction ;
+    rdfs:label "E1128 AS AA- 2024-09-16" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-09-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1128 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1277 a lad:RatingAction ;
+    rdfs:label "E1128 AF AA- 2026-08-09" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-08-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1128 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1278 a lad:RatingAction ;
+    rdfs:label "E1129 AS B+ 2022-10-06" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-10-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1129 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1279 a lad:RatingAction ;
+    rdfs:label "E1130 AS BB+ 2022-01-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-01-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1130 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1280 a lad:RatingAction ;
+    rdfs:label "E1131 AS BBB+ 2025-11-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1131 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1281 a lad:RatingAction ;
+    rdfs:label "I1038 AS BBB+ 2025-11-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-11-01"^^xsd:date ;
+    lad:ratedThing lad:I1038 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1282 a lad:RatingAction ;
+    rdfs:label "E1132 AS B+ 2022-02-19" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-02-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1132 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1283 a lad:RatingAction ;
+    rdfs:label "E1132 AF B+ 2024-09-13" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-09-13"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1132 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1284 a lad:RatingAction ;
+    rdfs:label "E1132 RW B+ 2025-08-24" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-24"^^xsd:date ;
+    lad:ratedThing lad:E1132 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1285 a lad:RatingAction ;
+    rdfs:label "E1133 AS B+ 2022-04-08" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-04-08"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1133 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1286 a lad:RatingAction ;
+    rdfs:label "E1133 AF B+ 2023-05-20" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1133 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1287 a lad:RatingAction ;
+    rdfs:label "E1133 RW B+ 2025-10-11" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-11"^^xsd:date ;
+    lad:ratedThing lad:E1133 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1288 a lad:RatingAction ;
+    rdfs:label "E1134 AS BBB 2025-02-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1134 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1289 a lad:RatingAction ;
+    rdfs:label "E1134 AF BBB 2025-07-17" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1134 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1290 a lad:RatingAction ;
+    rdfs:label "E1135 AS A 2024-07-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-07-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1135 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1291 a lad:RatingAction ;
+    rdfs:label "E1136 AS A- 2023-07-04" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1136 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1292 a lad:RatingAction ;
+    rdfs:label "E1137 AS A 2023-07-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1137 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1293 a lad:RatingAction ;
+    rdfs:label "E1137 AF A 2025-08-23" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-23"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1137 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1294 a lad:RatingAction ;
+    rdfs:label "E1137 UG A+ 2025-09-26" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1137 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1295 a lad:RatingAction ;
+    rdfs:label "E1138 AS BBB- 2024-03-05" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-03-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1138 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1296 a lad:RatingAction ;
+    rdfs:label "E1138 WD WD 2024-12-26" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2024-12-26"^^xsd:date ;
+    lad:ratedThing lad:E1138 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1297 a lad:RatingAction ;
+    rdfs:label "E1140 AS AA- 2024-02-08" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-02-08"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1140 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1298 a lad:RatingAction ;
+    rdfs:label "E1140 WD WD 2025-09-15" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-09-15"^^xsd:date ;
+    lad:ratedThing lad:E1140 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1299 a lad:RatingAction ;
+    rdfs:label "E1141 AS AA- 2023-01-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-01-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1141 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A13 a lad:RatingAction ;
+    rdfs:label "E05 AS BBB- 2025-04-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2025-04-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E05 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1300 a lad:RatingAction ;
+    rdfs:label "E1141 AF AA- 2025-05-18" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1141 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1301 a lad:RatingAction ;
+    rdfs:label "E1141 AF AA- 2025-03-16" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-03-16"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1141 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1302 a lad:RatingAction ;
+    rdfs:label "I1039 AS AA- 2023-01-03" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-01-03"^^xsd:date ;
+    lad:ratedThing lad:I1039 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1303 a lad:RatingAction ;
+    rdfs:label "E1142 AS A- 2023-01-08" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-01-08"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1142 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1304 a lad:RatingAction ;
+    rdfs:label "E1142 DG BBB+ 2024-06-15" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-06-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1142 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1305 a lad:RatingAction ;
+    rdfs:label "E1142 DG BBB 2025-07-05" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-05"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1142 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1306 a lad:RatingAction ;
+    rdfs:label "E1143 AS AA- 2023-02-16" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-02-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1143 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1307 a lad:RatingAction ;
+    rdfs:label "I1040 AS A+ 2023-02-16" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-02-16"^^xsd:date ;
+    lad:ratedThing lad:I1040 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1308 a lad:RatingAction ;
+    rdfs:label "E1144 AS B+ 2024-03-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-03-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1144 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1309 a lad:RatingAction ;
+    rdfs:label "E1144 UG BB- 2026-05-20" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-05-20"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1144 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1310 a lad:RatingAction ;
+    rdfs:label "E1144 DG B+ 2026-06-06" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-06"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1144 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1311 a lad:RatingAction ;
+    rdfs:label "E1144 AS B+ 2024-03-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-03-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1144 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1312 a lad:RatingAction ;
+    rdfs:label "E1144 UG BB- 2024-07-19" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-07-19"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1144 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1313 a lad:RatingAction ;
+    rdfs:label "E1145 AS BB+ 2025-06-04" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-06-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1145 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1314 a lad:RatingAction ;
+    rdfs:label "I1041 AS BB 2025-06-04" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-06-04"^^xsd:date ;
+    lad:ratedThing lad:I1041 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1315 a lad:RatingAction ;
+    rdfs:label "E1146 AS BB 2023-09-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-09-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1146 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1316 a lad:RatingAction ;
+    rdfs:label "E1146 AF BB 2025-04-23" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-04-23"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1146 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1317 a lad:RatingAction ;
+    rdfs:label "E1146 RW BB 2025-08-12" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-12"^^xsd:date ;
+    lad:ratedThing lad:E1146 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1318 a lad:RatingAction ;
+    rdfs:label "E1148 AS A+ 2025-04-10" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-04-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1148 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1319 a lad:RatingAction ;
+    rdfs:label "E1148 UG AA- 2025-11-11" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1148 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1320 a lad:RatingAction ;
+    rdfs:label "E1148 DG A+ 2025-06-15" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-06-15"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1148 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1321 a lad:RatingAction ;
+    rdfs:label "I1042 AS A+ 2025-04-10" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-04-10"^^xsd:date ;
+    lad:ratedThing lad:I1042 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1322 a lad:RatingAction ;
+    rdfs:label "E1149 AS AA- 2025-11-14" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1149 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1323 a lad:RatingAction ;
+    rdfs:label "I1043 AS A+ 2025-11-14" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-11-14"^^xsd:date ;
+    lad:ratedThing lad:I1043 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1324 a lad:RatingAction ;
+    rdfs:label "E1150 AS BB- 2025-11-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1150 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1325 a lad:RatingAction ;
+    rdfs:label "E1151 AS BBB+ 2023-08-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-08-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1151 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1326 a lad:RatingAction ;
+    rdfs:label "E1151 DG BBB 2026-01-26" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-01-26"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1151 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1327 a lad:RatingAction ;
+    rdfs:label "E1153 AS B+ 2022-04-18" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-04-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1153 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1328 a lad:RatingAction ;
+    rdfs:label "E1153 RW B+ 2024-02-13" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-02-13"^^xsd:date ;
+    lad:ratedThing lad:E1153 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1329 a lad:RatingAction ;
+    rdfs:label "E1153 UG BB- 2025-01-16" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1153 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1330 a lad:RatingAction ;
+    rdfs:label "E1154 AS BB+ 2022-12-10" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-12-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1154 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1331 a lad:RatingAction ;
+    rdfs:label "E1155 AS BB- 2025-02-14" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1155 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1332 a lad:RatingAction ;
+    rdfs:label "E1155 WD WD 2026-03-22" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2026-03-22"^^xsd:date ;
+    lad:ratedThing lad:E1155 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1333 a lad:RatingAction ;
+    rdfs:label "I1044 AS BB- 2025-02-14" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-02-14"^^xsd:date ;
+    lad:ratedThing lad:I1044 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1334 a lad:RatingAction ;
+    rdfs:label "E1156 AS A+ 2025-09-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1156 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1335 a lad:RatingAction ;
+    rdfs:label "I1045 AS A 2025-09-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-09-01"^^xsd:date ;
+    lad:ratedThing lad:I1045 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1336 a lad:RatingAction ;
+    rdfs:label "E1158 AS BBB 2025-07-14" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1158 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1337 a lad:RatingAction ;
+    rdfs:label "E1158 RW BBB 2026-05-22" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-05-22"^^xsd:date ;
+    lad:ratedThing lad:E1158 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1338 a lad:RatingAction ;
+    rdfs:label "E1158 AF BBB 2026-08-14" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-08-14"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1158 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1339 a lad:RatingAction ;
+    rdfs:label "E1158 WD WD 2026-02-27" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2026-02-27"^^xsd:date ;
+    lad:ratedThing lad:E1158 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1340 a lad:RatingAction ;
+    rdfs:label "E1159 AS A- 2025-11-02" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1159 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1341 a lad:RatingAction ;
+    rdfs:label "E1159 DG BBB+ 2026-06-16" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-16"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1159 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1342 a lad:RatingAction ;
+    rdfs:label "E1159 WD WD 2026-09-22" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2026-09-22"^^xsd:date ;
+    lad:ratedThing lad:E1159 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1343 a lad:RatingAction ;
+    rdfs:label "E1161 AS B+ 2025-10-04" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1161 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1344 a lad:RatingAction ;
+    rdfs:label "E1161 DG B 2026-07-28" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-07-28"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1161 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1345 a lad:RatingAction ;
+    rdfs:label "I1046 EX B+ 2026-05-18" ;
+    lad:action lad:action-EX ;
+    lad:date "2026-05-18"^^xsd:date ;
+    lad:ratedThing lad:I1046 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1346 a lad:RatingAction ;
+    rdfs:label "E1162 AS A+ 2025-10-19" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1162 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1347 a lad:RatingAction ;
+    rdfs:label "I1047 AS A+ 2025-10-19" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-10-19"^^xsd:date ;
+    lad:ratedThing lad:I1047 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1348 a lad:RatingAction ;
+    rdfs:label "E1163 AS BBB- 2023-09-18" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-09-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1163 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1349 a lad:RatingAction ;
+    rdfs:label "E1163 AF BBB- 2023-11-22" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-11-22"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1163 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1350 a lad:RatingAction ;
+    rdfs:label "E1163 DG BB+ 2026-03-19" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-03-19"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1163 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1351 a lad:RatingAction ;
+    rdfs:label "I1048 AS BB+ 2023-09-18" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-09-18"^^xsd:date ;
+    lad:ratedThing lad:I1048 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1352 a lad:RatingAction ;
+    rdfs:label "E1164 AS BB+ 2025-03-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-03-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1164 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1353 a lad:RatingAction ;
+    rdfs:label "E1164 AF BB+ 2026-04-19" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-04-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1164 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1354 a lad:RatingAction ;
+    rdfs:label "E1165 AS BBB+ 2024-05-14" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-05-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1165 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1355 a lad:RatingAction ;
+    rdfs:label "E1166 AS BB 2022-05-19" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-05-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1166 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1356 a lad:RatingAction ;
+    rdfs:label "E1166 WD WD 2023-07-26" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2023-07-26"^^xsd:date ;
+    lad:ratedThing lad:E1166 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1357 a lad:RatingAction ;
+    rdfs:label "I1049 EX BB- 2026-03-17" ;
+    lad:action lad:action-EX ;
+    lad:date "2026-03-17"^^xsd:date ;
+    lad:ratedThing lad:I1049 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1358 a lad:RatingAction ;
+    rdfs:label "E1167 AS BB 2023-07-21" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-21"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1167 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1359 a lad:RatingAction ;
+    rdfs:label "E1167 UG BB+ 2026-06-13" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-13"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1167 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1360 a lad:RatingAction ;
+    rdfs:label "E1167 DG BB 2026-09-07" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-09-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1167 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1361 a lad:RatingAction ;
+    rdfs:label "E1168 AS BBB- 2023-07-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1168 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1362 a lad:RatingAction ;
+    rdfs:label "E1168 RW BBB- 2023-10-12" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-10-12"^^xsd:date ;
+    lad:ratedThing lad:E1168 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1363 a lad:RatingAction ;
+    rdfs:label "I1050 AS BBB- 2023-07-22" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-07-22"^^xsd:date ;
+    lad:ratedThing lad:I1050 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1364 a lad:RatingAction ;
+    rdfs:label "E1170 AS BB- 2023-05-08" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-08"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1170 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1365 a lad:RatingAction ;
+    rdfs:label "E1170 UG BB 2026-05-09" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-05-09"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1170 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1366 a lad:RatingAction ;
+    rdfs:label "E1170 DG BB- 2026-08-16" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-08-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1170 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1367 a lad:RatingAction ;
+    rdfs:label "E1171 AS A 2024-06-05" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-06-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1171 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1368 a lad:RatingAction ;
+    rdfs:label "E1172 AS BB+ 2025-02-28" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1172 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1369 a lad:RatingAction ;
+    rdfs:label "E1172 DG BB 2025-10-28" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-28"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1172 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1370 a lad:RatingAction ;
+    rdfs:label "E1172 RW BB 2025-11-15" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-15"^^xsd:date ;
+    lad:ratedThing lad:E1172 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1371 a lad:RatingAction ;
+    rdfs:label "E1172 WD WD 2026-03-12" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2026-03-12"^^xsd:date ;
+    lad:ratedThing lad:E1172 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1372 a lad:RatingAction ;
+    rdfs:label "E1173 AS BB+ 2023-01-14" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-01-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1173 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1373 a lad:RatingAction ;
+    rdfs:label "E1173 AF BB+ 2024-06-25" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-06-25"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1173 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1374 a lad:RatingAction ;
+    rdfs:label "E1174 AS A 2024-01-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1174 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1375 a lad:RatingAction ;
+    rdfs:label "E1175 AS BBB+ 2023-10-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-10-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1175 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1376 a lad:RatingAction ;
+    rdfs:label "E1176 AS BB- 2025-06-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-06-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1176 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1377 a lad:RatingAction ;
+    rdfs:label "E1176 DG B+ 2025-11-17" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-17"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1176 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1378 a lad:RatingAction ;
+    rdfs:label "E1176 AF B+ 2026-01-09" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-01-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1176 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1379 a lad:RatingAction ;
+    rdfs:label "E1177 AS B+ 2025-01-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1177 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1380 a lad:RatingAction ;
+    rdfs:label "E1177 AF B+ 2026-07-14" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-07-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1177 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1381 a lad:RatingAction ;
+    rdfs:label "E1178 AS BBB 2023-09-10" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-09-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1178 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1382 a lad:RatingAction ;
+    rdfs:label "E1179 AS BBB+ 2022-09-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-09-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1179 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1383 a lad:RatingAction ;
+    rdfs:label "E1179 UG A- 2022-12-10" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-12-10"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1179 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1384 a lad:RatingAction ;
+    rdfs:label "E1179 DG BBB+ 2024-10-10" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-10-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1179 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1385 a lad:RatingAction ;
+    rdfs:label "E1181 AS A- 2022-10-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-10-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1181 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1386 a lad:RatingAction ;
+    rdfs:label "E1181 AF A- 2024-04-02" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-04-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1181 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1387 a lad:RatingAction ;
+    rdfs:label "E1181 RW A- 2025-01-06" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-06"^^xsd:date ;
+    lad:ratedThing lad:E1181 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1388 a lad:RatingAction ;
+    rdfs:label "E1182 AS B+ 2024-11-14" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-11-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1182 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1389 a lad:RatingAction ;
+    rdfs:label "E1183 AS A 2022-04-04" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-04-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1183 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1390 a lad:RatingAction ;
+    rdfs:label "E1184 AS BB- 2022-12-04" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-12-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1184 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1391 a lad:RatingAction ;
+    rdfs:label "E1184 AF BB- 2025-07-20" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-20"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1184 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1392 a lad:RatingAction ;
+    rdfs:label "E1185 AS BB+ 2025-02-28" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1185 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1393 a lad:RatingAction ;
+    rdfs:label "E1186 AS A- 2024-09-19" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-09-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1186 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1394 a lad:RatingAction ;
+    rdfs:label "E1186 AF A- 2025-07-13" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-13"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1186 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1395 a lad:RatingAction ;
+    rdfs:label "E1186 DG BBB+ 2026-01-04" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-01-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1186 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1396 a lad:RatingAction ;
+    rdfs:label "E1187 AS BBB 2023-09-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-09-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1187 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1397 a lad:RatingAction ;
+    rdfs:label "E1188 AS B+ 2023-09-26" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-09-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1188 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1398 a lad:RatingAction ;
+    rdfs:label "E1188 UG BB- 2024-09-05" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-09-05"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1188 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1399 a lad:RatingAction ;
+    rdfs:label "I1051 AS B+ 2023-09-26" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-09-26"^^xsd:date ;
+    lad:ratedThing lad:I1051 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A14 a lad:RatingAction ;
+    rdfs:label "E05 AS BB 2025-04-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-04-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E05 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1400 a lad:RatingAction ;
+    rdfs:label "E1189 AS BBB+ 2023-06-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-06-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1189 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1401 a lad:RatingAction ;
+    rdfs:label "E1189 AF BBB+ 2024-01-02" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-02"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1189 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1402 a lad:RatingAction ;
+    rdfs:label "I1052 AS BBB 2023-06-07" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-06-07"^^xsd:date ;
+    lad:ratedThing lad:I1052 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1403 a lad:RatingAction ;
+    rdfs:label "E1190 AS BBB- 2023-07-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1190 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1404 a lad:RatingAction ;
+    rdfs:label "E1190 UG BBB 2025-05-24" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-24"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1190 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1405 a lad:RatingAction ;
+    rdfs:label "I1053 AS BBB- 2023-07-09" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-07-09"^^xsd:date ;
+    lad:ratedThing lad:I1053 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1406 a lad:RatingAction ;
+    rdfs:label "E1191 AS BB 2022-08-05" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-08-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1191 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1407 a lad:RatingAction ;
+    rdfs:label "E1192 AS B+ 2024-01-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1192 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1408 a lad:RatingAction ;
+    rdfs:label "E1193 AS BB 2024-02-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-02-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1193 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1409 a lad:RatingAction ;
+    rdfs:label "E1194 AS A 2024-03-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-03-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1194 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1410 a lad:RatingAction ;
+    rdfs:label "E1194 RW A 2025-01-20" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-20"^^xsd:date ;
+    lad:ratedThing lad:E1194 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1411 a lad:RatingAction ;
+    rdfs:label "E1194 AS A 2024-03-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-03-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1194 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1412 a lad:RatingAction ;
+    rdfs:label "E1195 AS A+ 2025-04-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-04-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1195 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1413 a lad:RatingAction ;
+    rdfs:label "I1054 AS A+ 2025-04-07" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-04-07"^^xsd:date ;
+    lad:ratedThing lad:I1054 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1414 a lad:RatingAction ;
+    rdfs:label "E1196 AS BBB 2025-01-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1196 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1415 a lad:RatingAction ;
+    rdfs:label "E1196 UG BBB+ 2026-09-14" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-09-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1196 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1416 a lad:RatingAction ;
+    rdfs:label "E1196 UG A- 2026-09-17" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-09-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1196 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1417 a lad:RatingAction ;
+    rdfs:label "E1197 AS A- 2025-10-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1197 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1418 a lad:RatingAction ;
+    rdfs:label "E1198 AS A 2024-02-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-02-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1198 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1419 a lad:RatingAction ;
+    rdfs:label "I1055 AS A 2024-02-23" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-02-23"^^xsd:date ;
+    lad:ratedThing lad:I1055 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1420 a lad:RatingAction ;
+    rdfs:label "E1199 AS BBB+ 2023-11-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-11-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1199 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1421 a lad:RatingAction ;
+    rdfs:label "E1200 AS BB 2023-02-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-02-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1200 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1422 a lad:RatingAction ;
+    rdfs:label "E1200 WD WD 2023-11-03" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2023-11-03"^^xsd:date ;
+    lad:ratedThing lad:E1200 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1423 a lad:RatingAction ;
+    rdfs:label "E1201 AS A- 2022-12-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-12-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1201 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1424 a lad:RatingAction ;
+    rdfs:label "E1201 UG A 2023-07-27" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-27"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1201 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1425 a lad:RatingAction ;
+    rdfs:label "E1202 AS A 2023-01-13" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-01-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1202 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1426 a lad:RatingAction ;
+    rdfs:label "E1203 AS BBB+ 2023-06-13" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-06-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1203 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1427 a lad:RatingAction ;
+    rdfs:label "E1203 RW BBB+ 2023-09-02" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-09-02"^^xsd:date ;
+    lad:ratedThing lad:E1203 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1428 a lad:RatingAction ;
+    rdfs:label "E1204 AS BBB 2023-03-21" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-03-21"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1204 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1429 a lad:RatingAction ;
+    rdfs:label "E1205 AS A 2025-03-28" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-03-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1205 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1430 a lad:RatingAction ;
+    rdfs:label "E1205 WD WD 2025-11-16" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-11-16"^^xsd:date ;
+    lad:ratedThing lad:E1205 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1431 a lad:RatingAction ;
+    rdfs:label "I1056 AS A- 2025-03-28" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-03-28"^^xsd:date ;
+    lad:ratedThing lad:I1056 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1432 a lad:RatingAction ;
+    rdfs:label "E1206 AS AA- 2025-05-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1206 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1433 a lad:RatingAction ;
+    rdfs:label "E1206 WD WD 2025-11-20" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-11-20"^^xsd:date ;
+    lad:ratedThing lad:E1206 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1434 a lad:RatingAction ;
+    rdfs:label "I1057 AS AA- 2025-05-09" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-05-09"^^xsd:date ;
+    lad:ratedThing lad:I1057 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1435 a lad:RatingAction ;
+    rdfs:label "E1207 AS A 2023-11-16" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-11-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1207 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1436 a lad:RatingAction ;
+    rdfs:label "E1207 AF A 2025-06-22" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-06-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1207 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1437 a lad:RatingAction ;
+    rdfs:label "E1207 AF A 2025-04-12" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-04-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1207 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1438 a lad:RatingAction ;
+    rdfs:label "I1058 AS A- 2023-11-16" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-11-16"^^xsd:date ;
+    lad:ratedThing lad:I1058 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1439 a lad:RatingAction ;
+    rdfs:label "E1208 AS BBB- 2023-06-18" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-06-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1208 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1440 a lad:RatingAction ;
+    rdfs:label "I1059 AS BB+ 2023-06-18" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-06-18"^^xsd:date ;
+    lad:ratedThing lad:I1059 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1441 a lad:RatingAction ;
+    rdfs:label "E1210 AS BB 2022-04-06" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-04-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1210 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1442 a lad:RatingAction ;
+    rdfs:label "E1210 RW BB 2024-09-09" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-09-09"^^xsd:date ;
+    lad:ratedThing lad:E1210 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1443 a lad:RatingAction ;
+    rdfs:label "E1211 AS BB+ 2023-03-05" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-03-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1211 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1444 a lad:RatingAction ;
+    rdfs:label "E1211 UG BBB- 2023-05-10" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1211 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1445 a lad:RatingAction ;
+    rdfs:label "E1211 AF BBB- 2024-09-26" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-09-26"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1211 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1446 a lad:RatingAction ;
+    rdfs:label "E1212 AS BBB- 2024-02-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-02-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1212 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1447 a lad:RatingAction ;
+    rdfs:label "E1212 AF BBB- 2025-01-23" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1212 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1448 a lad:RatingAction ;
+    rdfs:label "E1213 AS A 2022-06-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1213 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1449 a lad:RatingAction ;
+    rdfs:label "E1213 RW A 2026-03-19" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-03-19"^^xsd:date ;
+    lad:ratedThing lad:E1213 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1450 a lad:RatingAction ;
+    rdfs:label "E1213 DG A- 2026-02-13" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1213 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1451 a lad:RatingAction ;
+    rdfs:label "E1213 DG BBB+ 2026-06-16" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-16"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1213 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1452 a lad:RatingAction ;
+    rdfs:label "I1060 AS A 2022-06-20" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-06-20"^^xsd:date ;
+    lad:ratedThing lad:I1060 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1453 a lad:RatingAction ;
+    rdfs:label "E1215 AS BBB 2025-10-24" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-24"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1215 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1454 a lad:RatingAction ;
+    rdfs:label "E1216 AS BB+ 2023-05-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1216 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1455 a lad:RatingAction ;
+    rdfs:label "E1216 RW BB+ 2023-11-12" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-11-12"^^xsd:date ;
+    lad:ratedThing lad:E1216 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1456 a lad:RatingAction ;
+    rdfs:label "E1216 AF BB+ 2025-08-13" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1216 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1457 a lad:RatingAction ;
+    rdfs:label "E1217 AS BB- 2025-09-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1217 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1458 a lad:RatingAction ;
+    rdfs:label "E1218 AS AA- 2024-11-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-11-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1218 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1459 a lad:RatingAction ;
+    rdfs:label "E1218 WD WD 2026-05-22" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2026-05-22"^^xsd:date ;
+    lad:ratedThing lad:E1218 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1460 a lad:RatingAction ;
+    rdfs:label "I1061 AS A+ 2024-11-12" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-11-12"^^xsd:date ;
+    lad:ratedThing lad:I1061 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1461 a lad:RatingAction ;
+    rdfs:label "E1219 AS BBB- 2024-11-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-11-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1219 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1462 a lad:RatingAction ;
+    rdfs:label "E1219 WD WD 2026-04-11" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2026-04-11"^^xsd:date ;
+    lad:ratedThing lad:E1219 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1463 a lad:RatingAction ;
+    rdfs:label "I1062 AS BBB- 2024-11-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-11-01"^^xsd:date ;
+    lad:ratedThing lad:I1062 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1464 a lad:RatingAction ;
+    rdfs:label "E1220 AS B+ 2023-07-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1220 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1465 a lad:RatingAction ;
+    rdfs:label "E1220 AF B+ 2025-07-05" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1220 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1466 a lad:RatingAction ;
+    rdfs:label "E1221 AS BBB+ 2025-02-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1221 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1467 a lad:RatingAction ;
+    rdfs:label "E1221 DG BBB 2025-06-20" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-06-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1221 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1468 a lad:RatingAction ;
+    rdfs:label "E1222 AS A 2025-12-16" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-12-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1222 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1469 a lad:RatingAction ;
+    rdfs:label "E1222 AF A 2026-04-09" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-04-09"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1222 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1470 a lad:RatingAction ;
+    rdfs:label "E1223 AS BB+ 2023-08-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-08-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1223 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1471 a lad:RatingAction ;
+    rdfs:label "E1224 AS A 2025-05-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1224 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1472 a lad:RatingAction ;
+    rdfs:label "E1225 AS BBB- 2023-03-06" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-03-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1225 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1473 a lad:RatingAction ;
+    rdfs:label "E1225 WD WD 2025-06-12" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-06-12"^^xsd:date ;
+    lad:ratedThing lad:E1225 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1474 a lad:RatingAction ;
+    rdfs:label "I1063 AS BBB- 2023-03-06" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-03-06"^^xsd:date ;
+    lad:ratedThing lad:I1063 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1475 a lad:RatingAction ;
+    rdfs:label "E1226 AS B+ 2024-05-16" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-05-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1226 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1476 a lad:RatingAction ;
+    rdfs:label "E1227 AS BB 2023-05-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1227 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1477 a lad:RatingAction ;
+    rdfs:label "E1227 AF BB 2026-01-14" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-01-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1227 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1478 a lad:RatingAction ;
+    rdfs:label "E1228 AS BBB- 2025-04-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-04-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1228 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1479 a lad:RatingAction ;
+    rdfs:label "E1228 DG BB+ 2026-06-28" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-28"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1228 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1480 a lad:RatingAction ;
+    rdfs:label "E1229 AS BBB- 2024-11-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-11-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1229 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1481 a lad:RatingAction ;
+    rdfs:label "E1229 DG BB+ 2026-06-02" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1229 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1482 a lad:RatingAction ;
+    rdfs:label "E1229 DG BB 2026-05-06" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-05-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1229 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1483 a lad:RatingAction ;
+    rdfs:label "E1229 AS BBB- 2024-11-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-11-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1229 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1484 a lad:RatingAction ;
+    rdfs:label "E1229 AF BBB- 2025-09-16" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2025-09-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1229 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1485 a lad:RatingAction ;
+    rdfs:label "E1229 DG BB+ 2025-05-17" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2025-05-17"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1229 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1486 a lad:RatingAction ;
+    rdfs:label "I1064 AS BBB- 2024-11-03" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-11-03"^^xsd:date ;
+    lad:ratedThing lad:I1064 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1487 a lad:RatingAction ;
+    rdfs:label "E1230 AS BB 2025-03-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-03-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1230 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1488 a lad:RatingAction ;
+    rdfs:label "E1230 UG BB+ 2026-08-11" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-08-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1230 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1489 a lad:RatingAction ;
+    rdfs:label "I1065 AS BB- 2025-03-15" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-03-15"^^xsd:date ;
+    lad:ratedThing lad:I1065 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1490 a lad:RatingAction ;
+    rdfs:label "E1231 AS BBB+ 2025-01-26" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1231 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1491 a lad:RatingAction ;
+    rdfs:label "E1231 AF BBB+ 2025-03-19" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-03-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1231 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1492 a lad:RatingAction ;
+    rdfs:label "E1232 AS BB+ 2025-10-10" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1232 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1493 a lad:RatingAction ;
+    rdfs:label "E1232 DG BB 2025-12-12" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-12-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1232 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1494 a lad:RatingAction ;
+    rdfs:label "I1066 AS BB+ 2025-10-10" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-10-10"^^xsd:date ;
+    lad:ratedThing lad:I1066 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1495 a lad:RatingAction ;
+    rdfs:label "E1233 AS BBB 2024-11-17" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-11-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1233 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1496 a lad:RatingAction ;
+    rdfs:label "E1233 WD WD 2025-01-24" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-01-24"^^xsd:date ;
+    lad:ratedThing lad:E1233 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1497 a lad:RatingAction ;
+    rdfs:label "I1067 AS BBB- 2024-11-17" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-11-17"^^xsd:date ;
+    lad:ratedThing lad:I1067 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1498 a lad:RatingAction ;
+    rdfs:label "E1234 AS BB+ 2025-07-19" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1234 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1499 a lad:RatingAction ;
+    rdfs:label "E1234 WD WD 2026-09-22" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2026-09-22"^^xsd:date ;
+    lad:ratedThing lad:E1234 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A15 a lad:RatingAction ;
+    rdfs:label "I04 AS BB 2025-04-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-04-01"^^xsd:date ;
+    lad:ratedThing lad:I04 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1500 a lad:RatingAction ;
+    rdfs:label "E1235 AS AA- 2025-01-02" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1235 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1501 a lad:RatingAction ;
+    rdfs:label "I1068 AS AA- 2025-01-02" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-01-02"^^xsd:date ;
+    lad:ratedThing lad:I1068 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1502 a lad:RatingAction ;
+    rdfs:label "E1236 AS BB 2023-09-17" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-09-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1236 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1503 a lad:RatingAction ;
+    rdfs:label "I1069 AS BB- 2023-09-17" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-09-17"^^xsd:date ;
+    lad:ratedThing lad:I1069 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1504 a lad:RatingAction ;
+    rdfs:label "E1237 AS AA- 2023-05-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1237 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1505 a lad:RatingAction ;
+    rdfs:label "E1238 AS AA- 2023-05-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1238 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1506 a lad:RatingAction ;
+    rdfs:label "E1238 AF AA- 2025-05-16" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1238 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1507 a lad:RatingAction ;
+    rdfs:label "E1238 AF AA- 2026-06-24" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-24"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1238 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1508 a lad:RatingAction ;
+    rdfs:label "E1238 RW AA- 2026-07-27" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-07-27"^^xsd:date ;
+    lad:ratedThing lad:E1238 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1509 a lad:RatingAction ;
+    rdfs:label "E1240 AS B+ 2025-07-04" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-04"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1240 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1510 a lad:RatingAction ;
+    rdfs:label "I1070 AS B+ 2025-07-04" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-07-04"^^xsd:date ;
+    lad:ratedThing lad:I1070 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1511 a lad:RatingAction ;
+    rdfs:label "E1241 AS A- 2025-07-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1241 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1512 a lad:RatingAction ;
+    rdfs:label "E1242 AS BBB+ 2023-07-26" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-07-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1242 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1513 a lad:RatingAction ;
+    rdfs:label "E1242 DG BBB 2025-03-03" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-03-03"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1242 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1514 a lad:RatingAction ;
+    rdfs:label "E1242 RW BBB 2025-09-11" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-11"^^xsd:date ;
+    lad:ratedThing lad:E1242 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1515 a lad:RatingAction ;
+    rdfs:label "E1243 AS BB+ 2022-01-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-01-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1243 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1516 a lad:RatingAction ;
+    rdfs:label "E1243 DG BB 2026-01-13" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-01-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1243 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1517 a lad:RatingAction ;
+    rdfs:label "E1243 AF BB 2026-08-19" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-08-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1243 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1518 a lad:RatingAction ;
+    rdfs:label "E1243 AS BBB 2022-01-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2022-01-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1243 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1519 a lad:RatingAction ;
+    rdfs:label "E1243 UG BBB+ 2023-05-10" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2023-05-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1243 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1520 a lad:RatingAction ;
+    rdfs:label "E1243 AF BBB+ 2026-01-15" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2026-01-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1243 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1521 a lad:RatingAction ;
+    rdfs:label "E1244 AS BBB- 2023-11-19" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-11-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1244 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1522 a lad:RatingAction ;
+    rdfs:label "E1244 WD WD 2024-04-18" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2024-04-18"^^xsd:date ;
+    lad:ratedThing lad:E1244 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1523 a lad:RatingAction ;
+    rdfs:label "E1245 AS B+ 2024-02-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-02-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1245 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1524 a lad:RatingAction ;
+    rdfs:label "E1245 DG B 2025-01-27" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-27"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1245 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1525 a lad:RatingAction ;
+    rdfs:label "E1245 UG B+ 2025-09-11" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-11"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1245 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1526 a lad:RatingAction ;
+    rdfs:label "E1245 AS B+ 2024-02-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-02-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1245 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1527 a lad:RatingAction ;
+    rdfs:label "E1245 DG B 2025-09-20" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2025-09-20"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1245 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1528 a lad:RatingAction ;
+    rdfs:label "I1071 AS B 2024-02-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-02-01"^^xsd:date ;
+    lad:ratedThing lad:I1071 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1529 a lad:RatingAction ;
+    rdfs:label "E1247 AS BBB- 2024-09-14" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-09-14"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1247 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1530 a lad:RatingAction ;
+    rdfs:label "E1248 AS A- 2025-07-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1248 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1531 a lad:RatingAction ;
+    rdfs:label "E1248 AF A- 2026-05-02" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-05-02"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1248 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1532 a lad:RatingAction ;
+    rdfs:label "E1249 AS A- 2022-08-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-08-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1249 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1533 a lad:RatingAction ;
+    rdfs:label "E1250 AS BB+ 2025-11-19" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1250 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1534 a lad:RatingAction ;
+    rdfs:label "E1251 AS BB 2023-02-21" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-02-21"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1251 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1535 a lad:RatingAction ;
+    rdfs:label "E1252 AS B+ 2022-09-26" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-09-26"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1252 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1536 a lad:RatingAction ;
+    rdfs:label "E1252 DG B 2023-12-25" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-12-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1252 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1537 a lad:RatingAction ;
+    rdfs:label "E1252 DG B- 2025-10-27" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-27"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1252 ;
+    lad:rating "B-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1538 a lad:RatingAction ;
+    rdfs:label "E1254 AS A 2024-12-21" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-12-21"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1254 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1539 a lad:RatingAction ;
+    rdfs:label "E1254 AF A 2025-05-15" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1254 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1540 a lad:RatingAction ;
+    rdfs:label "E1254 WD WD 2025-08-13" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-08-13"^^xsd:date ;
+    lad:ratedThing lad:E1254 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1541 a lad:RatingAction ;
+    rdfs:label "I1072 AS A 2024-12-21" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-12-21"^^xsd:date ;
+    lad:ratedThing lad:I1072 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1542 a lad:RatingAction ;
+    rdfs:label "E1255 AS BBB+ 2022-06-21" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-21"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1255 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1543 a lad:RatingAction ;
+    rdfs:label "E1255 UG A- 2024-02-28" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-02-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1255 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1544 a lad:RatingAction ;
+    rdfs:label "E1255 AF A- 2025-12-05" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-12-05"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1255 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1545 a lad:RatingAction ;
+    rdfs:label "E1255 DG BBB+ 2026-01-19" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-01-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1255 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1546 a lad:RatingAction ;
+    rdfs:label "I1073 AS BBB+ 2022-06-21" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-06-21"^^xsd:date ;
+    lad:ratedThing lad:I1073 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1547 a lad:RatingAction ;
+    rdfs:label "E1256 AS A 2022-10-24" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-10-24"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1256 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1548 a lad:RatingAction ;
+    rdfs:label "E1256 AF A 2026-02-21" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-21"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1256 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1549 a lad:RatingAction ;
+    rdfs:label "E1256 AF A 2026-06-21" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-21"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1256 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1550 a lad:RatingAction ;
+    rdfs:label "I1074 AS A 2022-10-24" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-10-24"^^xsd:date ;
+    lad:ratedThing lad:I1074 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1551 a lad:RatingAction ;
+    rdfs:label "E1257 AS B+ 2023-11-24" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-11-24"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1257 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1552 a lad:RatingAction ;
+    rdfs:label "I1075 AS B+ 2023-11-24" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-11-24"^^xsd:date ;
+    lad:ratedThing lad:I1075 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1553 a lad:RatingAction ;
+    rdfs:label "E1258 AS BBB 2023-01-17" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-01-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1258 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1554 a lad:RatingAction ;
+    rdfs:label "E1260 AS BBB- 2023-09-28" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-09-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1260 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1555 a lad:RatingAction ;
+    rdfs:label "E1260 RW BBB- 2025-09-05" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-05"^^xsd:date ;
+    lad:ratedThing lad:E1260 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1556 a lad:RatingAction ;
+    rdfs:label "I1076 AS BB+ 2023-09-28" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-09-28"^^xsd:date ;
+    lad:ratedThing lad:I1076 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1557 a lad:RatingAction ;
+    rdfs:label "E1262 AS B+ 2022-12-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-12-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1262 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1558 a lad:RatingAction ;
+    rdfs:label "E1262 AF B+ 2024-10-13" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-10-13"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1262 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1559 a lad:RatingAction ;
+    rdfs:label "I1077 AS B+ 2022-12-12" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-12-12"^^xsd:date ;
+    lad:ratedThing lad:I1077 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1560 a lad:RatingAction ;
+    rdfs:label "E1263 AS BBB+ 2022-10-17" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-10-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1263 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1561 a lad:RatingAction ;
+    rdfs:label "E1263 DG BBB 2026-03-03" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-03-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1263 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1562 a lad:RatingAction ;
+    rdfs:label "E1263 DG BBB- 2026-06-16" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-16"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1263 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1563 a lad:RatingAction ;
+    rdfs:label "E1264 AS B+ 2024-01-06" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1264 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1564 a lad:RatingAction ;
+    rdfs:label "E1264 RW B+ 2024-05-18" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-05-18"^^xsd:date ;
+    lad:ratedThing lad:E1264 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1565 a lad:RatingAction ;
+    rdfs:label "E1265 AS A- 2024-01-06" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1265 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1566 a lad:RatingAction ;
+    rdfs:label "E1265 AF A- 2026-01-05" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-01-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1265 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1567 a lad:RatingAction ;
+    rdfs:label "E1266 AS BBB 2022-03-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-03-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1266 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1568 a lad:RatingAction ;
+    rdfs:label "E1266 RW BBB 2026-07-20" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-07-20"^^xsd:date ;
+    lad:ratedThing lad:E1266 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1569 a lad:RatingAction ;
+    rdfs:label "E1267 AS A- 2022-02-17" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-02-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1267 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1570 a lad:RatingAction ;
+    rdfs:label "E1267 RW A- 2023-12-15" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-12-15"^^xsd:date ;
+    lad:ratedThing lad:E1267 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1571 a lad:RatingAction ;
+    rdfs:label "I1078 AS BBB+ 2022-02-17" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-02-17"^^xsd:date ;
+    lad:ratedThing lad:I1078 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1572 a lad:RatingAction ;
+    rdfs:label "E1268 AS B+ 2024-10-16" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-10-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1268 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1573 a lad:RatingAction ;
+    rdfs:label "E1269 AS BBB+ 2022-07-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-07-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1269 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1574 a lad:RatingAction ;
+    rdfs:label "E1269 AF BBB+ 2023-08-13" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-08-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1269 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1575 a lad:RatingAction ;
+    rdfs:label "E1270 AS A+ 2024-05-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-05-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1270 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1576 a lad:RatingAction ;
+    rdfs:label "E1271 AS A- 2024-09-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-09-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1271 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1577 a lad:RatingAction ;
+    rdfs:label "E1271 AF A- 2025-10-15" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-15"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1271 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1578 a lad:RatingAction ;
+    rdfs:label "E1272 AS AA- 2025-10-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-10-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1272 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1579 a lad:RatingAction ;
+    rdfs:label "I1079 AS AA- 2025-10-03" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-10-03"^^xsd:date ;
+    lad:ratedThing lad:I1079 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1580 a lad:RatingAction ;
+    rdfs:label "E1273 AS A+ 2024-07-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-07-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1273 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1581 a lad:RatingAction ;
+    rdfs:label "E1273 DG A 2025-01-09" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1273 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1582 a lad:RatingAction ;
+    rdfs:label "I1080 AS A+ 2024-07-09" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-07-09"^^xsd:date ;
+    lad:ratedThing lad:I1080 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1583 a lad:RatingAction ;
+    rdfs:label "E1274 AS A 2025-05-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1274 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1584 a lad:RatingAction ;
+    rdfs:label "E1275 AS A 2025-04-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-04-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1275 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1585 a lad:RatingAction ;
+    rdfs:label "E1276 AS A+ 2023-01-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-01-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1276 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1586 a lad:RatingAction ;
+    rdfs:label "E1276 UG AA- 2026-09-02" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-09-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1276 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1587 a lad:RatingAction ;
+    rdfs:label "E1276 RW AA- 2026-07-22" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-07-22"^^xsd:date ;
+    lad:ratedThing lad:E1276 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1588 a lad:RatingAction ;
+    rdfs:label "E1276 RW AA- 2026-02-07" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-07"^^xsd:date ;
+    lad:ratedThing lad:E1276 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1589 a lad:RatingAction ;
+    rdfs:label "E1277 AS BB+ 2024-06-08" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-06-08"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1277 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1590 a lad:RatingAction ;
+    rdfs:label "E1277 WD WD 2025-12-14" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-12-14"^^xsd:date ;
+    lad:ratedThing lad:E1277 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1591 a lad:RatingAction ;
+    rdfs:label "I1081 AS BB 2024-06-08" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-06-08"^^xsd:date ;
+    lad:ratedThing lad:I1081 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1592 a lad:RatingAction ;
+    rdfs:label "E1278 AS BB- 2024-03-16" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-03-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1278 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1593 a lad:RatingAction ;
+    rdfs:label "E1279 AS BB 2022-04-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-04-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1279 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1594 a lad:RatingAction ;
+    rdfs:label "E1279 WD WD 2024-11-17" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2024-11-17"^^xsd:date ;
+    lad:ratedThing lad:E1279 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1595 a lad:RatingAction ;
+    rdfs:label "E1279 AS BB 2022-04-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2022-04-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1279 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1596 a lad:RatingAction ;
+    rdfs:label "E1279 AF BB 2023-12-16" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2023-12-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1279 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1597 a lad:RatingAction ;
+    rdfs:label "E1280 AS BBB 2024-04-06" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-04-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1280 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1598 a lad:RatingAction ;
+    rdfs:label "E1281 AS BBB+ 2022-06-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1281 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1599 a lad:RatingAction ;
+    rdfs:label "E1282 AS BB+ 2024-02-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-02-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1282 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A16 a lad:RatingAction ;
+    rdfs:label "E06 AS A- 2024-05-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-05-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E06 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1600 a lad:RatingAction ;
+    rdfs:label "E1282 AF BB+ 2024-03-20" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-03-20"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1282 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1601 a lad:RatingAction ;
+    rdfs:label "E1283 AS BB- 2023-11-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-11-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1283 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1602 a lad:RatingAction ;
+    rdfs:label "E1283 UG BB 2024-11-03" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-11-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1283 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1603 a lad:RatingAction ;
+    rdfs:label "E1283 AS BB- 2023-11-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2023-11-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1283 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1604 a lad:RatingAction ;
+    rdfs:label "E1283 DG B+ 2024-06-19" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-06-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1283 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1605 a lad:RatingAction ;
+    rdfs:label "I1082 AS B+ 2023-11-15" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-11-15"^^xsd:date ;
+    lad:ratedThing lad:I1082 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1606 a lad:RatingAction ;
+    rdfs:label "E1284 AS AA- 2023-06-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-06-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1284 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1607 a lad:RatingAction ;
+    rdfs:label "E1285 AS A+ 2025-03-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-03-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1285 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1608 a lad:RatingAction ;
+    rdfs:label "E1285 DG A 2026-02-17" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-17"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1285 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1609 a lad:RatingAction ;
+    rdfs:label "E1286 AS A 2023-08-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-08-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1286 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1610 a lad:RatingAction ;
+    rdfs:label "E1286 UG A+ 2024-06-20" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-06-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1286 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1611 a lad:RatingAction ;
+    rdfs:label "E1286 DG A 2024-05-21" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-05-21"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1286 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1612 a lad:RatingAction ;
+    rdfs:label "E1287 AS BBB 2025-05-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-05-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1287 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1613 a lad:RatingAction ;
+    rdfs:label "E1287 AF BBB 2026-01-06" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-01-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1287 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1614 a lad:RatingAction ;
+    rdfs:label "E1288 AS A- 2022-06-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1288 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1615 a lad:RatingAction ;
+    rdfs:label "E1288 AF A- 2023-08-03" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-08-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1288 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1616 a lad:RatingAction ;
+    rdfs:label "I1083 AS BBB+ 2022-06-09" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-06-09"^^xsd:date ;
+    lad:ratedThing lad:I1083 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1617 a lad:RatingAction ;
+    rdfs:label "E1289 AS BBB+ 2024-12-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-12-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1289 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1618 a lad:RatingAction ;
+    rdfs:label "E1290 AS B+ 2022-09-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-09-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1290 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1619 a lad:RatingAction ;
+    rdfs:label "E1290 AF B+ 2026-03-21" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-03-21"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1290 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1620 a lad:RatingAction ;
+    rdfs:label "E1290 DG B 2026-08-16" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-08-16"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1290 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1621 a lad:RatingAction ;
+    rdfs:label "E1290 AF B 2026-01-01" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-01-01"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1290 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1622 a lad:RatingAction ;
+    rdfs:label "E1291 AS BB+ 2025-11-22" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-22"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1291 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1623 a lad:RatingAction ;
+    rdfs:label "E1292 AS BB+ 2025-08-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1292 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1624 a lad:RatingAction ;
+    rdfs:label "E1293 AS BB 2022-05-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-05-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1293 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1625 a lad:RatingAction ;
+    rdfs:label "E1293 AF BB 2023-06-19" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-06-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1293 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1626 a lad:RatingAction ;
+    rdfs:label "E1294 AS AA- 2024-10-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-10-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1294 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1627 a lad:RatingAction ;
+    rdfs:label "E1294 DG A+ 2026-07-11" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-07-11"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1294 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1628 a lad:RatingAction ;
+    rdfs:label "E1295 AS BBB- 2023-02-08" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-02-08"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1295 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1629 a lad:RatingAction ;
+    rdfs:label "E1295 DG BB+ 2024-08-12" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-08-12"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1295 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1630 a lad:RatingAction ;
+    rdfs:label "I1084 AS BB+ 2023-02-08" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-02-08"^^xsd:date ;
+    lad:ratedThing lad:I1084 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1631 a lad:RatingAction ;
+    rdfs:label "E1296 AS A- 2024-10-28" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-10-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1296 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1632 a lad:RatingAction ;
+    rdfs:label "E1297 AS BBB 2022-09-05" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-09-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1297 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1633 a lad:RatingAction ;
+    rdfs:label "E1297 RW BBB 2026-09-01" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-09-01"^^xsd:date ;
+    lad:ratedThing lad:E1297 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1634 a lad:RatingAction ;
+    rdfs:label "I1085 AS BBB- 2022-09-05" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-09-05"^^xsd:date ;
+    lad:ratedThing lad:I1085 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1635 a lad:RatingAction ;
+    rdfs:label "E1299 AS BBB+ 2024-01-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1299 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1636 a lad:RatingAction ;
+    rdfs:label "E1299 DG BBB 2026-02-06" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-06"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1299 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1637 a lad:RatingAction ;
+    rdfs:label "E1300 AS BBB+ 2024-11-13" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-11-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1300 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1638 a lad:RatingAction ;
+    rdfs:label "E1300 UG A- 2025-09-17" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1300 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1639 a lad:RatingAction ;
+    rdfs:label "E1300 DG BBB+ 2026-04-09" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-04-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1300 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1640 a lad:RatingAction ;
+    rdfs:label "E1300 DG BBB 2026-05-06" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-05-06"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1300 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1641 a lad:RatingAction ;
+    rdfs:label "E1301 AS AA- 2022-12-17" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-12-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1301 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1642 a lad:RatingAction ;
+    rdfs:label "E1301 DG A+ 2024-04-07" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-04-07"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1301 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1643 a lad:RatingAction ;
+    rdfs:label "E1301 AF A+ 2026-05-04" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-05-04"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1301 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1644 a lad:RatingAction ;
+    rdfs:label "E1302 AS BB- 2024-03-27" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-03-27"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1302 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1645 a lad:RatingAction ;
+    rdfs:label "E1302 DG B+ 2024-11-18" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-11-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1302 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1646 a lad:RatingAction ;
+    rdfs:label "E1302 AF B+ 2024-06-28" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-06-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1302 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1647 a lad:RatingAction ;
+    rdfs:label "E1303 AS BB+ 2025-07-23" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-23"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1303 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1648 a lad:RatingAction ;
+    rdfs:label "E1303 RW BB+ 2026-06-04" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-04"^^xsd:date ;
+    lad:ratedThing lad:E1303 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1649 a lad:RatingAction ;
+    rdfs:label "E1303 UG BBB- 2026-08-13" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-08-13"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1303 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1650 a lad:RatingAction ;
+    rdfs:label "E1303 WD WD 2026-03-26" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2026-03-26"^^xsd:date ;
+    lad:ratedThing lad:E1303 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1651 a lad:RatingAction ;
+    rdfs:label "E1304 AS B+ 2022-06-11" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-11"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1304 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1652 a lad:RatingAction ;
+    rdfs:label "E1304 UG BB- 2024-04-19" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-04-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1304 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1653 a lad:RatingAction ;
+    rdfs:label "E1304 UG BB 2026-07-25" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-07-25"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1304 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1654 a lad:RatingAction ;
+    rdfs:label "E1305 AS BBB 2023-06-09" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-06-09"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1305 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1655 a lad:RatingAction ;
+    rdfs:label "E1305 AF BBB 2024-02-15" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-02-15"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1305 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1656 a lad:RatingAction ;
+    rdfs:label "E1305 UG BBB+ 2025-04-06" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-04-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1305 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1657 a lad:RatingAction ;
+    rdfs:label "E1306 AS AA- 2022-04-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-04-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1306 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1658 a lad:RatingAction ;
+    rdfs:label "E1307 AS BB 2025-04-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-04-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1307 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1659 a lad:RatingAction ;
+    rdfs:label "E1307 UG BB 2026-07-05" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-07-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1307 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1660 a lad:RatingAction ;
+    rdfs:label "E1307 DG BB- 2026-02-08" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-02-08"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1307 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1661 a lad:RatingAction ;
+    rdfs:label "E1307 AF BB- 2026-09-25" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-09-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1307 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1662 a lad:RatingAction ;
+    rdfs:label "E1308 AS A+ 2022-03-02" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-03-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1308 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1663 a lad:RatingAction ;
+    rdfs:label "E1308 AF A+ 2025-02-09" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-09"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1308 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1664 a lad:RatingAction ;
+    rdfs:label "E1308 WD WD 2025-06-19" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2025-06-19"^^xsd:date ;
+    lad:ratedThing lad:E1308 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1665 a lad:RatingAction ;
+    rdfs:label "I1086 AS A+ 2022-03-02" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-03-02"^^xsd:date ;
+    lad:ratedThing lad:I1086 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1666 a lad:RatingAction ;
+    rdfs:label "E1309 AS B+ 2022-04-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-04-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1309 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1667 a lad:RatingAction ;
+    rdfs:label "I1087 AS B 2022-04-20" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-04-20"^^xsd:date ;
+    lad:ratedThing lad:I1087 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1668 a lad:RatingAction ;
+    rdfs:label "E1310 AS A+ 2025-06-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-06-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1310 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1669 a lad:RatingAction ;
+    rdfs:label "E1312 AS A 2023-01-19" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-01-19"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1312 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1670 a lad:RatingAction ;
+    rdfs:label "I1088 AS A 2023-01-19" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-01-19"^^xsd:date ;
+    lad:ratedThing lad:I1088 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1671 a lad:RatingAction ;
+    rdfs:label "E1313 AS BB 2024-01-24" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-24"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1313 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1672 a lad:RatingAction ;
+    rdfs:label "E1313 DG BB- 2025-09-02" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1313 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1673 a lad:RatingAction ;
+    rdfs:label "E1313 AS BBB- 2024-01-24" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-01-24"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1313 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1674 a lad:RatingAction ;
+    rdfs:label "E1314 AS BBB- 2022-04-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-04-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1314 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1675 a lad:RatingAction ;
+    rdfs:label "E1314 UG BBB 2023-11-07" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-11-07"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1314 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1676 a lad:RatingAction ;
+    rdfs:label "E1314 RW BBB 2024-06-26" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-06-26"^^xsd:date ;
+    lad:ratedThing lad:E1314 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1677 a lad:RatingAction ;
+    rdfs:label "I1089 AS BBB- 2022-04-12" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-04-12"^^xsd:date ;
+    lad:ratedThing lad:I1089 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1678 a lad:RatingAction ;
+    rdfs:label "E1315 AS BB+ 2024-12-20" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-12-20"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1315 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1679 a lad:RatingAction ;
+    rdfs:label "E1316 AS A- 2022-06-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-06-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1316 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1680 a lad:RatingAction ;
+    rdfs:label "E1316 WD WD 2024-07-07" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2024-07-07"^^xsd:date ;
+    lad:ratedThing lad:E1316 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1681 a lad:RatingAction ;
+    rdfs:label "E1317 AS BB 2022-05-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-05-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1317 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1682 a lad:RatingAction ;
+    rdfs:label "E1317 RW BB 2024-09-11" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-09-11"^^xsd:date ;
+    lad:ratedThing lad:E1317 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1683 a lad:RatingAction ;
+    rdfs:label "E1319 AS AA- 2023-06-07" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-06-07"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1319 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1684 a lad:RatingAction ;
+    rdfs:label "E1320 AS BB+ 2022-03-03" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-03-03"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1320 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1685 a lad:RatingAction ;
+    rdfs:label "E1320 WD WD 2023-10-15" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2023-10-15"^^xsd:date ;
+    lad:ratedThing lad:E1320 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1686 a lad:RatingAction ;
+    rdfs:label "I1090 AS BB+ 2022-03-03" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-03-03"^^xsd:date ;
+    lad:ratedThing lad:I1090 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1687 a lad:RatingAction ;
+    rdfs:label "E1321 AS AA- 2023-11-10" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-11-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1321 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1688 a lad:RatingAction ;
+    rdfs:label "E1321 AF AA- 2025-07-23" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-07-23"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1321 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1689 a lad:RatingAction ;
+    rdfs:label "E1322 AS BB+ 2025-09-24" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-24"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1322 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1690 a lad:RatingAction ;
+    rdfs:label "I1091 AS BB 2025-09-24" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-09-24"^^xsd:date ;
+    lad:ratedThing lad:I1091 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1691 a lad:RatingAction ;
+    rdfs:label "E1323 AS AA- 2024-02-21" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-02-21"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1323 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1692 a lad:RatingAction ;
+    rdfs:label "E1323 RW AA- 2025-01-06" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-01-06"^^xsd:date ;
+    lad:ratedThing lad:E1323 ;
+    lad:rating "AA-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1693 a lad:RatingAction ;
+    rdfs:label "E1324 AS B+ 2022-10-18" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-10-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1324 ;
+    lad:rating "B+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1694 a lad:RatingAction ;
+    rdfs:label "E1324 UG BB- 2022-11-25" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2022-11-25"^^xsd:date ;
+    lad:outlook lad:outlook-POS ;
+    lad:ratedThing lad:E1324 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1695 a lad:RatingAction ;
+    rdfs:label "I1092 AS B 2022-10-18" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-10-18"^^xsd:date ;
+    lad:ratedThing lad:I1092 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1696 a lad:RatingAction ;
+    rdfs:label "I1093 AS BBB- 2023-09-10" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-09-10"^^xsd:date ;
+    lad:ratedThing lad:I1093 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1697 a lad:RatingAction ;
+    rdfs:label "I1094 AS A+ 2025-04-21" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-04-21"^^xsd:date ;
+    lad:ratedThing lad:I1094 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1698 a lad:RatingAction ;
+    rdfs:label "E1326 AS BB 2026-09-02" ;
+    lad:action lad:action-AS ;
+    lad:date "2026-09-02"^^xsd:date ;
+    lad:ratedThing lad:E1326 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-CO .
+
+lad:A1699 a lad:RatingAction ;
+    rdfs:label "I1095 AS A+ 2025-03-21" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-03-21"^^xsd:date ;
+    lad:ratedThing lad:I1095 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A17 a lad:RatingAction ;
+    rdfs:label "E06 RW A- 2026-09-03" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-09-03"^^xsd:date ;
+    lad:ratedThing lad:E06 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A1700 a lad:RatingAction ;
+    rdfs:label "E1327 AS BBB- 2025-06-13" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-06-13"^^xsd:date ;
+    lad:ratedThing lad:E1327 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-CO .
+
+lad:A1701 a lad:RatingAction ;
+    rdfs:label "I1096 AS A- 2022-12-24" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-12-24"^^xsd:date ;
+    lad:ratedThing lad:I1096 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1702 a lad:RatingAction ;
+    rdfs:label "I1097 AS A 2022-06-06" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-06-06"^^xsd:date ;
+    lad:ratedThing lad:I1097 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1703 a lad:RatingAction ;
+    rdfs:label "I1098 AS BBB- 2022-01-12" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-01-12"^^xsd:date ;
+    lad:ratedThing lad:I1098 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1704 a lad:RatingAction ;
+    rdfs:label "E1330 AS BB+ 2025-06-27" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-06-27"^^xsd:date ;
+    lad:ratedThing lad:E1330 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-CO .
+
+lad:A1705 a lad:RatingAction ;
+    rdfs:label "I1099 AS A+ 2022-07-07" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-07-07"^^xsd:date ;
+    lad:ratedThing lad:I1099 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1706 a lad:RatingAction ;
+    rdfs:label "I1100 AS A+ 2024-12-24" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-12-24"^^xsd:date ;
+    lad:ratedThing lad:I1100 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1707 a lad:RatingAction ;
+    rdfs:label "I1101 AS BBB 2024-06-10" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-06-10"^^xsd:date ;
+    lad:ratedThing lad:I1101 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1708 a lad:RatingAction ;
+    rdfs:label "E1333 AS BBB+ 2024-08-17" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-08-17"^^xsd:date ;
+    lad:ratedThing lad:E1333 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-CO .
+
+lad:A1709 a lad:RatingAction ;
+    rdfs:label "I1102 AS BBB- 2022-07-23" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-07-23"^^xsd:date ;
+    lad:ratedThing lad:I1102 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1710 a lad:RatingAction ;
+    rdfs:label "I1103 AS BB+ 2024-01-20" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-01-20"^^xsd:date ;
+    lad:ratedThing lad:I1103 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1711 a lad:RatingAction ;
+    rdfs:label "I1104 AS BBB+ 2025-12-27" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-12-27"^^xsd:date ;
+    lad:ratedThing lad:I1104 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1712 a lad:RatingAction ;
+    rdfs:label "I1105 AS BBB 2024-05-15" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-05-15"^^xsd:date ;
+    lad:ratedThing lad:I1105 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1713 a lad:RatingAction ;
+    rdfs:label "E1337 AS BBB+ 2026-11-16" ;
+    lad:action lad:action-AS ;
+    lad:date "2026-11-16"^^xsd:date ;
+    lad:ratedThing lad:E1337 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-CO .
+
+lad:A1714 a lad:RatingAction ;
+    rdfs:label "I1106 AS BBB- 2024-06-13" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-06-13"^^xsd:date ;
+    lad:ratedThing lad:I1106 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1715 a lad:RatingAction ;
+    rdfs:label "E1338 AS BBB+ 2026-07-04" ;
+    lad:action lad:action-AS ;
+    lad:date "2026-07-04"^^xsd:date ;
+    lad:ratedThing lad:E1338 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-CO .
+
+lad:A1716 a lad:RatingAction ;
+    rdfs:label "I1107 AS BBB 2022-03-18" ;
+    lad:action lad:action-AS ;
+    lad:date "2022-03-18"^^xsd:date ;
+    lad:ratedThing lad:I1107 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A1717 a lad:RatingAction ;
+    rdfs:label "E1340 AS A- 2024-12-16" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-12-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1340 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1718 a lad:RatingAction ;
+    rdfs:label "E1340 DG BBB+ 2026-06-26" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-26"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1340 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1719 a lad:RatingAction ;
+    rdfs:label "E1341 AS A- 2025-09-05" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-09-05"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1341 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1720 a lad:RatingAction ;
+    rdfs:label "E1341 DG BBB+ 2026-11-09" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-11-09"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1341 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1721 a lad:RatingAction ;
+    rdfs:label "E1342 AS A- 2024-08-06" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-08-06"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1342 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1722 a lad:RatingAction ;
+    rdfs:label "E1342 DG BBB+ 2026-07-17" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-07-17"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1342 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1723 a lad:RatingAction ;
+    rdfs:label "E1343 AS A- 2023-05-12" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-12"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1343 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1724 a lad:RatingAction ;
+    rdfs:label "E1343 DG BBB+ 2026-08-08" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-08-08"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1343 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1725 a lad:RatingAction ;
+    rdfs:label "E1344 AS A 2023-09-25" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-09-25"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1344 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1726 a lad:RatingAction ;
+    rdfs:label "E1344 DG A- 2026-03-18" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-03-18"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1344 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1727 a lad:RatingAction ;
+    rdfs:label "E1345 AS BB 2024-11-02" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-11-02"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1345 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1728 a lad:RatingAction ;
+    rdfs:label "E1345 DG BB- 2026-09-22" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-09-22"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1345 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1729 a lad:RatingAction ;
+    rdfs:label "E1346 AS A- 2023-06-18" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-06-18"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1346 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1730 a lad:RatingAction ;
+    rdfs:label "E1346 DG BBB+ 2026-10-15" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-10-15"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1346 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1731 a lad:RatingAction ;
+    rdfs:label "E1347 AS BBB 2025-03-16" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-03-16"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1347 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1732 a lad:RatingAction ;
+    rdfs:label "E1347 DG BBB- 2026-03-10" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-03-10"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1347 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1733 a lad:RatingAction ;
+    rdfs:label "E1348 AS BBB 2023-11-28" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-11-28"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1348 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1734 a lad:RatingAction ;
+    rdfs:label "E1348 DG BBB- 2026-03-18" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-03-18"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1348 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1735 a lad:RatingAction ;
+    rdfs:label "E1349 AS A 2025-02-17" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-02-17"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1349 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1736 a lad:RatingAction ;
+    rdfs:label "E1349 DG A- 2026-10-14" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-10-14"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1349 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1737 a lad:RatingAction ;
+    rdfs:label "E1350 AS BB+ 2025-12-21" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-12-21"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1350 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1738 a lad:RatingAction ;
+    rdfs:label "E1350 DG BB 2026-09-03" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-09-03"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1350 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1739 a lad:RatingAction ;
+    rdfs:label "E1351 AS A 2023-12-10" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-12-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E1351 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A1740 a lad:RatingAction ;
+    rdfs:label "E1351 DG A- 2026-09-27" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-09-27"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E1351 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A18 a lad:RatingAction ;
+    rdfs:label "E07 AS BB 2024-01-10" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-10"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E07 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A19 a lad:RatingAction ;
+    rdfs:label "E07 WD WD 2026-05-12" ;
+    lad:action lad:action-WD ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "commercial reasons" ;
+    lad:date "2026-05-12"^^xsd:date ;
+    lad:ratedThing lad:E07 ;
+    lad:rating "WD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A20 a lad:RatingAction ;
+    rdfs:label "E08 AS B 2024-06-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-06-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E08 ;
+    lad:rating "B" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A21 a lad:RatingAction ;
+    rdfs:label "E08 DG CCC 2026-01-20" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-01-20"^^xsd:date ;
+    lad:ratedThing lad:E08 ;
+    lad:rating "CCC" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A22 a lad:RatingAction ;
+    rdfs:label "E08 DG RD 2026-07-08" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "distressed debt exchange completed" ;
+    lad:date "2026-07-08"^^xsd:date ;
+    lad:ratedThing lad:E08 ;
+    lad:rating "RD" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A23 a lad:RatingAction ;
+    rdfs:label "I02 AS BBB 2024-03-12" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-03-12"^^xsd:date ;
+    lad:ratedThing lad:I02 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-INST .
+
+lad:A24 a lad:RatingAction ;
+    rdfs:label "E09 AS A 2023-05-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-05-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E09 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A25 a lad:RatingAction ;
+    rdfs:label "E09 AF A 2026-03-01" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-03-01"^^xsd:date ;
+    lad:outlook lad:outlook-NEG ;
+    lad:ratedThing lad:E09 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A26 a lad:RatingAction ;
+    rdfs:label "E10 AS A- 2023-05-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:comment "support from parent" ;
+    lad:date "2023-05-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E10 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A27 a lad:RatingAction ;
+    rdfs:label "E10 DG BBB+ 2026-04-15" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-04-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E10 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A28 a lad:RatingAction ;
+    rdfs:label "I05 AS A- 2023-06-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2023-06-01"^^xsd:date ;
+    lad:ratedThing lad:I05 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A29 a lad:RatingAction ;
+    rdfs:label "I05 DG BBB+ 2026-04-15" ;
+    lad:action lad:action-DG ;
+    lad:date "2026-04-15"^^xsd:date ;
+    lad:ratedThing lad:I05 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-INST .
+
+lad:A30 a lad:RatingAction ;
+    rdfs:label "E12 AS BB- 2024-02-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-02-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E12 ;
+    lad:rating "BB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A31 a lad:RatingAction ;
+    rdfs:label "E12 UG BB 2025-08-01" ;
+    lad:action lad:action-UG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-08-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E12 ;
+    lad:rating "BB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A32 a lad:RatingAction ;
+    rdfs:label "E13 AS BBB 2024-07-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-07-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E13 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A33 a lad:RatingAction ;
+    rdfs:label "E14 AF BBB+ 2026-05-01" ;
+    lad:action lad:action-AF ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-05-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E14 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A34 a lad:RatingAction ;
+    rdfs:label "E14 AS A- 2023-01-15" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2023-01-15"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E14 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A35 a lad:RatingAction ;
+    rdfs:label "E14 RW BBB+ 2025-11-20" ;
+    lad:action lad:action-RW ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2025-11-20"^^xsd:date ;
+    lad:ratedThing lad:E14 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR ;
+    lad:watch lad:watch-RWN .
+
+lad:A36 a lad:RatingAction ;
+    rdfs:label "E14 DG BBB+ 2024-09-30" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-09-30"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E14 ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A37 a lad:RatingAction ;
+    rdfs:label "CV AS A 2024-01-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-01-01"^^xsd:date ;
+    lad:ratedThing lad:CV ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-CC .
+
+lad:A38 a lad:RatingAction ;
+    rdfs:label "CV AS BBB+ 2024-01-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-01-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:CV ;
+    lad:rating "BBB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A39 a lad:RatingAction ;
+    rdfs:label "CV AS A- 2024-01-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-01-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:CV ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A40 a lad:RatingAction ;
+    rdfs:label "E15 AS A+ 2024-03-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-LC ;
+    lad:date "2024-03-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E15 ;
+    lad:rating "A+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A41 a lad:RatingAction ;
+    rdfs:label "E15 AS A 2024-03-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-03-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E15 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A42 a lad:RatingAction ;
+    rdfs:label "I06 AS A- 2024-03-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2024-03-01"^^xsd:date ;
+    lad:ratedThing lad:I06 ;
+    lad:rating "A-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A43 a lad:RatingAction ;
+    rdfs:label "E16 AS BBB- 2024-04-01" ;
+    lad:action lad:action-AS ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2024-04-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E16 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A44 a lad:RatingAction ;
+    rdfs:label "E16 DG BB+ 2026-06-01" ;
+    lad:action lad:action-DG ;
+    lad:ccyBasis lad:basis-FC ;
+    lad:date "2026-06-01"^^xsd:date ;
+    lad:outlook lad:outlook-STA ;
+    lad:ratedThing lad:E16 ;
+    lad:rating "BB+" ;
+    lad:ratingType lad:type-LTIDR .
+
+lad:A45 a lad:RatingAction ;
+    rdfs:label "I07 AS BBB- 2025-04-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-04-01"^^xsd:date ;
+    lad:ratedThing lad:I07 ;
+    lad:rating "BBB-" ;
+    lad:ratingType lad:type-INST .
+
+lad:A46 a lad:RatingAction ;
+    rdfs:label "E11 AS BBB 2025-02-01" ;
+    lad:action lad:action-AS ;
+    lad:date "2025-02-01"^^xsd:date ;
+    lad:ratedThing lad:E11 ;
+    lad:rating "BBB" ;
+    lad:ratingType lad:type-CO .
+
+lad:A47 a lad:RatingAction ;
+    rdfs:label "I08 EX A 2026-09-01" ;
+    lad:action lad:action-EX ;
+    lad:date "2026-09-01"^^xsd:date ;
+    lad:ratedThing lad:I08 ;
+    lad:rating "A" ;
+    lad:ratingType lad:type-INST .
+
+lad:E1001 a lad:Entity ;
+    rdfs:label "Tunod Steel SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "3912003R00FP6CNV6210" ;
+    lad:name "Tunod Steel SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1022 a lad:Entity ;
+    rdfs:label "NINER PHARMA" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200KLG6G4KVIMIU52" ;
+    lad:name "NINER PHARMA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1030 a lad:Entity ;
+    rdfs:label "LESON TELECOM INC" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "8156008DPX4I9DNKWN26" ;
+    lad:name "LESON TELECOM INC" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1097 a lad:Entity ;
+    rdfs:label "RAVON CAPITAL SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300NTCTGRKRYIAN83" ;
+    lad:name "RAVON CAPITAL SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1116 a lad:Entity ;
+    rdfs:label "Hener Energy plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200JN4T4KY2HCRU75" ;
+    lad:name "Hener Energy plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1139 a lad:Entity ;
+    rdfs:label "KONEL ENERGY BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500BSV4X2J7KUR535" ;
+    lad:name "KONEL ENERGY BV" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1152 a lad:Entity ;
+    rdfs:label "Kivel Property plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300E50JHDJNBUGF22" ;
+    lad:name "Kivel Property plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1157 a lad:Entity ;
+    rdfs:label "RUVEN AIRLINES" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500KYKHRI6N2WRN19" ;
+    lad:name "RUVEN AIRLINES" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1169 a lad:Entity ;
+    rdfs:label "Seren Telecom plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300XV49ES64RGNQ00" ;
+    lad:name "Seren Telecom plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1180 a lad:Entity ;
+    rdfs:label "COTAN FOODS SA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200USHZVHBK9FHP01" ;
+    lad:name "COTAN FOODS SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1209 a lad:Entity ;
+    rdfs:label "Malid Mining SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300HWTXXHJP2HKU38" ;
+    lad:name "Malid Mining SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1214 a lad:Entity ;
+    rdfs:label "WINIM MINING SA" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300A64I73OEIC4R87" ;
+    lad:name "WINIM MINING SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1239 a lad:Entity ;
+    rdfs:label "WEVIN CAPITAL SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "5493004IM0PRT8BSDK29" ;
+    lad:name "WEVIN CAPITAL SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1246 a lad:Entity ;
+    rdfs:label "GATER HOLDINGS SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600LRX1P8142NMF42" ;
+    lad:name "GATER HOLDINGS SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1259 a lad:Entity ;
+    rdfs:label "NIRAD RETAIL SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "724500YEJSJ19G17TW94" ;
+    lad:name "NIRAD RETAIL SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1298 a lad:Entity ;
+    rdfs:label "Faner Steel SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600RCZP0ISY44E024" ;
+    lad:name "Faner Steel SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1311 a lad:Entity ;
+    rdfs:label "NATIL RETAIL SPA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "9695000PSF2HLPO9AE57" ;
+    lad:name "NATIL RETAIL SPA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1318 a lad:Entity ;
+    rdfs:label "Sutem Water plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500UQKUINIUB80J18" ;
+    lad:name "Sutem Water plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E17 a lad:Entity ;
+    rdfs:label "HALDEN BANK" ;
+    lad:country "LU" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "391200QYPVFF2O9K2039" ;
+    lad:name "HALDEN BANK" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E03 a lad:Entity ;
+    rdfs:label "NORTHWIND HLDGS" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800PHEIYNJMHTDV74" ;
+    lad:name "NORTHWIND HLDGS" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E04 a lad:Entity ;
+    rdfs:label "Northwind Finance BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "213800LA5RYJLGXV2T85" ;
+    lad:name "Northwind Finance BV" ;
+    lad:parent lad:E02 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1003 a lad:Entity ;
+    rdfs:label "Rilol Telecom plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "3912009W4J483WB8PZ97" ;
+    lad:name "Rilol Telecom plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1011 a lad:Entity ;
+    rdfs:label "Falom Media Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "549300XX6U9N4Y7KPH74" ;
+    lad:name "Falom Media Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1024 a lad:Entity ;
+    rdfs:label "Susin Shipping BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "3912005J04HB7X0GTN24" ;
+    lad:name "Susin Shipping BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1033 a lad:Entity ;
+    rdfs:label "Kunid Pharma SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800Q84PS4FTJJB947" ;
+    lad:name "Kunid Pharma SA" ;
+    lad:parent lad:E1004 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1036 a lad:Entity ;
+    rdfs:label "Lilor Retail AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "9695000N72OQ0Q07IW61" ;
+    lad:name "Lilor Retail AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1040 a lad:Entity ;
+    rdfs:label "Dorid Mining AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300SPMD9MEMFWMR12" ;
+    lad:name "Dorid Mining AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1042 a lad:Entity ;
+    rdfs:label "Rerod Steel BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200LC6V921W096L49" ;
+    lad:name "Rerod Steel BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1043 a lad:Entity ;
+    rdfs:label "Vitom Property plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "5493007IVTPIWJZLFF29" ;
+    lad:name "Vitom Property plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1044 a lad:Entity ;
+    rdfs:label "Hesid Telecom Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "3912003Y7VZHUGN50755" ;
+    lad:name "Hesid Telecom Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1045 a lad:Entity ;
+    rdfs:label "Nesid Logistics Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "96950029VB162U3K1976" ;
+    lad:name "Nesid Logistics Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1047 a lad:Entity ;
+    rdfs:label "Vaved Pharma plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200WGA8OE30KZUD08" ;
+    lad:name "Vaved Pharma plc" ;
+    lad:parent lad:E1020 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1065 a lad:Entity ;
+    rdfs:label "Lilan Airlines SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500P11RN2B8547E19" ;
+    lad:name "Lilan Airlines SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1070 a lad:Entity ;
+    rdfs:label "Valon Foods plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800HFIA87YIFJMK56" ;
+    lad:name "Valon Foods plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1075 a lad:Entity ;
+    rdfs:label "Nilim Industries Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600GT8SEYXSQI7W78" ;
+    lad:name "Nilim Industries Inc" ;
+    lad:parent lad:E1071 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1081 a lad:Entity ;
+    rdfs:label "Nover Shipping SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800MAUS8ZY20ZYX98" ;
+    lad:name "Nover Shipping SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1092 a lad:Entity ;
+    rdfs:label "Mitan Industries AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500ECBHNCD9G5G852" ;
+    lad:name "Mitan Industries AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1094 a lad:Entity ;
+    rdfs:label "Rever Airlines plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500RR7OZYXQG3H145" ;
+    lad:name "Rever Airlines plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1103 a lad:Entity ;
+    rdfs:label "Vavam Pharma Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600HDI8Y3IWGOOH22" ;
+    lad:name "Vavam Pharma Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1104 a lad:Entity ;
+    rdfs:label "VAVAM PHARMA INC" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600HDI8Y3IWGOOH22" ;
+    lad:name "VAVAM PHARMA INC" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1111 a lad:Entity ;
+    rdfs:label "Solil Industries SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500D8RI4YFRZ71884" ;
+    lad:name "Solil Industries SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1113 a lad:Entity ;
+    rdfs:label "Dolal Telecom SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "815600803W084A3YEL77" ;
+    lad:name "Dolal Telecom SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1117 a lad:Entity ;
+    rdfs:label "HENER ENERGY" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200JN4T4KY2HCRU75" ;
+    lad:name "HENER ENERGY" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1120 a lad:Entity ;
+    rdfs:label "Welil Industries AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200CM3S394IM9GC09" ;
+    lad:name "Welil Industries AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1123 a lad:Entity ;
+    rdfs:label "Suler Water plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "815600M9GYQA4WWV6W37" ;
+    lad:name "Suler Water plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1129 a lad:Entity ;
+    rdfs:label "Hesor Energy Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200PME83MK93N8Z61" ;
+    lad:name "Hesor Energy Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1130 a lad:Entity ;
+    rdfs:label "Dirim Capital SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200TSQ5VA0DA4C007" ;
+    lad:name "Dirim Capital SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1135 a lad:Entity ;
+    rdfs:label "Bosar Retail plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "549300C138N2A3615Y70" ;
+    lad:name "Bosar Retail plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1136 a lad:Entity ;
+    rdfs:label "Lenom Shipping SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200C93222W97BIT34" ;
+    lad:name "Lenom Shipping SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1147 a lad:Entity ;
+    rdfs:label "Daren Mining SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200E9TAHDZV7CY568" ;
+    lad:name "Daren Mining SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1150 a lad:Entity ;
+    rdfs:label "Kolan Energy Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800NDF6XIU4TG5W98" ;
+    lad:name "Kolan Energy Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1154 a lad:Entity ;
+    rdfs:label "Ginid Holdings BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800Y30UK6QRZ3PN91" ;
+    lad:name "Ginid Holdings BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1160 a lad:Entity ;
+    rdfs:label "Diled Steel SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500PM41NS2PBZU440" ;
+    lad:name "Diled Steel SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1165 a lad:Entity ;
+    rdfs:label "Pesir Utilities SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "2138000W35GHZOFBGH21" ;
+    lad:name "Pesir Utilities SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1171 a lad:Entity ;
+    rdfs:label "Kuren Logistics AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200V0ODCRCWMGK394" ;
+    lad:name "Kuren Logistics AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1174 a lad:Entity ;
+    rdfs:label "Fivel Retail SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "724500P05MC40B0POA10" ;
+    lad:name "Fivel Retail SpA" ;
+    lad:parent lad:E1073 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1175 a lad:Entity ;
+    rdfs:label "Tusin Holdings AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300EK1L0Q2SN47O23" ;
+    lad:name "Tusin Holdings AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1178 a lad:Entity ;
+    rdfs:label "Vuvel Airlines plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800OE6A1LJDGIKA27" ;
+    lad:name "Vuvel Airlines plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1182 a lad:Entity ;
+    rdfs:label "Furer Steel SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500M6NVM1I3VXU746" ;
+    lad:name "Furer Steel SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1183 a lad:Entity ;
+    rdfs:label "Danad Pharma plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "96950015W720OD9VIA28" ;
+    lad:name "Danad Pharma plc" ;
+    lad:parent lad:E1025 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1185 a lad:Entity ;
+    rdfs:label "Tosal Property SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500H78R8WU6K0T524" ;
+    lad:name "Tosal Property SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1187 a lad:Entity ;
+    rdfs:label "Geten Mining SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "7245000R6EQNO0HDSE65" ;
+    lad:name "Geten Mining SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1191 a lad:Entity ;
+    rdfs:label "Boler Steel SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600G5CMC2QEQUCG23" ;
+    lad:name "Boler Steel SA" ;
+    lad:parent lad:E1177 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1192 a lad:Entity ;
+    rdfs:label "Tusil Foods Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "549300T5V46GH5O3H698" ;
+    lad:name "Tusil Foods Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1193 a lad:Entity ;
+    rdfs:label "Geson Industries plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600XCZ1DW0R3UPV62" ;
+    lad:name "Geson Industries plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1197 a lad:Entity ;
+    rdfs:label "Kaval Property plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "8156000IN4HMEEM2ON82" ;
+    lad:name "Kaval Property plc" ;
+    lad:parent lad:E1066 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1199 a lad:Entity ;
+    rdfs:label "Kutim Capital Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500SSLM11JHNEVP69" ;
+    lad:name "Kutim Capital Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1202 a lad:Entity ;
+    rdfs:label "Sosal Capital SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600S7LGG60AI1LY97" ;
+    lad:name "Sosal Capital SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1204 a lad:Entity ;
+    rdfs:label "Dular Logistics SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500GM0Q12M8QDTL69" ;
+    lad:name "Dular Logistics SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1215 a lad:Entity ;
+    rdfs:label "Penen Retail Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "8156003V8NY694JQQA11" ;
+    lad:name "Penen Retail Inc" ;
+    lad:parent lad:E1063 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1217 a lad:Entity ;
+    rdfs:label "Worol Logistics SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600AJPH2BBLTIYW38" ;
+    lad:name "Worol Logistics SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1223 a lad:Entity ;
+    rdfs:label "Hilim Shipping SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300DESCLQXTLMLJ26" ;
+    lad:name "Hilim Shipping SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1224 a lad:Entity ;
+    rdfs:label "Serom Mining plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "7245008Z90UQ7BI0C100" ;
+    lad:name "Serom Mining plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1226 a lad:Entity ;
+    rdfs:label "Huvel Telecom plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500FIVWDYH3PC6Q57" ;
+    lad:name "Huvel Telecom plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1237 a lad:Entity ;
+    rdfs:label "Lisid Capital plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200FPZ6MLSMQPC418" ;
+    lad:name "Lisid Capital plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1247 a lad:Entity ;
+    rdfs:label "Rerel Media SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300TTC0933RYHZE17" ;
+    lad:name "Rerel Media SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1249 a lad:Entity ;
+    rdfs:label "Saven Foods SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500X1YAZZW1331P62" ;
+    lad:name "Saven Foods SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1250 a lad:Entity ;
+    rdfs:label "Halir Capital Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300LZ236Z7ODNGH97" ;
+    lad:name "Halir Capital Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1251 a lad:Entity ;
+    rdfs:label "Runod Telecom SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200C9HN9UNBYA5127" ;
+    lad:name "Runod Telecom SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1253 a lad:Entity ;
+    rdfs:label "Vusir Telecom SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "969500QXEZ0NSV6EIW69" ;
+    lad:name "Vusir Telecom SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1258 a lad:Entity ;
+    rdfs:label "Nirad Retail SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "724500YEJSJ19G17TW94" ;
+    lad:name "Nirad Retail SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1261 a lad:Entity ;
+    rdfs:label "Munam Water SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300H1N0EQEAZLE362" ;
+    lad:name "Munam Water SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1268 a lad:Entity ;
+    rdfs:label "Tasol Water Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "9695004XIVFRI7ALVD58" ;
+    lad:name "Tasol Water Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1270 a lad:Entity ;
+    rdfs:label "Talin Chemicals AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800AE1WF4VVTBWJ51" ;
+    lad:name "Talin Chemicals AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1274 a lad:Entity ;
+    rdfs:label "Nolil Foods Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600W7PVCU2WZCLL54" ;
+    lad:name "Nolil Foods Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1275 a lad:Entity ;
+    rdfs:label "Fusin Steel Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600G1ZFK3SU6EZU96" ;
+    lad:name "Fusin Steel Inc" ;
+    lad:parent lad:E1189 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1280 a lad:Entity ;
+    rdfs:label "Dunim Utilities Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200R9GYZ7FHNTJR87" ;
+    lad:name "Dunim Utilities Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1281 a lad:Entity ;
+    rdfs:label "Wasom Capital AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "213800DVWA3652YVSV75" ;
+    lad:name "Wasom Capital AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1284 a lad:Entity ;
+    rdfs:label "Metel Telecom plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500Y45795ZVKJTU43" ;
+    lad:name "Metel Telecom plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1289 a lad:Entity ;
+    rdfs:label "Sanel Shipping SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300ABS57U0TY4GB80" ;
+    lad:name "Sanel Shipping SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1291 a lad:Entity ;
+    rdfs:label "Vanen Industries Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "7245009X92QYKVWE9U27" ;
+    lad:name "Vanen Industries Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1292 a lad:Entity ;
+    rdfs:label "Bavon Industries plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300RN36RWXRZPV988" ;
+    lad:name "Bavon Industries plc" ;
+    lad:parent lad:E1061 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1296 a lad:Entity ;
+    rdfs:label "Nuvom Capital AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600YXL8UF9QLENC73" ;
+    lad:name "Nuvom Capital AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E13 a lad:Entity ;
+    rdfs:label "Orrin Bancorp Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "815600O8X8K2F154N214" ;
+    lad:name "Orrin Bancorp Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1306 a lad:Entity ;
+    rdfs:label "Rison Retail plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "7245005XZ13ZGPNJXU21" ;
+    lad:name "Rison Retail plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1310 a lad:Entity ;
+    rdfs:label "Natil Retail SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "9695000PSF2HLPO9AE57" ;
+    lad:name "Natil Retail SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1315 a lad:Entity ;
+    rdfs:label "Wetid Shipping AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200G0CPKPNGKWC253" ;
+    lad:name "Wetid Shipping AG" ;
+    lad:parent lad:E1278 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1319 a lad:Entity ;
+    rdfs:label "SUTEM WATER" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500UQKUINIUB80J18" ;
+    lad:name "SUTEM WATER" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1325 a lad:Entity ;
+    rdfs:label "Poval Chemicals Finance SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "9695001YLTVXK1L24J01" ;
+    lad:name "Poval Chemicals Finance SA" ;
+    lad:parent lad:E1084 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1328 a lad:Entity ;
+    rdfs:label "Palad Mining Finance BV" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "969500NW5R0G6TCAZA92" ;
+    lad:name "Palad Mining Finance BV" ;
+    lad:parent lad:E1244 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1329 a lad:Entity ;
+    rdfs:label "Ganen Shipping Finance plc" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "549300ZZB6Z4QUIPZW48" ;
+    lad:name "Ganen Shipping Finance plc" ;
+    lad:parent lad:E1069 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1331 a lad:Entity ;
+    rdfs:label "Tulol Shipping Finance BV" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "391200D59Z1B4XWDGA48" ;
+    lad:name "Tulol Shipping Finance BV" ;
+    lad:parent lad:E1025 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1332 a lad:Entity ;
+    rdfs:label "Sanin Mining Finance SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "21380077GIA72K258C76" ;
+    lad:name "Sanin Mining Finance SA" ;
+    lad:parent lad:E1068 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1334 a lad:Entity ;
+    rdfs:label "Votim Industries Finance BV" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "3912005LQY8PFMP9D487" ;
+    lad:name "Votim Industries Finance BV" ;
+    lad:parent lad:E1260 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1335 a lad:Entity ;
+    rdfs:label "Belor Telecom Finance plc" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "9695001Q1J0GREF1Y798" ;
+    lad:name "Belor Telecom Finance plc" ;
+    lad:parent lad:E1234 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1336 a lad:Entity ;
+    rdfs:label "Navor Holdings Finance SA" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "391200G55M6O27UJS152" ;
+    lad:name "Navor Holdings Finance SA" ;
+    lad:parent lad:E1176 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1339 a lad:Entity ;
+    rdfs:label "Wivin Airlines Finance SA" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "724500Y59GQFHLXXCT69" ;
+    lad:name "Wivin Airlines Finance SA" ;
+    lad:parent lad:E1241 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:I04 a lad:Instrument ;
+    rdfs:label "Valdoria Telecom 5.00% 2029" ;
+    lad:currency "USD" ;
+    lad:description "Valdoria Telecom 5.00% notes due 2029" ;
+    lad:issuer lad:E05 ;
+    lad:maturity "2029-11-20"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I06 a lad:Instrument ;
+    rdfs:label "Corvenia Power 7.10% 2032" ;
+    lad:currency "USD" ;
+    lad:description "Corvenia Power 7.10% notes due 2032" ;
+    lad:issuer lad:E15 ;
+    lad:maturity "2032-02-15"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I07 a lad:Instrument ;
+    rdfs:label "Valdoria Telecom 4.25% 2027" ;
+    lad:currency "XVD" ;
+    lad:description "Valdoria Telecom 4.25% notes due 2027" ;
+    lad:issuer lad:E05 ;
+    lad:maturity "2027-08-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I08 a lad:Instrument ;
+    rdfs:label "Corvenia Power 6.00% 2034" ;
+    lad:currency "USD" ;
+    lad:description "Corvenia Power 6.00% notes due 2034" ;
+    lad:issuer lad:E15 ;
+    lad:maturity "2034-09-01"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1001 a lad:Instrument ;
+    rdfs:label "Soson Airlines 5.50% 2031" ;
+    lad:currency "USD" ;
+    lad:description "Soson Airlines 5.50% notes due 2031" ;
+    lad:issuer lad:E1006 ;
+    lad:maturity "2035-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1002 a lad:Instrument ;
+    rdfs:label "Golod Property 8.75% 2031" ;
+    lad:currency "USD" ;
+    lad:description "Golod Property 8.75% notes due 2031" ;
+    lad:issuer lad:E1007 ;
+    lad:maturity "2033-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1003 a lad:Instrument ;
+    rdfs:label "Sotil Retail 3.00% 2031" ;
+    lad:currency "GBP" ;
+    lad:description "Sotil Retail 3.00% notes due 2031" ;
+    lad:issuer lad:E1008 ;
+    lad:maturity "2034-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1004 a lad:Instrument ;
+    rdfs:label "Malam Chemicals 2.25% 2035" ;
+    lad:currency "USD" ;
+    lad:description "Malam Chemicals 2.25% notes due 2035" ;
+    lad:issuer lad:E1009 ;
+    lad:maturity "2028-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1005 a lad:Instrument ;
+    rdfs:label "Posad Industries 4.00% 2033" ;
+    lad:currency "EUR" ;
+    lad:description "Posad Industries 4.00% notes due 2033" ;
+    lad:issuer lad:E1012 ;
+    lad:maturity "2031-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1006 a lad:Instrument ;
+    rdfs:label "Pisol Pharma 4.75% 2030" ;
+    lad:currency "USD" ;
+    lad:description "Pisol Pharma 4.75% notes due 2030" ;
+    lad:issuer lad:E1013 ;
+    lad:maturity "2030-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1007 a lad:Instrument ;
+    rdfs:label "Toral Utilities 7.75% 2028" ;
+    lad:currency "EUR" ;
+    lad:description "Toral Utilities 7.75% notes due 2028" ;
+    lad:issuer lad:E1014 ;
+    lad:maturity "2033-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1008 a lad:Instrument ;
+    rdfs:label "Ponar Telecom 4.75% 2035" ;
+    lad:currency "EUR" ;
+    lad:description "Ponar Telecom 4.75% notes due 2035" ;
+    lad:issuer lad:E1016 ;
+    lad:maturity "2033-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1009 a lad:Instrument ;
+    rdfs:label "Tosem Mining 2.75% 2031" ;
+    lad:currency "USD" ;
+    lad:description "Tosem Mining 2.75% notes due 2031" ;
+    lad:issuer lad:E1018 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1010 a lad:Instrument ;
+    rdfs:label "Finel Media 6.50% 2035" ;
+    lad:currency "EUR" ;
+    lad:description "Finel Media 6.50% notes due 2035" ;
+    lad:issuer lad:E1020 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1011 a lad:Instrument ;
+    rdfs:label "Niner Pharma 3.25% 2029" ;
+    lad:currency "USD" ;
+    lad:description "Niner Pharma 3.25% notes due 2029" ;
+    lad:issuer lad:E1021 ;
+    lad:maturity "2035-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1012 a lad:Instrument ;
+    rdfs:label "Heled Water 6.25% 2030" ;
+    lad:currency "GBP" ;
+    lad:description "Heled Water 6.25% notes due 2030" ;
+    lad:issuer lad:E1023 ;
+    lad:maturity "2031-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1013 a lad:Instrument ;
+    rdfs:label "Kuvir Logistics 2.00% 2027" ;
+    lad:currency "EUR" ;
+    lad:description "Kuvir Logistics 2.00% notes due 2027" ;
+    lad:issuer lad:E1031 ;
+    lad:maturity "2027-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1014 a lad:Instrument ;
+    rdfs:label "Kavod Utilities 2.50% 2032" ;
+    lad:currency "USD" ;
+    lad:description "Kavod Utilities 2.50% notes due 2032" ;
+    lad:issuer lad:E1035 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1015 a lad:Instrument ;
+    rdfs:label "Lanon Telecom 4.75% 2033" ;
+    lad:currency "EUR" ;
+    lad:description "Lanon Telecom 4.75% notes due 2033" ;
+    lad:issuer lad:E1038 ;
+    lad:maturity "2032-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1016 a lad:Instrument ;
+    rdfs:label "Hiral Steel 6.00% 2035" ;
+    lad:currency "USD" ;
+    lad:description "Hiral Steel 6.00% notes due 2035" ;
+    lad:issuer lad:E1041 ;
+    lad:maturity "2034-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1017 a lad:Instrument ;
+    rdfs:label "Lised Pharma 4.50% 2036" ;
+    lad:currency "EUR" ;
+    lad:description "Lised Pharma 4.50% notes due 2036" ;
+    lad:issuer lad:E1048 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1018 a lad:Instrument ;
+    rdfs:label "Paser Utilities 3.75% 2027" ;
+    lad:currency "GBP" ;
+    lad:description "Paser Utilities 3.75% notes due 2027" ;
+    lad:issuer lad:E1049 ;
+    lad:maturity "2034-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1019 a lad:Instrument ;
+    rdfs:label "Sunar Holdings 8.50% 2036" ;
+    lad:currency "USD" ;
+    lad:description "Sunar Holdings 8.50% notes due 2036" ;
+    lad:issuer lad:E1050 ;
+    lad:maturity "2034-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1020 a lad:Instrument ;
+    rdfs:label "Witad Steel 5.00% 2033" ;
+    lad:currency "EUR" ;
+    lad:description "Witad Steel 5.00% notes due 2033" ;
+    lad:issuer lad:E1052 ;
+    lad:maturity "2027-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1021 a lad:Instrument ;
+    rdfs:label "Duver Shipping 8.50% 2032" ;
+    lad:currency "EUR" ;
+    lad:description "Duver Shipping 8.50% notes due 2032" ;
+    lad:issuer lad:E1056 ;
+    lad:maturity "2030-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1022 a lad:Instrument ;
+    rdfs:label "Levem Foods 6.50% 2035" ;
+    lad:currency "EUR" ;
+    lad:description "Levem Foods 6.50% notes due 2035" ;
+    lad:issuer lad:E1067 ;
+    lad:maturity "2030-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1023 a lad:Instrument ;
+    rdfs:label "Mored Utilities 4.25% 2032" ;
+    lad:currency "USD" ;
+    lad:description "Mored Utilities 4.25% notes due 2032" ;
+    lad:issuer lad:E1071 ;
+    lad:maturity "2033-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1024 a lad:Instrument ;
+    rdfs:label "Ganed Holdings 5.75% 2035" ;
+    lad:currency "EUR" ;
+    lad:description "Ganed Holdings 5.75% notes due 2035" ;
+    lad:issuer lad:E1077 ;
+    lad:maturity "2032-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1025 a lad:Instrument ;
+    rdfs:label "Menir Shipping 7.50% 2028" ;
+    lad:currency "EUR" ;
+    lad:description "Menir Shipping 7.50% notes due 2028" ;
+    lad:issuer lad:E1078 ;
+    lad:maturity "2034-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1026 a lad:Instrument ;
+    rdfs:label "Nevar Property 6.75% 2036" ;
+    lad:currency "GBP" ;
+    lad:description "Nevar Property 6.75% notes due 2036" ;
+    lad:issuer lad:E1079 ;
+    lad:maturity "2028-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1027 a lad:Instrument ;
+    rdfs:label "Gilen Capital 2.00% 2031" ;
+    lad:currency "USD" ;
+    lad:description "Gilen Capital 2.00% notes due 2031" ;
+    lad:issuer lad:E1082 ;
+    lad:maturity "2034-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1028 a lad:Instrument ;
+    rdfs:label "Givim Mining 5.75% 2036" ;
+    lad:currency "EUR" ;
+    lad:description "Givim Mining 5.75% notes due 2036" ;
+    lad:issuer lad:E1085 ;
+    lad:maturity "2034-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1029 a lad:Instrument ;
+    rdfs:label "Gorar Steel 7.25% 2033" ;
+    lad:currency "USD" ;
+    lad:description "Gorar Steel 7.25% notes due 2033" ;
+    lad:issuer lad:E1086 ;
+    lad:maturity "2035-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1030 a lad:Instrument ;
+    rdfs:label "Vitid Holdings 5.75% 2032" ;
+    lad:currency "EUR" ;
+    lad:description "Vitid Holdings 5.75% notes due 2032" ;
+    lad:issuer lad:E1087 ;
+    lad:maturity "2034-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1031 a lad:Instrument ;
+    rdfs:label "Koved Holdings 2.50% 2032" ;
+    lad:currency "EUR" ;
+    lad:description "Koved Holdings 2.50% notes due 2032" ;
+    lad:issuer lad:E1088 ;
+    lad:maturity "2033-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1032 a lad:Instrument ;
+    rdfs:label "Getel Utilities 7.25% 2033" ;
+    lad:currency "USD" ;
+    lad:description "Getel Utilities 7.25% notes due 2033" ;
+    lad:issuer lad:E1090 ;
+    lad:maturity "2032-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1033 a lad:Instrument ;
+    rdfs:label "Vavam Pharma 8.75% 2032" ;
+    lad:currency "USD" ;
+    lad:description "Vavam Pharma 8.75% notes due 2032" ;
+    lad:issuer lad:E1103 ;
+    lad:maturity "2032-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1034 a lad:Instrument ;
+    rdfs:label "Kisil Logistics 8.50% 2031" ;
+    lad:currency "EUR" ;
+    lad:description "Kisil Logistics 8.50% notes due 2031" ;
+    lad:issuer lad:E1108 ;
+    lad:maturity "2033-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1035 a lad:Instrument ;
+    rdfs:label "Verod Logistics 3.00% 2035" ;
+    lad:currency "GBP" ;
+    lad:description "Verod Logistics 3.00% notes due 2035" ;
+    lad:issuer lad:E1114 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1036 a lad:Instrument ;
+    rdfs:label "Piren Foods 2.50% 2030" ;
+    lad:currency "USD" ;
+    lad:description "Piren Foods 2.50% notes due 2030" ;
+    lad:issuer lad:E1115 ;
+    lad:maturity "2033-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1037 a lad:Instrument ;
+    rdfs:label "Reter Shipping 8.00% 2028" ;
+    lad:currency "EUR" ;
+    lad:description "Reter Shipping 8.00% notes due 2028" ;
+    lad:issuer lad:E1118 ;
+    lad:maturity "2027-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1038 a lad:Instrument ;
+    rdfs:label "Conan Capital 4.75% 2033" ;
+    lad:currency "EUR" ;
+    lad:description "Conan Capital 4.75% notes due 2033" ;
+    lad:issuer lad:E1131 ;
+    lad:maturity "2031-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1039 a lad:Instrument ;
+    rdfs:label "Larid Steel 8.50% 2028" ;
+    lad:currency "GBP" ;
+    lad:description "Larid Steel 8.50% notes due 2028" ;
+    lad:issuer lad:E1141 ;
+    lad:maturity "2033-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1040 a lad:Instrument ;
+    rdfs:label "Woner Media 5.75% 2027" ;
+    lad:currency "EUR" ;
+    lad:description "Woner Media 5.75% notes due 2027" ;
+    lad:issuer lad:E1143 ;
+    lad:maturity "2027-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1041 a lad:Instrument ;
+    rdfs:label "Kanim Pharma 3.25% 2033" ;
+    lad:currency "EUR" ;
+    lad:description "Kanim Pharma 3.25% notes due 2033" ;
+    lad:issuer lad:E1145 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1042 a lad:Instrument ;
+    rdfs:label "Daren Mining 5.75% 2030" ;
+    lad:currency "EUR" ;
+    lad:description "Daren Mining 5.75% notes due 2030" ;
+    lad:issuer lad:E1147 ;
+    lad:maturity "2035-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1043 a lad:Instrument ;
+    rdfs:label "Honel Shipping 4.50% 2028" ;
+    lad:currency "EUR" ;
+    lad:description "Honel Shipping 4.50% notes due 2028" ;
+    lad:issuer lad:E1149 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1044 a lad:Instrument ;
+    rdfs:label "Wavad Foods 6.75% 2035" ;
+    lad:currency "USD" ;
+    lad:description "Wavad Foods 6.75% notes due 2035" ;
+    lad:issuer lad:E1155 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1045 a lad:Instrument ;
+    rdfs:label "Ruven Airlines 5.75% 2032" ;
+    lad:currency "EUR" ;
+    lad:description "Ruven Airlines 5.75% notes due 2032" ;
+    lad:issuer lad:E1156 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1046 a lad:Instrument ;
+    rdfs:label "Diled Steel 8.75% 2027" ;
+    lad:currency "EUR" ;
+    lad:description "Diled Steel 8.75% notes due 2027" ;
+    lad:issuer lad:E1160 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1047 a lad:Instrument ;
+    rdfs:label "Wunam Telecom 5.25% 2032" ;
+    lad:currency "EUR" ;
+    lad:description "Wunam Telecom 5.25% notes due 2032" ;
+    lad:issuer lad:E1162 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1048 a lad:Instrument ;
+    rdfs:label "Wenar Water 8.25% 2028" ;
+    lad:currency "EUR" ;
+    lad:description "Wenar Water 8.25% notes due 2028" ;
+    lad:issuer lad:E1163 ;
+    lad:maturity "2028-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1049 a lad:Instrument ;
+    rdfs:label "Ranim Shipping 8.00% 2028" ;
+    lad:currency "USD" ;
+    lad:description "Ranim Shipping 8.00% notes due 2028" ;
+    lad:issuer lad:E1166 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1050 a lad:Instrument ;
+    rdfs:label "Fivan Holdings 2.25% 2035" ;
+    lad:currency "EUR" ;
+    lad:description "Fivan Holdings 2.25% notes due 2035" ;
+    lad:issuer lad:E1168 ;
+    lad:maturity "2027-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1051 a lad:Instrument ;
+    rdfs:label "Molar Shipping 3.25% 2031" ;
+    lad:currency "EUR" ;
+    lad:description "Molar Shipping 3.25% notes due 2031" ;
+    lad:issuer lad:E1188 ;
+    lad:maturity "2028-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1052 a lad:Instrument ;
+    rdfs:label "Divid Property 4.25% 2033" ;
+    lad:currency "GBP" ;
+    lad:description "Divid Property 4.25% notes due 2033" ;
+    lad:issuer lad:E1189 ;
+    lad:maturity "2032-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1053 a lad:Instrument ;
+    rdfs:label "Piran Logistics 7.25% 2034" ;
+    lad:currency "EUR" ;
+    lad:description "Piran Logistics 7.25% notes due 2034" ;
+    lad:issuer lad:E1190 ;
+    lad:maturity "2028-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1054 a lad:Instrument ;
+    rdfs:label "Lenam Industries 2.50% 2036" ;
+    lad:currency "GBP" ;
+    lad:description "Lenam Industries 2.50% notes due 2036" ;
+    lad:issuer lad:E1195 ;
+    lad:maturity "2030-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1055 a lad:Instrument ;
+    rdfs:label "Kiver Property 8.00% 2032" ;
+    lad:currency "EUR" ;
+    lad:description "Kiver Property 8.00% notes due 2032" ;
+    lad:issuer lad:E1198 ;
+    lad:maturity "2034-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1056 a lad:Instrument ;
+    rdfs:label "Misam Shipping 8.00% 2036" ;
+    lad:currency "USD" ;
+    lad:description "Misam Shipping 8.00% notes due 2036" ;
+    lad:issuer lad:E1205 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1057 a lad:Instrument ;
+    rdfs:label "Rival Chemicals 5.25% 2027" ;
+    lad:currency "USD" ;
+    lad:description "Rival Chemicals 5.25% notes due 2027" ;
+    lad:issuer lad:E1206 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1058 a lad:Instrument ;
+    rdfs:label "Holar Logistics 5.75% 2030" ;
+    lad:currency "EUR" ;
+    lad:description "Holar Logistics 5.75% notes due 2030" ;
+    lad:issuer lad:E1207 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1059 a lad:Instrument ;
+    rdfs:label "Nelem Foods 4.75% 2027" ;
+    lad:currency "USD" ;
+    lad:description "Nelem Foods 4.75% notes due 2027" ;
+    lad:issuer lad:E1208 ;
+    lad:maturity "2031-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1060 a lad:Instrument ;
+    rdfs:label "Winim Mining 4.75% 2035" ;
+    lad:currency "EUR" ;
+    lad:description "Winim Mining 4.75% notes due 2035" ;
+    lad:issuer lad:E1213 ;
+    lad:maturity "2032-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1061 a lad:Instrument ;
+    rdfs:label "Putan Chemicals 6.75% 2036" ;
+    lad:currency "EUR" ;
+    lad:description "Putan Chemicals 6.75% notes due 2036" ;
+    lad:issuer lad:E1218 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1062 a lad:Instrument ;
+    rdfs:label "Sanen Property 8.75% 2031" ;
+    lad:currency "EUR" ;
+    lad:description "Sanen Property 8.75% notes due 2031" ;
+    lad:issuer lad:E1219 ;
+    lad:maturity "2028-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1063 a lad:Instrument ;
+    rdfs:label "Kolom Utilities 5.50% 2030" ;
+    lad:currency "EUR" ;
+    lad:description "Kolom Utilities 5.50% notes due 2030" ;
+    lad:issuer lad:E1225 ;
+    lad:maturity "2031-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1064 a lad:Instrument ;
+    rdfs:label "Fetam Mining 6.75% 2035" ;
+    lad:currency "CVK" ;
+    lad:description "Fetam Mining 6.75% notes due 2035" ;
+    lad:issuer lad:E1229 ;
+    lad:maturity "2028-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1065 a lad:Instrument ;
+    rdfs:label "Hiter Utilities 4.50% 2033" ;
+    lad:currency "EUR" ;
+    lad:description "Hiter Utilities 4.50% notes due 2033" ;
+    lad:issuer lad:E1230 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1066 a lad:Instrument ;
+    rdfs:label "Neved Mining 6.75% 2030" ;
+    lad:currency "EUR" ;
+    lad:description "Neved Mining 6.75% notes due 2030" ;
+    lad:issuer lad:E1232 ;
+    lad:maturity "2027-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1067 a lad:Instrument ;
+    rdfs:label "Kavid Industries 6.00% 2032" ;
+    lad:currency "EUR" ;
+    lad:description "Kavid Industries 6.00% notes due 2032" ;
+    lad:issuer lad:E1233 ;
+    lad:maturity "2034-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1068 a lad:Instrument ;
+    rdfs:label "Ketor Retail 5.00% 2036" ;
+    lad:currency "EUR" ;
+    lad:description "Ketor Retail 5.00% notes due 2036" ;
+    lad:issuer lad:E1235 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1069 a lad:Instrument ;
+    rdfs:label "Nitel Retail 2.25% 2031" ;
+    lad:currency "XVD" ;
+    lad:description "Nitel Retail 2.25% notes due 2031" ;
+    lad:issuer lad:E1236 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1070 a lad:Instrument ;
+    rdfs:label "Desar Steel 2.75% 2027" ;
+    lad:currency "EUR" ;
+    lad:description "Desar Steel 2.75% notes due 2027" ;
+    lad:issuer lad:E1240 ;
+    lad:maturity "2028-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1071 a lad:Instrument ;
+    rdfs:label "Gater Holdings 7.50% 2036" ;
+    lad:currency "CVK" ;
+    lad:description "Gater Holdings 7.50% notes due 2036" ;
+    lad:issuer lad:E1245 ;
+    lad:maturity "2035-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1072 a lad:Instrument ;
+    rdfs:label "Vusir Telecom 6.25% 2033" ;
+    lad:currency "EUR" ;
+    lad:description "Vusir Telecom 6.25% notes due 2033" ;
+    lad:issuer lad:E1253 ;
+    lad:maturity "2030-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1073 a lad:Instrument ;
+    rdfs:label "Melan Holdings 5.50% 2036" ;
+    lad:currency "EUR" ;
+    lad:description "Melan Holdings 5.50% notes due 2036" ;
+    lad:issuer lad:E1255 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1074 a lad:Instrument ;
+    rdfs:label "Poven Airlines 3.75% 2033" ;
+    lad:currency "EUR" ;
+    lad:description "Poven Airlines 3.75% notes due 2033" ;
+    lad:issuer lad:E1256 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1075 a lad:Instrument ;
+    rdfs:label "Givin Holdings 4.75% 2029" ;
+    lad:currency "EUR" ;
+    lad:description "Givin Holdings 4.75% notes due 2029" ;
+    lad:issuer lad:E1257 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1076 a lad:Instrument ;
+    rdfs:label "Votim Industries 3.25% 2035" ;
+    lad:currency "USD" ;
+    lad:description "Votim Industries 3.25% notes due 2035" ;
+    lad:issuer lad:E1260 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1077 a lad:Instrument ;
+    rdfs:label "Munam Water 8.75% 2031" ;
+    lad:currency "EUR" ;
+    lad:description "Munam Water 8.75% notes due 2031" ;
+    lad:issuer lad:E1261 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1078 a lad:Instrument ;
+    rdfs:label "Gutin Water 4.75% 2033" ;
+    lad:currency "USD" ;
+    lad:description "Gutin Water 4.75% notes due 2033" ;
+    lad:issuer lad:E1267 ;
+    lad:maturity "2031-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1079 a lad:Instrument ;
+    rdfs:label "Nisim Logistics 8.50% 2035" ;
+    lad:currency "EUR" ;
+    lad:description "Nisim Logistics 8.50% notes due 2035" ;
+    lad:issuer lad:E1272 ;
+    lad:maturity "2030-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1080 a lad:Instrument ;
+    rdfs:label "Furer Property 8.50% 2036" ;
+    lad:currency "USD" ;
+    lad:description "Furer Property 8.50% notes due 2036" ;
+    lad:issuer lad:E1273 ;
+    lad:maturity "2028-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1081 a lad:Instrument ;
+    rdfs:label "Lesol Steel 3.00% 2028" ;
+    lad:currency "EUR" ;
+    lad:description "Lesol Steel 3.00% notes due 2028" ;
+    lad:issuer lad:E1277 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1082 a lad:Instrument ;
+    rdfs:label "Norad Airlines 6.00% 2034" ;
+    lad:currency "EUR" ;
+    lad:description "Norad Airlines 6.00% notes due 2034" ;
+    lad:issuer lad:E1283 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1083 a lad:Instrument ;
+    rdfs:label "Binod Foods 6.75% 2029" ;
+    lad:currency "EUR" ;
+    lad:description "Binod Foods 6.75% notes due 2029" ;
+    lad:issuer lad:E1288 ;
+    lad:maturity "2033-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1084 a lad:Instrument ;
+    rdfs:label "Lolod Industries 3.00% 2035" ;
+    lad:currency "EUR" ;
+    lad:description "Lolod Industries 3.00% notes due 2035" ;
+    lad:issuer lad:E1295 ;
+    lad:maturity "2029-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1085 a lad:Instrument ;
+    rdfs:label "Kotim Pharma 7.50% 2035" ;
+    lad:currency "EUR" ;
+    lad:description "Kotim Pharma 7.50% notes due 2035" ;
+    lad:issuer lad:E1297 ;
+    lad:maturity "2028-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1086 a lad:Instrument ;
+    rdfs:label "Bavom Logistics 7.00% 2036" ;
+    lad:currency "EUR" ;
+    lad:description "Bavom Logistics 7.00% notes due 2036" ;
+    lad:issuer lad:E1308 ;
+    lad:maturity "2034-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1087 a lad:Instrument ;
+    rdfs:label "Wuvor Telecom 5.00% 2035" ;
+    lad:currency "USD" ;
+    lad:description "Wuvor Telecom 5.00% notes due 2035" ;
+    lad:issuer lad:E1309 ;
+    lad:maturity "2036-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1088 a lad:Instrument ;
+    rdfs:label "Naner Airlines 3.00% 2027" ;
+    lad:currency "GBP" ;
+    lad:description "Naner Airlines 3.00% notes due 2027" ;
+    lad:issuer lad:E1312 ;
+    lad:maturity "2035-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1089 a lad:Instrument ;
+    rdfs:label "Dulem Retail 5.00% 2028" ;
+    lad:currency "GBP" ;
+    lad:description "Dulem Retail 5.00% notes due 2028" ;
+    lad:issuer lad:E1314 ;
+    lad:maturity "2030-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1090 a lad:Instrument ;
+    rdfs:label "Cetem Industries 3.75% 2027" ;
+    lad:currency "EUR" ;
+    lad:description "Cetem Industries 3.75% notes due 2027" ;
+    lad:issuer lad:E1320 ;
+    lad:maturity "2028-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1091 a lad:Instrument ;
+    rdfs:label "Bivid Mining 5.00% 2030" ;
+    lad:currency "EUR" ;
+    lad:description "Bivid Mining 5.00% notes due 2030" ;
+    lad:issuer lad:E1322 ;
+    lad:maturity "2031-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1092 a lad:Instrument ;
+    rdfs:label "Tusil Telecom 4.75% 2029" ;
+    lad:currency "GBP" ;
+    lad:description "Tusil Telecom 4.75% notes due 2029" ;
+    lad:issuer lad:E1324 ;
+    lad:maturity "2027-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I1093 a lad:Instrument ;
+    rdfs:label "Poval Chemicals Finance 2.50% 2034" ;
+    lad:currency "EUR" ;
+    lad:description "Poval Chemicals Finance 2.50% notes due 2034" ;
+    lad:guarantor lad:E1084 ;
+    lad:issuer lad:E1325 ;
+    lad:maturity "2027-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1094 a lad:Instrument ;
+    rdfs:label "Witad Steel Finance 6.50% 2027" ;
+    lad:currency "EUR" ;
+    lad:description "Witad Steel Finance 6.50% notes due 2027" ;
+    lad:guarantor lad:E1052 ;
+    lad:issuer lad:E1326 ;
+    lad:maturity "2033-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1095 a lad:Instrument ;
+    rdfs:label "Nuner Holdings Finance 4.50% 2032" ;
+    lad:currency "EUR" ;
+    lad:description "Nuner Holdings Finance 4.50% notes due 2032" ;
+    lad:guarantor lad:E1119 ;
+    lad:issuer lad:E1327 ;
+    lad:maturity "2030-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1096 a lad:Instrument ;
+    rdfs:label "Palad Mining Finance 6.50% 2030" ;
+    lad:currency "EUR" ;
+    lad:description "Palad Mining Finance 6.50% notes due 2030" ;
+    lad:guarantor lad:E1244 ;
+    lad:issuer lad:E1328 ;
+    lad:maturity "2028-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1097 a lad:Instrument ;
+    rdfs:label "Ganen Shipping Finance 5.50% 2030" ;
+    lad:currency "EUR" ;
+    lad:description "Ganen Shipping Finance 5.50% notes due 2030" ;
+    lad:guarantor lad:E1069 ;
+    lad:issuer lad:E1329 ;
+    lad:maturity "2029-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1098 a lad:Instrument ;
+    rdfs:label "Niner Pharma Finance 3.50% 2030" ;
+    lad:currency "EUR" ;
+    lad:description "Niner Pharma Finance 3.50% notes due 2030" ;
+    lad:guarantor lad:E1021 ;
+    lad:issuer lad:E1330 ;
+    lad:maturity "2032-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1099 a lad:Instrument ;
+    rdfs:label "Tulol Shipping Finance 3.50% 2034" ;
+    lad:currency "EUR" ;
+    lad:description "Tulol Shipping Finance 3.50% notes due 2034" ;
+    lad:guarantor lad:E1025 ;
+    lad:issuer lad:E1331 ;
+    lad:maturity "2032-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1100 a lad:Instrument ;
+    rdfs:label "Sanin Mining Finance 2.50% 2032" ;
+    lad:currency "EUR" ;
+    lad:description "Sanin Mining Finance 2.50% notes due 2032" ;
+    lad:guarantor lad:E1068 ;
+    lad:issuer lad:E1332 ;
+    lad:maturity "2028-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1101 a lad:Instrument ;
+    rdfs:label "Gilen Capital Finance 3.50% 2031" ;
+    lad:currency "EUR" ;
+    lad:description "Gilen Capital Finance 3.50% notes due 2031" ;
+    lad:guarantor lad:E1082 ;
+    lad:issuer lad:E1333 ;
+    lad:maturity "2034-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1102 a lad:Instrument ;
+    rdfs:label "Votim Industries Finance 3.50% 2027" ;
+    lad:currency "EUR" ;
+    lad:description "Votim Industries Finance 3.50% notes due 2027" ;
+    lad:guarantor lad:E1260 ;
+    lad:issuer lad:E1334 ;
+    lad:maturity "2031-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1103 a lad:Instrument ;
+    rdfs:label "Belor Telecom Finance 2.50% 2027" ;
+    lad:currency "EUR" ;
+    lad:description "Belor Telecom Finance 2.50% notes due 2027" ;
+    lad:guarantor lad:E1234 ;
+    lad:issuer lad:E1335 ;
+    lad:maturity "2030-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1104 a lad:Instrument ;
+    rdfs:label "Navor Holdings Finance 2.50% 2029" ;
+    lad:currency "EUR" ;
+    lad:description "Navor Holdings Finance 2.50% notes due 2029" ;
+    lad:guarantor lad:E1176 ;
+    lad:issuer lad:E1336 ;
+    lad:maturity "2033-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1105 a lad:Instrument ;
+    rdfs:label "Lanon Telecom Finance 5.50% 2028" ;
+    lad:currency "EUR" ;
+    lad:description "Lanon Telecom Finance 5.50% notes due 2028" ;
+    lad:guarantor lad:E1038 ;
+    lad:issuer lad:E1337 ;
+    lad:maturity "2034-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1106 a lad:Instrument ;
+    rdfs:label "Hivor Industries Finance 6.50% 2027" ;
+    lad:currency "EUR" ;
+    lad:description "Hivor Industries Finance 6.50% notes due 2027" ;
+    lad:guarantor lad:E1073 ;
+    lad:issuer lad:E1338 ;
+    lad:maturity "2033-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I1107 a lad:Instrument ;
+    rdfs:label "Wivin Airlines Finance 2.50% 2031" ;
+    lad:currency "EUR" ;
+    lad:description "Wivin Airlines Finance 2.50% notes due 2031" ;
+    lad:guarantor lad:E1241 ;
+    lad:issuer lad:E1339 ;
+    lad:maturity "2030-03-31"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:VD a lad:Entity ;
+    rdfs:label "Republic of Valdoria" ;
+    lad:country "VD" ;
+    lad:entityType lad:etype-SOV ;
+    lad:name "Republic of Valdoria" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E06 a lad:Entity ;
+    rdfs:label "Orrin Bank AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "549300AMVE3VRVG7HK43" ;
+    lad:name "Orrin Bank AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E07 a lad:Entity ;
+    rdfs:label "Pellam Retail Ltd" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500B6IUACELPI2291" ;
+    lad:name "Pellam Retail Ltd" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1002 a lad:Entity ;
+    rdfs:label "TUNOD STEEL SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "3912003R00FP6CNV6210" ;
+    lad:name "TUNOD STEEL SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1008 a lad:Entity ;
+    rdfs:label "Sotil Retail plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800RPNJ2OSQ387M40" ;
+    lad:name "Sotil Retail plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1009 a lad:Entity ;
+    rdfs:label "Malam Chemicals Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "3912006EIY6TU9NVSC86" ;
+    lad:name "Malam Chemicals Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1010 a lad:Entity ;
+    rdfs:label "Buvir Industries Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "3912004R2GZJL49URX69" ;
+    lad:name "Buvir Industries Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1014 a lad:Entity ;
+    rdfs:label "Toral Utilities BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200J700D8T2H18W16" ;
+    lad:name "Toral Utilities BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1015 a lad:Entity ;
+    rdfs:label "Civen Steel Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600JSNIJ4UFCBF662" ;
+    lad:name "Civen Steel Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1018 a lad:Entity ;
+    rdfs:label "Tosem Mining Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300SEMGL6OXLWHQ59" ;
+    lad:name "Tosem Mining Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1026 a lad:Entity ;
+    rdfs:label "Vunam Water BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500C8XYHXZBFMUO41" ;
+    lad:name "Vunam Water BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1027 a lad:Entity ;
+    rdfs:label "Tesad Media Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500T86HNH5S920X18" ;
+    lad:name "Tesad Media Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1029 a lad:Entity ;
+    rdfs:label "Leson Telecom Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "8156008DPX4I9DNKWN26" ;
+    lad:name "Leson Telecom Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1032 a lad:Entity ;
+    rdfs:label "Helom Chemicals BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "2138006H9XCYN2P1K228" ;
+    lad:name "Helom Chemicals BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1034 a lad:Entity ;
+    rdfs:label "Tanad Capital SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600KLV84WAQGPSX27" ;
+    lad:name "Tanad Capital SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1037 a lad:Entity ;
+    rdfs:label "Natil Retail SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200OBAXI8590VQN12" ;
+    lad:name "Natil Retail SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1046 a lad:Entity ;
+    rdfs:label "Ditin Shipping Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "549300ZM08IADSAK3L87" ;
+    lad:name "Ditin Shipping Inc" ;
+    lad:parent lad:E1026 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1049 a lad:Entity ;
+    rdfs:label "Paser Utilities plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200R2EH7FELZFOV27" ;
+    lad:name "Paser Utilities plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1050 a lad:Entity ;
+    rdfs:label "Sunar Holdings AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500YF1ZXQV9ONT388" ;
+    lad:name "Sunar Holdings AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1060 a lad:Entity ;
+    rdfs:label "KELIM MEDIA SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300CRXZL5I1OT6L14" ;
+    lad:name "KELIM MEDIA SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1062 a lad:Entity ;
+    rdfs:label "Puver Shipping plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300QT2LSIX31F9O17" ;
+    lad:name "Puver Shipping plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1067 a lad:Entity ;
+    rdfs:label "Levem Foods AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300JCQLO2RULRWH17" ;
+    lad:name "Levem Foods AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1076 a lad:Entity ;
+    rdfs:label "Rulid Capital SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500R7NQF1BMLIW829" ;
+    lad:name "Rulid Capital SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1080 a lad:Entity ;
+    rdfs:label "Gatad Property Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600SERWD64UWU8808" ;
+    lad:name "Gatad Property Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1083 a lad:Entity ;
+    rdfs:label "Senir Mining plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800OK3464E1I8MT49" ;
+    lad:name "Senir Mining plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1086 a lad:Entity ;
+    rdfs:label "Gorar Steel Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300EMY7XSXCJ7IS82" ;
+    lad:name "Gorar Steel Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1089 a lad:Entity ;
+    rdfs:label "Hanir Airlines SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500WJX7JXMZXN4L42" ;
+    lad:name "Hanir Airlines SA" ;
+    lad:parent lad:E1078 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1090 a lad:Entity ;
+    rdfs:label "Getel Utilities SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "2138007XFHBHBP7UKW71" ;
+    lad:name "Getel Utilities SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1093 a lad:Entity ;
+    rdfs:label "Nulil Airlines plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500IYLWO8RRIOIL83" ;
+    lad:name "Nulil Airlines plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1099 a lad:Entity ;
+    rdfs:label "Nasad Shipping SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800XQVJ5IKNNVXY16" ;
+    lad:name "Nasad Shipping SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E11 a lad:Entity ;
+    rdfs:label "Halden Leasing SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "549300XBZH4ULO9MQV55" ;
+    lad:name "Halden Leasing SA" ;
+    lad:parent lad:E10 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1101 a lad:Entity ;
+    rdfs:label "Doror Telecom SA" ;
+    lad:country "VD" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600YUVYKAXDN9LE93" ;
+    lad:name "Doror Telecom SA" ;
+    lad:parent lad:E1083 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1102 a lad:Entity ;
+    rdfs:label "Manid Property SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600BOBQSLCRWUB459" ;
+    lad:name "Manid Property SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1108 a lad:Entity ;
+    rdfs:label "Kisil Logistics AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "8156001ZRSLGA0KHXR41" ;
+    lad:name "Kisil Logistics AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1110 a lad:Entity ;
+    rdfs:label "Rinar Industries SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600DZBIB9VS57NE44" ;
+    lad:name "Rinar Industries SA" ;
+    lad:parent lad:E1007 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1122 a lad:Entity ;
+    rdfs:label "Gesed Capital plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200ACJQ1TIF3U6I69" ;
+    lad:name "Gesed Capital plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1124 a lad:Entity ;
+    rdfs:label "Dolom Steel plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600NAKDQJ2L7WWJ01" ;
+    lad:name "Dolom Steel plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1125 a lad:Entity ;
+    rdfs:label "Kotir Water Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500J5HIM8YK8D3832" ;
+    lad:name "Kotir Water Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1127 a lad:Entity ;
+    rdfs:label "Helid Steel SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "213800REUQQKVFZ8XB81" ;
+    lad:name "Helid Steel SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1128 a lad:Entity ;
+    rdfs:label "Lunel Media plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "9695008ZNRDSQ5T1SG98" ;
+    lad:name "Lunel Media plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1131 a lad:Entity ;
+    rdfs:label "Conan Capital SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800Q6JLQDFM0X9H13" ;
+    lad:name "Conan Capital SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1134 a lad:Entity ;
+    rdfs:label "Vulin Utilities AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500QS8AVGZ6CEXK27" ;
+    lad:name "Vulin Utilities AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1138 a lad:Entity ;
+    rdfs:label "Konel Energy BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500BSV4X2J7KUR535" ;
+    lad:name "Konel Energy BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1140 a lad:Entity ;
+    rdfs:label "Danem Industries Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200IBY0WQGAT3R586" ;
+    lad:name "Danem Industries Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1143 a lad:Entity ;
+    rdfs:label "Woner Media SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600HKKJNXG3S3TM53" ;
+    lad:name "Woner Media SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1145 a lad:Entity ;
+    rdfs:label "Kanim Pharma AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500BNAIM5VJE4XC29" ;
+    lad:name "Kanim Pharma AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1149 a lad:Entity ;
+    rdfs:label "Honel Shipping BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500DV6LOBOACJKE42" ;
+    lad:name "Honel Shipping BV" ;
+    lad:parent lad:E1013 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1151 a lad:Entity ;
+    rdfs:label "Nunan Media SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300XHVH0VBXX4D156" ;
+    lad:name "Nunan Media SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1156 a lad:Entity ;
+    rdfs:label "Ruven Airlines AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500KYKHRI6N2WRN19" ;
+    lad:name "Ruven Airlines AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1161 a lad:Entity ;
+    rdfs:label "DILED STEEL SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500PM41NS2PBZU440" ;
+    lad:name "DILED STEEL SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1164 a lad:Entity ;
+    rdfs:label "Dolod Capital SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600XR7HVA2RVFKS52" ;
+    lad:name "Dolod Capital SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1173 a lad:Entity ;
+    rdfs:label "Lotil Pharma Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "8156005CHXEYXPAR0F03" ;
+    lad:name "Lotil Pharma Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1184 a lad:Entity ;
+    rdfs:label "Gavom Airlines plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300FC2Z3B4E5GEQ28" ;
+    lad:name "Gavom Airlines plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1195 a lad:Entity ;
+    rdfs:label "Lenam Industries plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "5493006Q9GZQ3SSPKD32" ;
+    lad:name "Lenam Industries plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E12 a lad:Entity ;
+    rdfs:label "Halden Foods Ltd" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800IJDL4OJ4DG5T19" ;
+    lad:name "Halden Foods Ltd" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1200 a lad:Entity ;
+    rdfs:label "Ganid Holdings plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500L96DLBJOLSDZ06" ;
+    lad:name "Ganid Holdings plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1201 a lad:Entity ;
+    rdfs:label "Halid Steel SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300QCQFZALHPLOM37" ;
+    lad:name "Halid Steel SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1203 a lad:Entity ;
+    rdfs:label "Fusir Steel AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500W08E6JP9P9NC97" ;
+    lad:name "Fusir Steel AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1208 a lad:Entity ;
+    rdfs:label "Nelem Foods Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200ZCSCMVTJQGIO75" ;
+    lad:name "Nelem Foods Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1210 a lad:Entity ;
+    rdfs:label "MALID MINING SPA" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300HWTXXHJP2HKU38" ;
+    lad:name "MALID MINING SPA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1212 a lad:Entity ;
+    rdfs:label "Savam Retail SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500U29S59A0Q8QF01" ;
+    lad:name "Savam Retail SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1220 a lad:Entity ;
+    rdfs:label "Genol Energy Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600YKFDDKKP5RU032" ;
+    lad:name "Genol Energy Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1221 a lad:Entity ;
+    rdfs:label "Nolor Airlines plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "969500UNOYV72E8TPM83" ;
+    lad:name "Nolor Airlines plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1222 a lad:Entity ;
+    rdfs:label "Giran Retail SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600G56160T4WW7170" ;
+    lad:name "Giran Retail SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1227 a lad:Entity ;
+    rdfs:label "Nonil Shipping AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "8156005URSO7UZ34MM93" ;
+    lad:name "Nonil Shipping AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1228 a lad:Entity ;
+    rdfs:label "Cevad Chemicals plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500JFK718P3DNW233" ;
+    lad:name "Cevad Chemicals plc" ;
+    lad:parent lad:E1023 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1231 a lad:Entity ;
+    rdfs:label "Ralir Pharma plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600F5LE0N42IQ6631" ;
+    lad:name "Ralir Pharma plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1235 a lad:Entity ;
+    rdfs:label "Ketor Retail BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "2138002457DBLI8SE576" ;
+    lad:name "Ketor Retail BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1236 a lad:Entity ;
+    rdfs:label "Nitel Retail SA" ;
+    lad:country "VD" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "3912002FNTE1EKOY9W74" ;
+    lad:name "Nitel Retail SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1240 a lad:Entity ;
+    rdfs:label "Desar Steel BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500VXDHSZ84PQJ546" ;
+    lad:name "Desar Steel BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1248 a lad:Entity ;
+    rdfs:label "Hivod Mining Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800XN4WOS9M0UP985" ;
+    lad:name "Hivod Mining Inc" ;
+    lad:parent lad:E1107 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1257 a lad:Entity ;
+    rdfs:label "Givin Holdings SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "7245008EAJLEUCZUW413" ;
+    lad:name "Givin Holdings SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1262 a lad:Entity ;
+    rdfs:label "MUNAM WATER SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300H1N0EQEAZLE362" ;
+    lad:name "MUNAM WATER SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1264 a lad:Entity ;
+    rdfs:label "Devam Water plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300HH75F3NXLKV336" ;
+    lad:name "Devam Water plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1265 a lad:Entity ;
+    rdfs:label "Turid Pharma AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "7245006R28HS7PV1BL78" ;
+    lad:name "Turid Pharma AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1266 a lad:Entity ;
+    rdfs:label "Culed Chemicals BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "724500CD625Q9LIJG838" ;
+    lad:name "Culed Chemicals BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1269 a lad:Entity ;
+    rdfs:label "Piven Industries AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600BHWVUTBUE1KW94" ;
+    lad:name "Piven Industries AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1271 a lad:Entity ;
+    rdfs:label "Rarid Logistics AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800M91M3NKSWT8K97" ;
+    lad:name "Rarid Logistics AG" ;
+    lad:parent lad:E1071 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1272 a lad:Entity ;
+    rdfs:label "Nisim Logistics SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200ZU0OC3WDRA0J59" ;
+    lad:name "Nisim Logistics SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1278 a lad:Entity ;
+    rdfs:label "Bavil Chemicals plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600LDQIUCNNTOL286" ;
+    lad:name "Bavil Chemicals plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1282 a lad:Entity ;
+    rdfs:label "Falan Mining Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500GZZJO3VTZ5OY05" ;
+    lad:name "Falan Mining Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1285 a lad:Entity ;
+    rdfs:label "Laril Retail plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200J1XGI3MNYV2584" ;
+    lad:name "Laril Retail plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1287 a lad:Entity ;
+    rdfs:label "Wenol Water SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "3912009DMLJCE9TDCF07" ;
+    lad:name "Wenol Water SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1293 a lad:Entity ;
+    rdfs:label "Datod Airlines plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200BREGDXY5M1LW07" ;
+    lad:name "Datod Airlines plc" ;
+    lad:parent lad:E1166 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1294 a lad:Entity ;
+    rdfs:label "Runor Media SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200WPOJY9F1NTH725" ;
+    lad:name "Runor Media SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1299 a lad:Entity ;
+    rdfs:label "FANER STEEL SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600RCZP0ISY44E024" ;
+    lad:name "FANER STEEL SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1309 a lad:Entity ;
+    rdfs:label "Wuvor Telecom plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "391200B3S9KKLPO1GZ78" ;
+    lad:name "Wuvor Telecom plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1312 a lad:Entity ;
+    rdfs:label "Naner Airlines plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600IAXXJMP1V41890" ;
+    lad:name "Naner Airlines plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1316 a lad:Entity ;
+    rdfs:label "Rinal Foods BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "2138005XQUSYXQWKHP15" ;
+    lad:name "Rinal Foods BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1317 a lad:Entity ;
+    rdfs:label "Wisir Telecom AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "391200YYRT4OCYJBQT44" ;
+    lad:name "Wisir Telecom AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1321 a lad:Entity ;
+    rdfs:label "Warer Mining plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "7245007YVHZJKD3Z3X87" ;
+    lad:name "Warer Mining plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1322 a lad:Entity ;
+    rdfs:label "Bivid Mining SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "7245003MRSQ8C823Z590" ;
+    lad:name "Bivid Mining SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1323 a lad:Entity ;
+    rdfs:label "Tutal Media SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "9695000MJJR7IQP71F01" ;
+    lad:name "Tutal Media SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1326 a lad:Entity ;
+    rdfs:label "Witad Steel Finance BV" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "969500WJEQ7O6V8P8X79" ;
+    lad:name "Witad Steel Finance BV" ;
+    lad:parent lad:E1052 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1327 a lad:Entity ;
+    rdfs:label "Nuner Holdings Finance plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "391200SWQKZG1IRLG226" ;
+    lad:name "Nuner Holdings Finance plc" ;
+    lad:parent lad:E1119 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1330 a lad:Entity ;
+    rdfs:label "Niner Pharma Finance SA" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "969500PPIIF0MLO97E32" ;
+    lad:name "Niner Pharma Finance SA" ;
+    lad:parent lad:E1021 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1333 a lad:Entity ;
+    rdfs:label "Gilen Capital Finance plc" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "213800HVPSP99Z2KCJ88" ;
+    lad:name "Gilen Capital Finance plc" ;
+    lad:parent lad:E1082 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1337 a lad:Entity ;
+    rdfs:label "Lanon Telecom Finance plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "391200EERFGANN46Y270" ;
+    lad:name "Lanon Telecom Finance plc" ;
+    lad:parent lad:E1038 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1338 a lad:Entity ;
+    rdfs:label "Hivor Industries Finance BV" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-FINSUB ;
+    lad:lei "724500WX98LDWMIZLF21" ;
+    lad:name "Hivor Industries Finance BV" ;
+    lad:parent lad:E1073 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1340 a lad:Entity ;
+    rdfs:label "Biram Steel plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800CSTQH7UO0A8E29" ;
+    lad:name "Biram Steel plc" ;
+    lad:sourceSystem "QA" .
+
+lad:E1341 a lad:Entity ;
+    rdfs:label "Panar Airlines SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300IFOJRHYHEP5N72" ;
+    lad:name "Panar Airlines SA" ;
+    lad:sourceSystem "QA" .
+
+lad:E1342 a lad:Entity ;
+    rdfs:label "Cuvol Water AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "7245000RRKYSQSJ2DB31" ;
+    lad:name "Cuvol Water AG" ;
+    lad:sourceSystem "QA" .
+
+lad:E1343 a lad:Entity ;
+    rdfs:label "Bolem Energy plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500F1DAQZF8FNJS41" ;
+    lad:name "Bolem Energy plc" ;
+    lad:sourceSystem "QA" .
+
+lad:E1344 a lad:Entity ;
+    rdfs:label "Naled Utilities plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500N069ZCQGY1UI76" ;
+    lad:name "Naled Utilities plc" ;
+    lad:sourceSystem "QA" .
+
+lad:E1345 a lad:Entity ;
+    rdfs:label "Wesen Retail plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200T3GEO5X4SJMO02" ;
+    lad:name "Wesen Retail plc" ;
+    lad:sourceSystem "QA" .
+
+lad:E1346 a lad:Entity ;
+    rdfs:label "Kalem Property AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200MMTFNAN4NBM054" ;
+    lad:name "Kalem Property AG" ;
+    lad:sourceSystem "QA" .
+
+lad:E1347 a lad:Entity ;
+    rdfs:label "Nunan Capital plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500649FYULZG25F44" ;
+    lad:name "Nunan Capital plc" ;
+    lad:sourceSystem "QA" .
+
+lad:E1348 a lad:Entity ;
+    rdfs:label "Wosed Holdings AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500JEL6C1PJZEDM26" ;
+    lad:name "Wosed Holdings AG" ;
+    lad:sourceSystem "QA" .
+
+lad:E1349 a lad:Entity ;
+    rdfs:label "Parod Pharma SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500PGN9P0AMIWNV47" ;
+    lad:name "Parod Pharma SA" ;
+    lad:sourceSystem "QA" .
+
+lad:E1350 a lad:Entity ;
+    rdfs:label "Palol Airlines plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800GZMC02BI2WJX12" ;
+    lad:name "Palol Airlines plc" ;
+    lad:sourceSystem "QA" .
+
+lad:E1351 a lad:Entity ;
+    rdfs:label "Bisad Property plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500MERFFSB2CHQE09" ;
+    lad:name "Bisad Property plc" ;
+    lad:sourceSystem "QA" .
+
+lad:E16 a lad:Entity ;
+    rdfs:label "Brindle Capital Ltd" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "5493003Z3PXXR7KNFM81" ;
+    lad:name "Brindle Capital Ltd" ;
+    lad:sourceSystem "QA" .
+
+lad:I01 a lad:Instrument ;
+    rdfs:label "Kestrel Energy 4.50% 2030" ;
+    lad:currency "GBP" ;
+    lad:description "Kestrel Energy 4.50% notes due 2030" ;
+    lad:issuer lad:E01 ;
+    lad:maturity "2030-03-15"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I02 a lad:Instrument ;
+    rdfs:label "Kestrel Energy 6.25% 2031" ;
+    lad:currency "GBP" ;
+    lad:description "Kestrel Energy 6.25% notes due 2031" ;
+    lad:issuer lad:E01 ;
+    lad:maturity "2031-09-30"^^xsd:date ;
+    lad:seniority lad:seniority-SUB .
+
+lad:I03 a lad:Instrument ;
+    rdfs:label "Northwind Finance 3.75% 2030" ;
+    lad:currency "EUR" ;
+    lad:description "Northwind Finance 3.75% notes due 2030" ;
+    lad:guarantor lad:E02 ;
+    lad:issuer lad:E04 ;
+    lad:maturity "2030-05-01"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:I05 a lad:Instrument ;
+    rdfs:label "Halden Leasing 2.90% 2028" ;
+    lad:currency "EUR" ;
+    lad:description "Halden Leasing 2.90% notes due 2028" ;
+    lad:guarantor lad:E10 ;
+    lad:issuer lad:E11 ;
+    lad:maturity "2028-06-30"^^xsd:date ;
+    lad:seniority lad:seniority-SU .
+
+lad:CV a lad:Entity ;
+    rdfs:label "Republic of Corvenia" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-SOV ;
+    lad:name "Republic of Corvenia" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E02 a lad:Entity ;
+    rdfs:label "Northwind Holdings plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800PHEIYNJMHTDV74" ;
+    lad:name "Northwind Holdings plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E08 a lad:Entity ;
+    rdfs:label "Saxby Shipping SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500KOTZ1JFIZSG796" ;
+    lad:name "Saxby Shipping SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E09 a lad:Entity ;
+    rdfs:label "Halden Group plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600ASM9EHDG931T89" ;
+    lad:name "Halden Group plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1016 a lad:Entity ;
+    rdfs:label "Ponar Telecom SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "5493008DQ96XI37KZG24" ;
+    lad:name "Ponar Telecom SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1017 a lad:Entity ;
+    rdfs:label "Nisid Steel SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "391200K600X7LWZTTM85" ;
+    lad:name "Nisid Steel SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1020 a lad:Entity ;
+    rdfs:label "Finel Media AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300FCSHHELSCZX562" ;
+    lad:name "Finel Media AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1031 a lad:Entity ;
+    rdfs:label "Kuvir Logistics SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500GRHP48SQNEWH44" ;
+    lad:name "Kuvir Logistics SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1035 a lad:Entity ;
+    rdfs:label "Kavod Utilities AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500YHN51API4SE179" ;
+    lad:name "Kavod Utilities AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1039 a lad:Entity ;
+    rdfs:label "Pulor Airlines SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "969500HA9D5I7F73PW83" ;
+    lad:name "Pulor Airlines SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1048 a lad:Entity ;
+    rdfs:label "Lised Pharma AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "9695000T21G05UQMGF10" ;
+    lad:name "Lised Pharma AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1053 a lad:Entity ;
+    rdfs:label "Soter Water SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "5493001E7O9QDD98PV36" ;
+    lad:name "Soter Water SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1055 a lad:Entity ;
+    rdfs:label "Muran Property plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500WWWM8KJ2Q08398" ;
+    lad:name "Muran Property plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1056 a lad:Entity ;
+    rdfs:label "Duver Shipping SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "969500DMA3PCFLMC4U98" ;
+    lad:name "Duver Shipping SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1058 a lad:Entity ;
+    rdfs:label "Wasil Shipping SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500Y1Y66M1421WE10" ;
+    lad:name "Wasil Shipping SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1059 a lad:Entity ;
+    rdfs:label "Kelim Media SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300CRXZL5I1OT6L14" ;
+    lad:name "Kelim Media SA" ;
+    lad:parent lad:E1015 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1061 a lad:Entity ;
+    rdfs:label "Dotan Retail AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "5493002BLV266QJVIH90" ;
+    lad:name "Dotan Retail AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1066 a lad:Entity ;
+    rdfs:label "Lolil Industries SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800VQSNQ2434DKS91" ;
+    lad:name "Lolil Industries SA" ;
+    lad:parent lad:E1004 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1068 a lad:Entity ;
+    rdfs:label "Sanin Mining SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800KNUYRFXEU6PS61" ;
+    lad:name "Sanin Mining SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1072 a lad:Entity ;
+    rdfs:label "Delil Chemicals plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500W1RDU3ZPX1YB94" ;
+    lad:name "Delil Chemicals plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1074 a lad:Entity ;
+    rdfs:label "Kuron Steel plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "3912006TI0YGHZXX0R89" ;
+    lad:name "Kuron Steel plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1085 a lad:Entity ;
+    rdfs:label "Givim Mining SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600AMW73J02NXW456" ;
+    lad:name "Givim Mining SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1087 a lad:Entity ;
+    rdfs:label "Vitid Holdings SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200RKSQVHNLQFJS46" ;
+    lad:name "Vitid Holdings SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1088 a lad:Entity ;
+    rdfs:label "Koved Holdings SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "549300GS8TRRRJCSVZ45" ;
+    lad:name "Koved Holdings SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1095 a lad:Entity ;
+    rdfs:label "Hunel Foods Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300YCPCEYTT7UCP57" ;
+    lad:name "Hunel Foods Inc" ;
+    lad:parent lad:E1027 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1096 a lad:Entity ;
+    rdfs:label "Ravon Capital SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300NTCTGRKRYIAN83" ;
+    lad:name "Ravon Capital SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1098 a lad:Entity ;
+    rdfs:label "Wirim Water Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500HD5AQ2MDSXXU69" ;
+    lad:name "Wirim Water Inc" ;
+    lad:parent lad:E1006 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1105 a lad:Entity ;
+    rdfs:label "Betin Pharma SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "3912002RB0IGZZN6RN49" ;
+    lad:name "Betin Pharma SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1106 a lad:Entity ;
+    rdfs:label "Reril Pharma SA" ;
+    lad:country "VD" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "724500MTRZ5RNJAKRB00" ;
+    lad:name "Reril Pharma SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1109 a lad:Entity ;
+    rdfs:label "Susal Energy BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600379XSXXQR72R46" ;
+    lad:name "Susal Energy BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1112 a lad:Entity ;
+    rdfs:label "Calem Logistics Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500QJ1AV6AZJSB088" ;
+    lad:name "Calem Logistics Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1114 a lad:Entity ;
+    rdfs:label "Verod Logistics plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800VNSK3FDUWI9Q67" ;
+    lad:name "Verod Logistics plc" ;
+    lad:parent lad:E1063 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1118 a lad:Entity ;
+    rdfs:label "Reter Shipping AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500ZM445IDEYHCL85" ;
+    lad:name "Reter Shipping AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1121 a lad:Entity ;
+    rdfs:label "Matal Foods AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600MZAUY1OCZWJF49" ;
+    lad:name "Matal Foods AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1126 a lad:Entity ;
+    rdfs:label "Goter Capital SA" ;
+    lad:country "VD" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "213800QG4ZGLWRUBIQ31" ;
+    lad:name "Goter Capital SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1132 a lad:Entity ;
+    rdfs:label "Deler Logistics Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "549300WSZI986L1XA988" ;
+    lad:name "Deler Logistics Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1133 a lad:Entity ;
+    rdfs:label "Sorir Water Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300PSORKEO25SHT85" ;
+    lad:name "Sorir Water Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1137 a lad:Entity ;
+    rdfs:label "Ronam Shipping AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "969500ZHKP5H51WXI091" ;
+    lad:name "Ronam Shipping AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1142 a lad:Entity ;
+    rdfs:label "Dasem Media BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "3912006CF5A1XYZZT210" ;
+    lad:name "Dasem Media BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1146 a lad:Entity ;
+    rdfs:label "Taril Industries Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "7245008Y7HAJI3ZSJK12" ;
+    lad:name "Taril Industries Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1148 a lad:Entity ;
+    rdfs:label "DAREN MINING SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200E9TAHDZV7CY568" ;
+    lad:name "DAREN MINING SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1153 a lad:Entity ;
+    rdfs:label "KIVEL PROPERTY" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300E50JHDJNBUGF22" ;
+    lad:name "KIVEL PROPERTY" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1155 a lad:Entity ;
+    rdfs:label "Wavad Foods Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200428FS1WJP3AG75" ;
+    lad:name "Wavad Foods Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1159 a lad:Entity ;
+    rdfs:label "Benem Property AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "213800VMJXKPLM9ZIL74" ;
+    lad:name "Benem Property AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1162 a lad:Entity ;
+    rdfs:label "Wunam Telecom BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800AYN5M70T4RZ707" ;
+    lad:name "Wunam Telecom BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1167 a lad:Entity ;
+    rdfs:label "Fitad Foods BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "5493000NGCMTDC4BZ653" ;
+    lad:name "Fitad Foods BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1168 a lad:Entity ;
+    rdfs:label "Fivan Holdings Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300N9NKGSRIO34Y39" ;
+    lad:name "Fivan Holdings Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1170 a lad:Entity ;
+    rdfs:label "SEREN TELECOM" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300XV49ES64RGNQ00" ;
+    lad:name "SEREN TELECOM" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1177 a lad:Entity ;
+    rdfs:label "Kiver Capital AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "213800J4ER8QI0XDZ847" ;
+    lad:name "Kiver Capital AG" ;
+    lad:parent lad:E1010 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1179 a lad:Entity ;
+    rdfs:label "Cotan Foods SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200USHZVHBK9FHP01" ;
+    lad:name "Cotan Foods SA" ;
+    lad:parent lad:E1162 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1181 a lad:Entity ;
+    rdfs:label "Mosal Logistics SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "3912006PQEEWVJETOG62" ;
+    lad:name "Mosal Logistics SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1186 a lad:Entity ;
+    rdfs:label "Toren Capital AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300OCOVKZOF4FO259" ;
+    lad:name "Toren Capital AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1188 a lad:Entity ;
+    rdfs:label "Molar Shipping SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600O0Y6S2CPCDAA82" ;
+    lad:name "Molar Shipping SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1190 a lad:Entity ;
+    rdfs:label "Piran Logistics plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300ENXJ8RIUXUHZ80" ;
+    lad:name "Piran Logistics plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1194 a lad:Entity ;
+    rdfs:label "Litem Industries SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600GVTRTKVHG8BO41" ;
+    lad:name "Litem Industries SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1196 a lad:Entity ;
+    rdfs:label "Norin Holdings plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600TWQWCHVZCRGX36" ;
+    lad:name "Norin Holdings plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1198 a lad:Entity ;
+    rdfs:label "Kiver Property AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600K08Z108WT4MF26" ;
+    lad:name "Kiver Property AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1205 a lad:Entity ;
+    rdfs:label "Misam Shipping SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200H4MC1UG4HGZY09" ;
+    lad:name "Misam Shipping SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1206 a lad:Entity ;
+    rdfs:label "Rival Chemicals Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600IJD373PYH08A24" ;
+    lad:name "Rival Chemicals Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1211 a lad:Entity ;
+    rdfs:label "Cinam Energy plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "2138006JVQYZA2IAU357" ;
+    lad:name "Cinam Energy plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1216 a lad:Entity ;
+    rdfs:label "Posod Industries SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200QQ2CCDLHBP7A11" ;
+    lad:name "Posod Industries SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1218 a lad:Entity ;
+    rdfs:label "Putan Chemicals SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "9695003B8HVZN6WVB082" ;
+    lad:name "Putan Chemicals SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1219 a lad:Entity ;
+    rdfs:label "Sanen Property BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "815600YLA1GXMHYMXP16" ;
+    lad:name "Sanen Property BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1225 a lad:Entity ;
+    rdfs:label "Kolom Utilities SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500AXGCJXTB1DVL94" ;
+    lad:name "Kolom Utilities SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1230 a lad:Entity ;
+    rdfs:label "Hiter Utilities SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "96950058W63NC1NGPF00" ;
+    lad:name "Hiter Utilities SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1232 a lad:Entity ;
+    rdfs:label "Neved Mining SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "8156007ZTSM91F5OCS62" ;
+    lad:name "Neved Mining SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1233 a lad:Entity ;
+    rdfs:label "Kavid Industries AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "3912001DEUC7UPZYE471" ;
+    lad:name "Kavid Industries AG" ;
+    lad:parent lad:E1198 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1241 a lad:Entity ;
+    rdfs:label "Wivin Airlines SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600GT61BFNLDX4741" ;
+    lad:name "Wivin Airlines SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1242 a lad:Entity ;
+    rdfs:label "Botin Logistics SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "213800VNDQV0VN6FVU72" ;
+    lad:name "Botin Logistics SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1252 a lad:Entity ;
+    rdfs:label "Nosan Water SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200CHF1IWOC8LNL16" ;
+    lad:name "Nosan Water SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1254 a lad:Entity ;
+    rdfs:label "VUSIR TELECOM SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "969500QXEZ0NSV6EIW69" ;
+    lad:name "VUSIR TELECOM SA" ;
+    lad:sourceSystem "RESEARCH" .
+
+lad:E1263 a lad:Entity ;
+    rdfs:label "Sotin Property Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800TWNH19JCPPPE80" ;
+    lad:name "Sotin Property Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1267 a lad:Entity ;
+    rdfs:label "Gutin Water SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "8156006G7EEYC0O0U554" ;
+    lad:name "Gutin Water SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1273 a lad:Entity ;
+    rdfs:label "Furer Property SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500Y582IZ7KJ6AG72" ;
+    lad:name "Furer Property SA" ;
+    lad:parent lad:E1074 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1277 a lad:Entity ;
+    rdfs:label "Lesol Steel SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200922SWGGGCXM514" ;
+    lad:name "Lesol Steel SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1286 a lad:Entity ;
+    rdfs:label "Nuren Industries plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300WS0EQ3X26QYY19" ;
+    lad:name "Nuren Industries plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1288 a lad:Entity ;
+    rdfs:label "Binod Foods AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "213800QEX3DTCPW3E621" ;
+    lad:name "Binod Foods AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1295 a lad:Entity ;
+    rdfs:label "Lolod Industries plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500LISV58YIC2GE65" ;
+    lad:name "Lolod Industries plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1297 a lad:Entity ;
+    rdfs:label "Kotim Pharma SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "7245002QMS1HJ8LWKI72" ;
+    lad:name "Kotim Pharma SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1301 a lad:Entity ;
+    rdfs:label "Wesal Retail plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200VYVH0QM8ABHK11" ;
+    lad:name "Wesal Retail plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1302 a lad:Entity ;
+    rdfs:label "Vinil Media plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300WY6QUNFJ2IKC40" ;
+    lad:name "Vinil Media plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1304 a lad:Entity ;
+    rdfs:label "Peson Shipping SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500BPQVYYSLHHCK81" ;
+    lad:name "Peson Shipping SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1305 a lad:Entity ;
+    rdfs:label "Cenin Media SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500OHVHFTDDP42261" ;
+    lad:name "Cenin Media SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1313 a lad:Entity ;
+    rdfs:label "Divim Holdings SA" ;
+    lad:country "VD" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "213800P5J80HH9LC8L85" ;
+    lad:name "Divim Holdings SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1320 a lad:Entity ;
+    rdfs:label "Cetem Industries SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300P8CEPUO96H4Y59" ;
+    lad:name "Cetem Industries SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1324 a lad:Entity ;
+    rdfs:label "Tusil Telecom plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600ZMS6FKIP8OSV58" ;
+    lad:name "Tusil Telecom plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E05 a lad:Entity ;
+    rdfs:label "Valdoria Telecom SA" ;
+    lad:country "VD" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200LESH03LMOY2U61" ;
+    lad:name "Valdoria Telecom SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E10 a lad:Entity ;
+    rdfs:label "Halden Bank AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "391200QYPVFF2O9K2039" ;
+    lad:name "Halden Bank AG" ;
+    lad:parent lad:E09 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1004 a lad:Entity ;
+    rdfs:label "Munem Retail SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500IBYK0X2ZT52780" ;
+    lad:name "Munem Retail SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1005 a lad:Entity ;
+    rdfs:label "Setan Airlines Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600JRN7AOE36KFR35" ;
+    lad:name "Setan Airlines Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1007 a lad:Entity ;
+    rdfs:label "Golod Property plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "815600N2UAHQREHHWF76" ;
+    lad:name "Golod Property plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1012 a lad:Entity ;
+    rdfs:label "Posad Industries SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "9695002JIQI5QYDN0G98" ;
+    lad:name "Posad Industries SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1013 a lad:Entity ;
+    rdfs:label "Pisol Pharma BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "969500U072SAPPW32N81" ;
+    lad:name "Pisol Pharma BV" ;
+    lad:parent lad:E1004 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1019 a lad:Entity ;
+    rdfs:label "Losol Mining SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200GSFO0F68KKUC67" ;
+    lad:name "Losol Mining SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1025 a lad:Entity ;
+    rdfs:label "Tulol Shipping SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "2138007MIV2OS05PET94" ;
+    lad:name "Tulol Shipping SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1038 a lad:Entity ;
+    rdfs:label "Lanon Telecom BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300EZ4HXP0L5RAZ01" ;
+    lad:name "Lanon Telecom BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1041 a lad:Entity ;
+    rdfs:label "Hiral Steel SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300JU1O5MP1HSKQ01" ;
+    lad:name "Hiral Steel SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1051 a lad:Entity ;
+    rdfs:label "Kenar Water SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500WO4TZY2027IZ62" ;
+    lad:name "Kenar Water SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1054 a lad:Entity ;
+    rdfs:label "Luvol Foods SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "2138000BOQ4DC1ME1X13" ;
+    lad:name "Luvol Foods SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1057 a lad:Entity ;
+    rdfs:label "Batan Foods plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "2138009BPHEDKSZHFF68" ;
+    lad:name "Batan Foods plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1063 a lad:Entity ;
+    rdfs:label "Kotom Media SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "9695003FBHLB9KIKNT76" ;
+    lad:name "Kotom Media SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1064 a lad:Entity ;
+    rdfs:label "Renil Media BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800YPXA4OJXD8EB91" ;
+    lad:name "Renil Media BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1069 a lad:Entity ;
+    rdfs:label "Ganen Shipping SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300GV9F3CNKP0QJ18" ;
+    lad:name "Ganen Shipping SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1071 a lad:Entity ;
+    rdfs:label "Mored Utilities SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800CG5LUFZKTQXL65" ;
+    lad:name "Mored Utilities SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1073 a lad:Entity ;
+    rdfs:label "Hivor Industries Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200OKDLRW7OVOQO93" ;
+    lad:name "Hivor Industries Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1077 a lad:Entity ;
+    rdfs:label "Ganed Holdings SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500WWBMQVN9F3D293" ;
+    lad:name "Ganed Holdings SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1078 a lad:Entity ;
+    rdfs:label "Menir Shipping Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600NRZ5OBW078A263" ;
+    lad:name "Menir Shipping Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1079 a lad:Entity ;
+    rdfs:label "Nevar Property plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "5493000MDIWO1KHI0272" ;
+    lad:name "Nevar Property plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1082 a lad:Entity ;
+    rdfs:label "Gilen Capital Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600JMC4KYXP7JLQ54" ;
+    lad:name "Gilen Capital Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1084 a lad:Entity ;
+    rdfs:label "Poval Chemicals SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200MB5QFXCD5X8I15" ;
+    lad:name "Poval Chemicals SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1091 a lad:Entity ;
+    rdfs:label "Darod Holdings BV" ;
+    lad:country "NL" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "549300JYTOP4HB983N35" ;
+    lad:name "Darod Holdings BV" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1100 a lad:Entity ;
+    rdfs:label "Winan Chemicals AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "213800TV6XNVW6TD8O52" ;
+    lad:name "Winan Chemicals AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1107 a lad:Entity ;
+    rdfs:label "Warod Capital SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "39120035C3L494GPV335" ;
+    lad:name "Warod Capital SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1115 a lad:Entity ;
+    rdfs:label "Piren Foods plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500MTPRXFHT68GB84" ;
+    lad:name "Piren Foods plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1141 a lad:Entity ;
+    rdfs:label "Larid Steel plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200W47D7VYX9MFZ96" ;
+    lad:name "Larid Steel plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1158 a lad:Entity ;
+    rdfs:label "Nular Energy SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "9695008UP74QEOJ3KW74" ;
+    lad:name "Nular Energy SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1163 a lad:Entity ;
+    rdfs:label "Wenar Water SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300SBMAQCEKT3IC98" ;
+    lad:name "Wenar Water SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1166 a lad:Entity ;
+    rdfs:label "Ranim Shipping Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "8156008Z86BWAKVE7I73" ;
+    lad:name "Ranim Shipping Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1172 a lad:Entity ;
+    rdfs:label "Vitid Property SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "549300F5R74KW6K96H13" ;
+    lad:name "Vitid Property SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1189 a lad:Entity ;
+    rdfs:label "Divid Property plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300EK7E9K0SBA9583" ;
+    lad:name "Divid Property plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1207 a lad:Entity ;
+    rdfs:label "Holar Logistics SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500CER62I0612CU87" ;
+    lad:name "Holar Logistics SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1234 a lad:Entity ;
+    rdfs:label "Belor Telecom SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600HZK0IK4Q5GF769" ;
+    lad:name "Belor Telecom SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1238 a lad:Entity ;
+    rdfs:label "Wevin Capital SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "5493004IM0PRT8BSDK29" ;
+    lad:name "Wevin Capital SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1244 a lad:Entity ;
+    rdfs:label "Palad Mining Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500SQSSYT8HOYOP58" ;
+    lad:name "Palad Mining Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1256 a lad:Entity ;
+    rdfs:label "Poven Airlines plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300NRX9W7B8DIPZ84" ;
+    lad:name "Poven Airlines plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1276 a lad:Entity ;
+    rdfs:label "Nevil Holdings SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "2138005AK9MHXT35J172" ;
+    lad:name "Nevil Holdings SpA" ;
+    lad:parent lad:E1074 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1279 a lad:Entity ;
+    rdfs:label "Denim Water SA" ;
+    lad:country "VD" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "8156000D8CUMX9DLYO45" ;
+    lad:name "Denim Water SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1290 a lad:Entity ;
+    rdfs:label "Nural Water plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "5493005YGBG4Z7ZGH950" ;
+    lad:name "Nural Water plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1300 a lad:Entity ;
+    rdfs:label "Livar Chemicals plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200Z1OH1HXMHTW971" ;
+    lad:name "Livar Chemicals plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1303 a lad:Entity ;
+    rdfs:label "Lunor Water SA" ;
+    lad:country "GR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200BP67PA2KCQD481" ;
+    lad:name "Lunor Water SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1307 a lad:Entity ;
+    rdfs:label "Vevom Retail SA" ;
+    lad:country "VD" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500CNC5SOCN5K2N29" ;
+    lad:name "Vevom Retail SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1308 a lad:Entity ;
+    rdfs:label "Bavom Logistics AG" ;
+    lad:country "DE" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300IGMPC8HEIKND87" ;
+    lad:name "Bavom Logistics AG" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1314 a lad:Entity ;
+    rdfs:label "Dulem Retail plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600VWY9ZIH3XVHE31" ;
+    lad:name "Dulem Retail plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E14 a lad:Entity ;
+    rdfs:label "Marlow Utilities plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "3912005AH2C1I9YF8106" ;
+    lad:name "Marlow Utilities plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E15 a lad:Entity ;
+    rdfs:label "Corvenia Power SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800PBQVHVBBH6GV02" ;
+    lad:name "Corvenia Power SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1006 a lad:Entity ;
+    rdfs:label "Soson Airlines Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800WSVEOAQ5HD4C43" ;
+    lad:name "Soson Airlines Inc" ;
+    lad:parent lad:E1005 ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1021 a lad:Entity ;
+    rdfs:label "Niner Pharma plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "391200KLG6G4KVIMIU52" ;
+    lad:name "Niner Pharma plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1023 a lad:Entity ;
+    rdfs:label "Heled Water plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "3912006FHXTH5V6WNK07" ;
+    lad:name "Heled Water plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1028 a lad:Entity ;
+    rdfs:label "Mutir Retail SA" ;
+    lad:country "VD" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800TJ32NARU0BI982" ;
+    lad:name "Mutir Retail SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1052 a lad:Entity ;
+    rdfs:label "Witad Steel SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800ENVP6736MREW83" ;
+    lad:name "Witad Steel SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1119 a lad:Entity ;
+    rdfs:label "Nuner Holdings SpA" ;
+    lad:country "IT" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "5493007DOMNBIWQWGR68" ;
+    lad:name "Nuner Holdings SpA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1144 a lad:Entity ;
+    rdfs:label "Witan Logistics SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "213800QV7J1EXLC4YX51" ;
+    lad:name "Witan Logistics SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1176 a lad:Entity ;
+    rdfs:label "Navor Holdings plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "8156009KMEPDX5HOT275" ;
+    lad:name "Navor Holdings plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1213 a lad:Entity ;
+    rdfs:label "Winim Mining SA" ;
+    lad:country "FR" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "549300A64I73OEIC4R87" ;
+    lad:name "Winim Mining SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1255 a lad:Entity ;
+    rdfs:label "Melan Holdings SA" ;
+    lad:country "ES" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "7245002EC45UEUXQJA30" ;
+    lad:name "Melan Holdings SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1260 a lad:Entity ;
+    rdfs:label "Votim Industries Inc" ;
+    lad:country "US" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "969500D8VQO3X7NDHQ76" ;
+    lad:name "Votim Industries Inc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1283 a lad:Entity ;
+    rdfs:label "Norad Airlines SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "724500B6N6CB70KO0R91" ;
+    lad:name "Norad Airlines SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E01 a lad:Entity ;
+    rdfs:label "Kestrel Energy plc" ;
+    lad:country "GB" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "7245002OOPBG04092E43" ;
+    lad:name "Kestrel Energy plc" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1243 a lad:Entity ;
+    rdfs:label "Herar Foods SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "2138008SWUJK7JUSMR14" ;
+    lad:name "Herar Foods SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1245 a lad:Entity ;
+    rdfs:label "Gater Holdings SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-CORP ;
+    lad:lei "815600LRX1P8142NMF42" ;
+    lad:name "Gater Holdings SA" ;
+    lad:sourceSystem "RATINGS" .
+
+lad:E1229 a lad:Entity ;
+    rdfs:label "Fetam Mining SA" ;
+    lad:country "CV" ;
+    lad:entityType lad:etype-BANK ;
+    lad:lei "549300GJM0MMFEH84V77" ;
+    lad:name "Fetam Mining SA" ;
+    lad:sourceSystem "RATINGS" .
+```
+
+## Questions
+
+Answer each question below from the data above. Start each answer on a new line with its
+number in bold, like **Q1.**, give the direct answer first, then at most two sentences of
+reasoning that cite the records (IDs) you relied on.
+
+Then end with one JSON block (```json) holding the structured answer to each question listed
+here, with exactly these fields, shaped like {"Q1": {"field": value}, ...}. Name entities by their record ID: the entity_id in the CSV files, or the part of the IRI after lad: in the RDF (E01, not Kestrel Energy plc).
+
+- Q1: rating (a rating, or "none")
+- Q2: downgraded ("yes", "no" or "depends")
+- Q3: investment_grade ("yes", "no" or "depends"), rating (a rating, or "none")
+- Q4: outlook (an outlook)
+- Q5: risk_of (a record ID), rating (a rating, or "none")
+- Q7: issuers (a list of record IDs)
+- Q8: entities (a list of record IDs)
+- Q9: count (a number)
+- Q10: investment_grade ("yes", "no" or "depends")
+- Q11: rating (a rating, or "none")
+- Q12: rating (a rating, or "none")
+- Q13: count (a number)
+- Q14: rating (a rating, or "none")
+- Q15: rating (a rating, or "none")
+- Q16: changed ("yes", "no" or "depends")
+- Q17: downgraded ("yes", "no" or "depends")
+- Q18: issuers (a list of record IDs)
+- Q19: issuers (a list of record IDs)
+- Q20: in_default ("yes", "no" or "depends")
+- Q21: entities (a list of record IDs)
+- Q22: entities (a list of record IDs)
+- Q23: rating (a rating, or "none")
+- Q24: investment_grade ("yes", "no" or "depends")
+- Q25: count (a number)
+- Q26: rating (a rating, or "none")
+- Q27: rating (a rating, or "none")
+- Q28: rating (a rating, or "none")
+- Q29: rating (a rating, or "none")
+- Q30: entities (a list of record IDs)
+- Q31: any ("yes", "no" or "depends")
+- Q32: parent (a record ID)
+- Q33: risk_of (a record ID), rating (a rating, or "none")
+- Q34: same_group ("yes", "no" or "depends")
+- Q35: count (a number)
+- Q36: count (a number)
+- Q37: count (a number)
+- Q38: same ("yes", "no" or "depends")
+- Q39: rating (a rating, or "none")
+- Q40: count (a number)
+- Q41: rating (a rating, or "none")
+- Q42: country (a country code)
+- Q43: count (a number)
+- Q44: local_currency ("yes", "no" or "depends")
+- Q45: above_ceiling ("yes", "no" or "depends")
+- Q46: issuer_rating ("yes", "no" or "depends")
+- Q47: rating (a rating, or "none")
+- Q48: count (a number)
+
+Q1. What was Kestrel Energy's rating on 1 January 2025?
+Q2. Has Kestrel Energy been downgraded in 2026?
+Q3. Is Kestrel Energy's 2031 note investment grade?
+Q4. What is Northwind Holdings' current outlook?
+Q5. Whose credit risk does a holder of the Northwind Finance 2030 notes take, and how is it rated?
+Q6. Why is Valdoria Telecom's foreign-currency rating lower than its local-currency rating?
+Q7. Which issuers were downgraded in 2026?
+Q8. Which entities were in default on 1 October 2026?
+Q9. As of 1 October 2026, how many distinct issuers hold an issuer rating?
+Q10. Is Valdoria Telecom investment grade?
+Q11. What was Marlow Utilities' rating on 1 June 2025?
+Q12. What was Marlow Utilities' rating on 1 January 2024?
+Q13. How many times has Marlow Utilities been downgraded?
+Q14. What was Halden Foods' rating on 1 January 2024?
+Q15. What was Halden Bank's rating on 1 January 2026?
+Q16. Has Marlow Utilities' rating changed since 1 January 2025?
+Q17. Was Orrin Bank downgraded in 2026?
+Q18. Which issuers were on Rating Watch Negative on 1 October 2026?
+Q19. Which issuers had a Negative outlook on 1 October 2026?
+Q20. Is Pellam Retail in default?
+Q21. Which entities had an issuer rating at some point but no longer had one on 1 October 2026?
+Q22. Which entities have ever been in default?
+Q23. What is Kestrel Energy's short-term rating?
+Q24. Is Kestrel Energy's issuer rating investment grade?
+Q25. How many instruments held an investment-grade rating on 1 October 2026?
+Q26. What is Corvenia Power's local-currency rating?
+Q27. How is Corvenia Power's 2032 note rated?
+Q28. What is the Republic of Corvenia's foreign-currency issuer rating?
+Q29. What is the Republic of Valdoria's issuer rating?
+Q30. Which entities had a foreign-currency issuer rating exactly at their country's ceiling on 1 October 2026?
+Q31. Did any company have a foreign-currency issuer rating above its country's ceiling on 1 October 2026?
+Q32. Who is Halden Leasing's ultimate parent?
+Q33. Whose credit risk does a holder of the Halden Leasing 2028 notes take, and how is it rated?
+Q34. Is Halden Foods part of the same group as Halden Bank?
+Q35. How many entities are in the Halden group, the parent included?
+Q36. How many entities are in the Northwind group, the parent included?
+Q37. How many distinct legal entities does the data describe?
+Q38. Are Orrin Bank AG and Orrin Bancorp Inc the same entity?
+Q39. What is Northwind Holdings' current rating?
+Q40. How many distinct issuers domiciled in GB held an issuer rating on 1 October 2026?
+Q41. What is Brindle Capital's current rating?
+Q42. In which country is Halden Bank domiciled?
+Q43. How many distinct entities are domiciled in Luxembourg (LU)?
+Q44. Is Valdoria Telecom's 2027 note a local-currency obligation?
+Q45. Is Valdoria Telecom's 2027 note rated above what Valdoria's Country Ceiling allows?
+Q46. Does Halden Leasing have an issuer rating?
+Q47. How is Corvenia Power's 2034 note rated?
+Q48. How many instruments held a rating on 1 October 2026?

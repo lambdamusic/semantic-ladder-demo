@@ -65,7 +65,7 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 **Partly answered: for Claude Haiku and Sonnet, yes.**
 
 - **The weaker the model, the more the definitions are worth.** Haiku gains +20 to +21 points on credit and +51 to +53 on research, against Sonnet's +15 to +16 and +41.
-- **With the definitions, the two models end up level.** Both reach 96–100% in both domains.
+- **With the definitions, the two models end up level on the base data.** Both reach 96–100% in both domains. At 300 issuers they don't: Sonnet reaches 92–95% and Haiku 83–91%, though each gains about as much as on the base data ([Sonnet](/runs/credit_300/2026-11-05-2135-sonnet/), [Haiku](/runs/credit_300/2026-11-05-2135-haiku/)).
 - **Text that doesn't carry the meaning helps neither model.** The decoy glossary stays within 2 points of `csv` for both. An earlier credit run had Haiku lose 5 points with it, which this run doesn't repeat (−2, −6 to +1).
 
 *Still open:* Opus and Gemini, set aside for now.
