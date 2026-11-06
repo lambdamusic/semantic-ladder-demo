@@ -46,7 +46,7 @@ from it.
 | `src/web/` | the web pages (see below) |
 | `docs/` | the web pages' text, in Markdown |
 | `domains/credit/` | credit ratings: `data/` (three CSV files and `facts.ttl`), `ontology/` (`ontology.ttl`, the `ontology.md` generated from it, `axioms.ttl`, checked by `check_axioms.py`, and the decoy glossary `padding.md`), `questions.json` (48 questions with typed keys, written by `build_questions.py`, which stops if a key disagrees with the data), `domain.py`, `execute.py`, `csv_to_rdf.py`, and `concepts.md`, the credit terms explained for people. `scale.py` and `paths.py` build the larger copies |
-| `domains/credit_100/`, `credit_300/` | the credit domain at 100 and 300 issuers |
+| `domains/credit_300/` | the credit domain at 300 issuers |
 | `domains/credit_paths/` | 300 issuers plus six deep ownership groups, with 61 questions, 13 of which follow links |
 | `domains/research/` | research analytics: works, authors, institutions and citations, with 48 questions; `NOTES.md` describes how it was built |
 | `results/<domain>/<timestamp>-<model>/` | per run: `meta.json` (with the commit), `questions.json`, the prompts, the answers, `grades.json`, `report.md` |

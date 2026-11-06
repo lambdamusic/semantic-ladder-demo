@@ -302,11 +302,18 @@ def main():
     ap.add_argument("--resume", type=Path)
     ap.add_argument("--store", choices=["rdflib", "graphdb"], default="rdflib", help="the engine for the SPARQL conditions")
     args = ap.parse_args()
+    if args.resume:  # a resumed run finishes what it started: its own domain, model, conditions and questions
+        meta = json.loads((args.resume / "meta.json").read_text())
+        args.domain, args.model, args.grader, args.runs = meta["domain"], meta["model"], meta["grader"], meta["runs"]
+        args.only = args.only or meta["conditions"]
+        args.store = meta.get("store", "rdflib")
     global STORE
     STORE = args.store
 
     domain = importlib.import_module(f"domains.{args.domain}.domain")
     questions = json.loads(domain.QUESTIONS.read_text())
+    if args.resume:
+        questions = json.loads((args.resume / "questions.json").read_text())
     conditions = args.only or CONDITIONS
     canon = domain.canonical()
     out = args.resume or ROOT / "results" / args.domain / f"{datetime.now():%Y-%m-%d-%H%M}-{providers.split(args.model)[1]}-query{'-graphdb' if STORE == 'graphdb' else ''}"

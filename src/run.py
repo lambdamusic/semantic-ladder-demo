@@ -80,9 +80,15 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--regrade", type=Path, help="a run folder: redo its code grading, with no model calls")
     args = ap.parse_args()
+    if args.resume:  # a resumed run finishes what it started: its own domain, model, conditions and questions
+        meta = json.loads((args.resume / "meta.json").read_text())
+        args.domain, args.model, args.grader, args.runs = meta["domain"], meta["model"], meta["grader"], meta["runs"]
+        args.only = args.only or meta["conditions"]
 
     domain = importlib.import_module(f"domains.{args.domain}.domain")
     questions = json.loads(domain.QUESTIONS.read_text())
+    if args.resume:
+        questions = json.loads((args.resume / "questions.json").read_text())
     conditions = args.only or getattr(domain, "CONDITIONS", CONDITIONS)  # a domain may offer fewer
     canon = domain.canonical()
 
