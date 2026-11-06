@@ -1,0 +1,178 @@
+@prefix res:  <https://example.org/research/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.org/research/axioms> a owl:Ontology ;
+    rdfs:label "Research analytics: axioms and rules" ;
+    owl:imports <https://example.org/research/ontology> ;
+    sh:declare [ sh:prefix "res" ; sh:namespace "https://example.org/research/"^^xsd:anyURI ] .
+
+# === Classes and properties =================================================================
+
+res:Work a owl:Class ; rdfs:label "Work" .
+res:Author a owl:Class ; rdfs:label "Author" ; owl:hasKey ( res:orcid ) .
+res:Institution a owl:Class ; rdfs:label "Institution" .
+res:Source a owl:Class ; rdfs:label "Source" .
+res:Authorship a owl:Class ; rdfs:label "Authorship" .
+res:Citation a owl:Class ; rdfs:label "Citation" .
+[ a owl:AllDisjointClasses ; owl:members ( res:Work res:Author res:Institution res:Source res:Authorship res:Citation ) ] .
+
+res:name a owl:DatatypeProperty ; rdfs:range xsd:string .
+res:ror a owl:DatatypeProperty, owl:FunctionalProperty ; rdfs:domain res:Institution .
+res:country a owl:DatatypeProperty, owl:FunctionalProperty ; rdfs:domain res:Institution ; rdfs:range xsd:string .
+res:institutionType a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Institution ; rdfs:range skos:Concept .
+res:parent a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Institution ; rdfs:range res:Institution ;
+    rdfs:comment "as the record gives it; see res:unitOf" .
+res:orcid a owl:DatatypeProperty, owl:FunctionalProperty ; rdfs:domain res:Author ; rdfs:range xsd:string .
+res:issn a owl:DatatypeProperty ; rdfs:domain res:Source .
+res:sourceType a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Source ; rdfs:range skos:Concept .
+res:tier a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Source ; rdfs:range skos:Concept .
+res:title a owl:DatatypeProperty ; rdfs:domain res:Work .
+res:year a owl:DatatypeProperty, owl:FunctionalProperty ; rdfs:domain res:Work ; rdfs:range xsd:gYear .
+res:workType a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Work ; rdfs:range skos:Concept .
+res:source a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Work ; rdfs:range res:Source .
+res:doi a owl:DatatypeProperty, owl:FunctionalProperty ; rdfs:domain res:Work .
+res:versionOf a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Work ; rdfs:range res:Work .
+res:retracted a owl:DatatypeProperty, owl:FunctionalProperty ; rdfs:domain res:Work ; rdfs:range xsd:boolean .
+res:recordSource a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Work ; rdfs:range skos:Concept .
+res:work a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Authorship ; rdfs:range res:Work .
+res:author a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Authorship ; rdfs:range res:Author .
+res:authorPosition a owl:DatatypeProperty, owl:FunctionalProperty ; rdfs:domain res:Authorship ; rdfs:range xsd:integer .
+res:institution a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Authorship ; rdfs:range res:Institution .
+res:affiliationSeq a owl:DatatypeProperty, owl:FunctionalProperty ; rdfs:domain res:Authorship ; rdfs:range xsd:integer .
+res:citingWork a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Citation ; rdfs:range res:Work .
+res:citedWork a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Citation ; rdfs:range res:Work .
+
+# Derived by the rules below.
+res:samePersonAs a owl:ObjectProperty, owl:SymmetricProperty, owl:TransitiveProperty ; rdfs:subPropertyOf owl:sameAs ;
+    rdfs:domain res:Author ; rdfs:range res:Author .
+res:countsAs a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Work ; rdfs:range res:Work ;
+    rdfs:label "the work this record counts as: its published version, or itself" .
+res:unitOf a owl:ObjectProperty, owl:TransitiveProperty ; rdfs:domain res:Institution ; rdfs:range res:Institution ;
+    rdfs:label "a unit of, to any depth" .
+res:countsTowards a owl:ObjectProperty, owl:ReflexiveProperty ; rdfs:domain res:Institution ; rdfs:range res:Institution ;
+    rdfs:label "an institution's works also count towards: itself and every institution it is a unit of" .
+res:ultimateParent a owl:ObjectProperty, owl:FunctionalProperty ; rdfs:domain res:Institution ; rdfs:range res:Institution .
+res:creditedInstitution a owl:ObjectProperty ; rdfs:domain res:Work ; rdfs:range res:Institution ;
+    rdfs:label "an institution credited on the work, its units' parents included" .
+res:creditedCountry a owl:DatatypeProperty ; rdfs:domain res:Work ; rdfs:range xsd:string .
+res:hasPerson a owl:ObjectProperty ; rdfs:domain res:Work ; rdfs:range res:Author ;
+    rdfs:label "an author record on the work (any of its records), one per person: the person's lowest record ID" .
+res:cites a owl:ObjectProperty ; rdfs:domain res:Work ; rdfs:range res:Work ;
+    rdfs:label "a citation that counts, between the works the records count as" .
+res:tierRank a owl:DatatypeProperty ; rdfs:domain skos:Concept ; rdfs:range xsd:integer ;
+    rdfs:label "a tier's rank, 1 the highest" .
+
+# === Codes as classes =======================================================================
+
+res:TestRecord owl:equivalentClass [ a owl:Restriction ; owl:onProperty res:recordSource ; owl:hasValue res:origin-STG ] .
+res:ResearchType owl:equivalentClass [ a owl:Class ; owl:oneOf ( res:wtype-ART res:wtype-REV res:wtype-SUP res:wtype-PPR ) ] .
+res:DelistedSource owl:equivalentClass [ a owl:Restriction ; owl:onProperty res:tier ; owl:hasValue res:tier-K0 ] .
+res:RetractedWork owl:equivalentClass [ a owl:Restriction ; owl:onProperty res:retracted ; owl:hasValue true ] .
+res:MergedPreprint rdfs:label "a preprint whose published version is in the data" ;
+    owl:equivalentClass [ a owl:Restriction ; owl:onProperty res:versionOf ; owl:someValuesFrom res:Work ] .
+res:ResearchWork owl:equivalentClass [ a owl:Class ; owl:intersectionOf (
+        res:Work
+        [ a owl:Restriction ; owl:onProperty res:workType ; owl:someValuesFrom res:ResearchType ]
+        [ a owl:Class ; owl:complementOf res:TestRecord ]
+        [ a owl:Class ; owl:complementOf res:RetractedWork ]
+        [ a owl:Class ; owl:complementOf res:MergedPreprint ]
+        [ a owl:Class ; owl:complementOf [ a owl:Restriction ; owl:onProperty res:source ; owl:someValuesFrom res:DelistedSource ] ] ) ] .
+res:AffiliatedInstitute owl:equivalentClass [ a owl:Restriction ; owl:onProperty res:institutionType ; owl:hasValue res:itype-AFF ] .
+res:CreditedAuthorship rdfs:subClassOf res:Authorship ;
+    rdfs:label "the authorship that credits a person's institution on a work: their highest affiliation sequence" .
+
+# === Tiers ==================================================================================
+
+res:tier-K3 res:tierRank 1 .   res:tier-K2 res:tierRank 2 .   res:tier-K1 res:tierRank 3 .
+
+# === Rules (SHACL-AF), run in this order ====================================================
+
+res:PersonRule a sh:NodeShape ; sh:targetClass res:Author ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 1 ; sh:prefixes <https://example.org/research/axioms> ; sh:construct """
+        CONSTRUCT { $this res:samePersonAs ?other }
+        WHERE { $this res:orcid ?o . ?other res:orcid ?o . FILTER (?other != $this) }""" ] .
+
+res:WorkRule a sh:NodeShape ; sh:targetClass res:Work ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 1 ; sh:prefixes <https://example.org/research/axioms> ; sh:construct """
+        CONSTRUCT { $this res:countsAs ?w }
+        WHERE {
+          OPTIONAL { $this res:versionOf ?v . ?v a res:Work }
+          BIND (COALESCE(?v, $this) AS ?w)
+        }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 2 ; sh:prefixes <https://example.org/research/axioms> ; sh:construct """
+        CONSTRUCT { $this a res:ResearchWork }
+        WHERE {
+          $this res:workType ?t ; res:retracted false ; res:source ?s .
+          VALUES ?t { res:wtype-ART res:wtype-REV res:wtype-SUP res:wtype-PPR }
+          FILTER NOT EXISTS { $this res:recordSource res:origin-STG }
+          FILTER NOT EXISTS { ?s res:tier res:tier-K0 }
+          FILTER NOT EXISTS { $this res:versionOf ?v . ?v a res:Work }
+        }""" ] .
+
+res:InstitutionRule a sh:NodeShape ; sh:targetClass res:Institution ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 1 ; sh:prefixes <https://example.org/research/axioms> ; sh:construct """
+        CONSTRUCT { $this res:unitOf ?p }
+        WHERE { $this res:parent ?p FILTER NOT EXISTS { $this res:institutionType res:itype-AFF } }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 2 ; sh:prefixes <https://example.org/research/axioms> ; sh:construct """
+        CONSTRUCT { $this res:countsTowards ?up }
+        WHERE { { BIND ($this AS ?up) } UNION { $this res:unitOf+ ?up } }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 3 ; sh:prefixes <https://example.org/research/axioms> ; sh:construct """
+        CONSTRUCT { $this res:ultimateParent ?up }
+        WHERE { $this res:countsTowards ?up FILTER NOT EXISTS { ?up res:unitOf ?higher } }""" ] .
+
+res:CreditRule a sh:NodeShape ; sh:targetClass res:Authorship ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 4 ; sh:prefixes <https://example.org/research/axioms> ; sh:construct """
+        CONSTRUCT { $this a res:CreditedAuthorship }
+        WHERE {
+          $this res:work ?w ; res:author ?a ; res:affiliationSeq ?seq .
+          FILTER NOT EXISTS {
+            ?other res:work ?w ; res:author ?b ; res:affiliationSeq ?seq2 .
+            FILTER (?seq2 > ?seq && (?b = ?a || EXISTS { ?b res:samePersonAs ?a }))
+          }
+        }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 5 ; sh:prefixes <https://example.org/research/axioms> ; sh:construct """
+        CONSTRUCT { ?w res:creditedInstitution ?up ; res:creditedCountry ?c }
+        WHERE {
+          $this a res:CreditedAuthorship ; res:work ?w ; res:institution ?i .
+          ?i res:countsTowards ?up ; res:country ?c .
+        }""" ] .
+
+res:PeopleRule a sh:NodeShape ; sh:targetClass res:Authorship ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 5 ; sh:prefixes <https://example.org/research/axioms> ; sh:construct """
+        CONSTRUCT { ?work res:hasPerson ?first }
+        WHERE {
+          $this res:work/res:countsAs ?work ; res:author ?a .
+          ?first a res:Author .
+          FILTER (?first = ?a || EXISTS { ?a res:samePersonAs ?first })
+          FILTER (STR(?a) >= STR(?first))
+          FILTER NOT EXISTS { ?a res:samePersonAs ?x FILTER (STR(?x) < STR(?first)) }
+        }""" ] .
+
+res:CitationRule a sh:NodeShape ; sh:targetClass res:Citation ;
+    sh:rule [ a sh:SPARQLRule ; sh:order 6 ; sh:prefixes <https://example.org/research/axioms> ; sh:construct """
+        CONSTRUCT { ?citing res:cites ?cited }
+        WHERE {
+          $this res:citingWork ?c ; res:citedWork ?d .
+          ?c res:countsAs ?citing ; res:retracted false .
+          ?d res:countsAs ?cited .
+          FILTER NOT EXISTS { ?c res:recordSource res:origin-STG }
+        }""" ] .
+
+# === Constraints (SHACL) ====================================================================
+
+res:OneCreditShape a sh:NodeShape ; sh:targetClass res:CreditedAuthorship ;
+    sh:sparql [ sh:prefixes <https://example.org/research/axioms> ; sh:message "a person credited to two institutions on one work" ; sh:select """
+        SELECT $this WHERE {
+          $this res:work ?w ; res:author ?a ; res:institution ?i .
+          ?other a res:CreditedAuthorship ; res:work ?w ; res:author ?b ; res:institution ?j .
+          FILTER (?i != ?j && (?b = ?a || EXISTS { ?b res:samePersonAs ?a }))
+        }""" ] .
+
+res:PreprintShape a sh:NodeShape ; sh:targetClass res:Work ;
+    sh:sparql [ sh:prefixes <https://example.org/research/axioms> ; sh:message "a version of a work that is not a preprint" ; sh:select """
+        SELECT $this WHERE { $this res:versionOf ?v . ?v a res:Work . FILTER NOT EXISTS { $this res:workType res:wtype-PPR } }""" ] .

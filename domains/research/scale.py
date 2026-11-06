@@ -595,7 +595,7 @@ def build(total):
     (target / "data").mkdir(parents=True)
     shutil.copy(HERE / "domain.py", target / "domain.py")
     (target / "ontology").mkdir(parents=True, exist_ok=True)
-    for name in ["ontology.ttl", "ontology.md", "padding.md"]:  # the ontology, copied unchanged
+    for name in ["ontology.ttl", "ontology.md", "axioms.ttl", "padding.md"]:  # the ontology, copied unchanged
         shutil.copy(HERE / "ontology" / name, target / "ontology" / name)
     n_add = total - len(read(HERE, "works.csv"))
     g = Generator(n_add, seed=int(hashlib.sha256(f"research-{total}".encode()).hexdigest()[:8], 16))
