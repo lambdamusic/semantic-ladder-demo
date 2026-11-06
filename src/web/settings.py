@@ -38,3 +38,5 @@ STATIC_ROOT = REPO_ROOT / "build" / "collectstatic"
 
 APP_NAME = "Semantics ladder"
 REPO_URL = "https://github.com/lambdamusic/semantic-ladder-demo"
+AUTHOR_URL = "https://www.michelepasin.org/"
+BLOG_URL = ""  # the blog post about the experiment; until it is set, the sidebar links to AUTHOR_URL
