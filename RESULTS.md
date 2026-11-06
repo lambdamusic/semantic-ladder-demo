@@ -316,3 +316,21 @@ Haiku's run is `results/credit/2026-11-04-2028-haiku/`.
 - **`sparql+axioms` trails the ontology by 8 points.** It answers Q7 with an empty list in every session.
 - **Q18 stays wrong** in every condition but `sql` (3 of 5) and `sparql` (1 of 5): the narrow key (backlog #22). The conditions with definitions list the two local-currency Watches.
 - 17 of 578 queries failed and 3 timed out, all three in `sparql+ontology`.
+
+## 6 November 2026: research at 850 works, reading, Sonnet and Haiku
+
+`results/research_850/2026-11-06-0206-sonnet/` and `2026-11-06-0206-haiku/`: `csv`, `csv+padding`, `csv+markdown`, `csv+ontology` and `executed`, five repeats, on the research data at ten times the size (850 works, built by `domains/research/scale.py 850`). The prompts are 110 to 160 KB, against 19 to 39 KB on the base data. `rdf` and `rdf+ontology` are left out: the Turtle alone is about 770 KB.
+
+| Condition | Sonnet | Haiku | Base data: Sonnet, Haiku |
+|---|---|---|---|
+| `csv` | 42% | 21% | 57%, 45% |
+| `csv+padding` | 42% (+0) | 30% (+9, +4 to +15) | 57%, 44% |
+| `csv+markdown` | 87% (+45) | 43% (+22) | 98%, 99% |
+| `csv+ontology` | 89% (+47) | 49% (+28) | 98%, 96% |
+| `executed` | 79% (+37) | 69% (+48) | 90%, 92% |
+
+- **Sonnet keeps the meaning and loses the arithmetic.** With the definitions, it gets 97% of the local-rule questions (Q33 to Q46, Q48), as on the base data, but 82–85% of the general ones (Q1 to Q32, Q47), against 97%. The misses are counts and roll-ups over the whole data: Q9, Q10, Q11, Q14, Q16, Q19 and Q21.
+- **Q1:** with the definitions, Sonnet answers 1 person in 9 of 10 sessions, reading the question as the three name forms. The six records with those names carry three ORCIDs, and the key says 3. Without the definitions it answers 3.
+- **Haiku answers only part of the questions in 5 of 25 sessions** (`csv` run 4, `csv+markdown` runs 1, 2 and 4, `csv+ontology` run 1), three of them saying so ("Q9–Q48: not yet answered… I'll continue"). The answers are complete as sent, so they're graded as they are. On the sessions that answered everything: `csv` 23%, `csv+ontology` 58%, `csv+markdown` 74% (two sessions).
+- **`executed` is Haiku's best condition here,** at 69%: the merging and roll-ups are already done, and its prompt is the smallest.
+- **So at this size, reading starts to fail on work, not meaning.** The definitions still carry the local rules, but the model has to tally too much by hand. That's where querying should help: the querying run on this data is next.
