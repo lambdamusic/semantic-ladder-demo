@@ -10,7 +10,7 @@ Where each of the [five goals](/#goals) stands, from the runs so far. The [score
 | [4. Does it hold across models?](#4-does-it-hold-across-models) | **Yes, for Haiku and Sonnet.** The weaker model gains more, and with the definitions the two end up level on the base data. On larger data, Haiku falls well behind. |
 | [5. Does the domain matter?](#5-does-the-domain-matter) | **The pattern holds; the size of the gain doesn't.** It's +15 to +21 points on credit and +41 to +53 on research, where more of the questions rest on local rules. |
 
-What's still open is listed under [Future work](#future-work).
+**Read these as early results.** They're measured carefully: every key is computed from the data, every answer graded by code where it can be, every condition repeated five times, with intervals. But the scope is small. There are two invented domains, with about 50 questions each and ontologies of about 50 terms. Only two models were tested, both Claude, and the datasets are mostly small enough to read. So the findings are indicative, not general: they show what happened here, and suggest what might hold elsewhere. Take them with a pinch of salt, and as a starting point: the code, data and every run are [open](https://github.com/lambdamusic/semantic-ladder-demo), and [Future work](#future-work) lists where to dig next.
 
 ## 1. Does written-down meaning help?
 
