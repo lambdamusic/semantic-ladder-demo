@@ -54,7 +54,7 @@ Within each group, the conditions differ in how much of the data's meaning the m
 
 The data sits either in [DuckDB](https://duckdb.org/), an in-process SQL database, queried with SQL, or in an in-memory graph store built with [rdflib](https://rdflib.readthedocs.io/), the Python library for RDF, queried with SPARQL. The model gets up to eight rounds of queries before it must answer, and a query that runs for more than 60 seconds is stopped and reported to it as failed.
 
-The SPARQL conditions can also run on [GraphDB](https://graphdb.ontotext.com/) (the free edition), a graph database built for speed. Such a run loads exactly the same triples, in a repository with no inference, so that only the engine changes; its column in the scores says GraphDB. Reproducing those runs needs a local GraphDB.
+The SPARQL conditions can also run on [GraphDB](https://graphdb.ontotext.com/), a graph database built for speed. Such a run loads exactly the same triples, in a repository with no inference, so that only the engine changes. One run did, on the ownership paths: see [the technical setup](#the-technical-setup).
 
 | Condition | What the model gets | What it tests |
 |---|---|---|
@@ -66,6 +66,19 @@ The SPARQL conditions can also run on [GraphDB](https://graphdb.ontotext.com/) (
 | `sparql+axioms` | the graph after the SHACL rules have run, holding what they derive (on credit, one entity per LEI, ancestors and the ultimate parent; on research, one person per ORCID, credited institutions and the citations that count), with no definitions | rules run in the graph, against `sql+executed` |
 
 Read across, D1 against D4, D2 against D5 and D3 against D6 compare SQL with SPARQL given the same meaning.
+
+## The technical setup
+
+| Part | What | Used for |
+|---|---|---|
+| The models | Claude Sonnet 5.5 and Claude Haiku 5.5, through the `claude` command line in print mode | every answer; Sonnet also grades the three "why" questions |
+| SQL store | [DuckDB](https://duckdb.org/) 1.5, in-process | every SQL condition |
+| Graph store | [rdflib](https://rdflib.readthedocs.io/) 7.6, in memory | every SPARQL condition, in every run but one |
+| Graph database | [GraphDB](https://graphdb.ontotext.com/) 11.5, free edition, local | one run only: the three SPARQL conditions on the [ownership paths](/domains/credit/#ownership-paths) (credit), to check whether a faster engine changes the result. Not used on research |
+| Rules | [pySHACL](https://github.com/RDFLib/pySHACL) 0.40, running the SHACL rules in `axioms.ttl` | the graph for `sparql+axioms`, and the checks that the rules agree with the answer keys |
+| The rest | Python 3.13; [Django](https://www.djangoproject.com/) 5.2 for these pages, mirrored to a static site with wget and published on GitHub Pages | building the data, grading, and showing the results |
+
+The versions are pinned in [`requirements.txt`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/requirements.txt), and [`BUILDING.md`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/BUILDING.md) says how to set them up.
 
 ## What the runs cost, and how long they took
 
