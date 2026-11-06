@@ -19,7 +19,7 @@ The base records plus 300 invented issuers that repeat the same traps many times
 
 ### Ownership paths
 
-Does the store need to be a graph? With one or two levels of parent, the data can't show a graph's strength. This dataset is the 300-issuer data, on the current rules, plus six invented groups four to six levels deep, built so that answering means walking parent and guarantee links:
+Does the store need to be a graph? With one or two levels of parent, the data can't show a graph's strength. This dataset is the 300-issuer data plus six invented groups four to six levels deep, built so that answering means walking parent and guarantee links:
 
 - in the largest group, a parent link names a **RESEARCH record** of the parent, so the chain goes on from that entity's RATINGS record;
 - a RESEARCH record gives a **stale parent** in another group, which the RATINGS record overrules;

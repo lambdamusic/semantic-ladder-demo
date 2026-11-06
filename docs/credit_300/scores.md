@@ -1,4 +1,4 @@
-Reading, every condition, on the version 2 rules ([Sonnet](/runs/credit_300/2026-11-05-2135-sonnet/), [Haiku](/runs/credit_300/2026-11-05-2135-haiku/)), five repeats:
+Reading, every condition ([Sonnet](/runs/credit_300/2026-11-05-2135-sonnet/), [Haiku](/runs/credit_300/2026-11-05-2135-haiku/)), five repeats:
 
 | Condition | Sonnet | Haiku |
 |---|---|---|
@@ -18,7 +18,7 @@ Reading, every condition, on the version 2 rules ([Sonnet](/runs/credit_300/2026
 - **Raw RDF costs more at this size:** −4 for Sonnet and −10 for Haiku. The decoy glossary costs Haiku 4 points.
 - **Q18 counts a Watch on either currency.** Its key first counted only Watches on the foreign-currency rating, and missed two issuers here (E1019 and E1059) on Watch Negative on their local-currency rating. The key was fixed and the runs regraded. The base data has no such case.
 
-Querying, the six conditions, on the version 2 rules ([Sonnet](/runs/credit_300/2026-11-06-0041-sonnet-query/)), five repeats, against reading with the same model:
+Querying, the six conditions ([Sonnet](/runs/credit_300/2026-11-06-0041-sonnet-query/)), five repeats, against reading with the same model:
 
 | | No definitions | With the definitions | Rules executed |
 |---|---|---|---|
