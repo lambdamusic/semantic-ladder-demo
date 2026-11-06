@@ -420,3 +420,18 @@ Querying at 850 works, `sparql+axioms`, Sonnet, five repeats (`results/research_
 - **Q1 is misread across conditions.** It asks how many people the records named "Mara Ellison", "M. Ellison" and "Ellison, Mara J." stand for; A04 is also an "M. Ellison", with another ORCID, so the key is 2 (3 at 850 works). The models tell the people apart and still answer 1, reading the question as the three name forms. Only `executed` gets it right consistently. The wording is ambiguous; the key isn't wrong.
 - **At 850 works, a graph whose rules have run matches executed tables:** 91% against 92%, and 6 to 11 points above querying with only the definitions. The general questions (counts and roll-ups) are right 90% of the time, against 75–80% querying with the definitions and 82–85% reading them.
 - **So querying pays off at scale when the rules run in the store,** whether the result is a set of tables or a graph. The definitions alone, read or queried, leave the model to apply the rules itself, and at this size it slips.
+
+## 6 November 2026: credit, querying, Sonnet
+
+`results/credit/2026-11-06-0935-sonnet-query/`: the six querying conditions on the base credit data, five repeats, rdflib as the store. The first querying run at this size.
+
+| | No definitions | With the definitions | Rules run |
+|---|---|---|---|
+| Reading (same data, Sonnet) | `csv` 84% | `csv+markdown` 100% | `executed` 99% |
+| SQL | `sql` 84% | `sql+markdown` 100% (+16) | `sql+executed` 99% (+16) |
+| SPARQL | `sparql` 82% (−2) | `sparql+ontology` 100% (+16) | `sparql+axioms` 90% (+6, +2 to +13) |
+
+- **On small data, querying matches reading.** The model fetches the three tables in about three queries a session and reads them.
+- **`sparql+ontology` is perfect in every session,** as `sql+markdown` is.
+- **`sparql+axioms` counts a test record.** All its misses (Q7, Q9, Q37, Q40, Q41, in nearly every session) come from E16, Brindle Capital, source system `QA`. The SHACL rules keep test records out of `lad:RatingInForce`, but don't mark them, and the axioms note tells the model what the rules derived without mentioning test records. So the model counts E16 as an issuer and its 2026 downgrade as real. Executed tables drop test records, so `sql+executed` doesn't have the problem. This also explains `sparql+axioms` answering Q7 wrongly at 300 issuers. It's a gap in how the condition was built, not in the graph: a rule asserting `lad:TestRecord` and a line in `AXIOMS_NOTE` would close it, and `sparql+axioms` would need rerunning on credit, `credit_300` and `credit_paths`.
+- 139 queries in all, 1 failed, none timed out.

@@ -7,3 +7,15 @@ The table shows the current rules (version 2), with every reading condition in o
 - **Executed rules help as much as definitions** on this data: +15 points for Sonnet and +19 for Haiku. What they don't give is the reason: the one "why" question (Q6) is answered only partly in most repeats.
 
 The list of every run below has version 1 and version 2 together. Each run is graded against the keys it ran with.
+
+Querying ([Sonnet](/runs/credit/2026-11-06-0935-sonnet-query/)), five repeats, against reading with the same model:
+
+| | No definitions | With the definitions | Rules run |
+|---|---|---|---|
+| Reading | `csv` 84% | `csv+markdown` 100% | `executed` 99% |
+| SQL | `sql` 84% | `sql+markdown` 100% | `sql+executed` 99% |
+| SPARQL | `sparql` 82% | `sparql+ontology` 100% | `sparql+axioms` 90% |
+
+- **At this size, querying and reading end up level:** 100% with the definitions either way, and 82–84% without them. The data is small enough that the model fetches whole tables in a few queries and then reads them.
+- **SPARQL with the ontology is as good as SQL with the definitions:** 100% in all five sessions.
+- **`sparql+axioms` misses the test record.** Its five misses (Q7, Q9, Q37, Q40, Q41) all come from E16, Brindle Capital, a `QA` test record that describes no real entity. The executed tables drop test records. The graph after the axioms' rules keeps it, unmarked, and the note on what the rules derived doesn't mention it, so the model counts it, and its 2026 downgrade, as real. The same misses explain the 300-issuer run's empty or wrong answers to Q7. A rule that marks test records, and a line in the note, would close the gap.

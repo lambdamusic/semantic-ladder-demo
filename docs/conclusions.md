@@ -55,6 +55,7 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 | SQL (`sql`, `sql+markdown`) | 80% | 99% |
 | SPARQL (`sparql`, `sparql+ontology`) | 77% | 97% |
 
+- **On the base credit data, small enough to read, the two modes end level** ([querying](/runs/credit/2026-11-06-0935-sonnet-query/)): 100% with the definitions, whether the model reads, writes SQL or writes SPARQL, and 82–84% without them.
 - **The definitions matter as much when querying as when reading:** +12 to +20 points in each mode.
 - **With the definitions, querying helps a little with long lists,** where reading misses an item or two. Without them, it doesn't help at all.
 - **On ownership paths of unknown depth** ([reading](/runs/credit_paths/2026-11-04-2022-sonnet/), [querying](/runs/credit_paths/2026-11-05-1515-sonnet-query/)), a graph store doesn't help, with or without the definitions. Without them, SPARQL gets 32% of the path questions and SQL 60%. With them, SQL gets every path right in all five sessions, and SPARQL swings from 4% to 77%, with queries that time out in rdflib. On GraphDB, a fast graph database, nothing times out, but SPARQL with the ontology still gets 60% of the paths, swinging from 0% to 100%: the model uses up its rounds or gives up early. A precomputed `ancestors` table gives SQL every path right, and reading the 100 KB of CSV with the definitions also gets every path right.
@@ -107,6 +108,7 @@ What the runs so far leave open, and what would make the experiment stronger.
 
 - **Data far too large to read,** say 3,000 issuers, where only querying is possible. At 850 works, querying pays off once the rules have run in the store. A larger dataset would show whether that holds as the gap grows.
 - **Querying at more sizes, with five repeats,** so every querying result has the same footing.
+- **Mark test records in the credit graph.** Over the graph after the axioms' rules (`sparql+axioms`), the model counts a test record as real, because the rules leave it unmarked and the note on the store doesn't mention it. That accounts for every miss in that condition on the base credit data (90%, against 99–100% for the other conditions with the meaning). A rule that marks test records, and a rerun, would show how well a graph after its rules really does on credit.
 - **Why SPARQL sessions break down more often than SQL ones.** With the same definitions and rounds, the model sometimes gives up early, reports errors that didn't happen, or pages through the graph instead of asking for what it needs. More rounds, larger result limits, or a different prompt might close the gap.
 
 **The meaning**
