@@ -45,36 +45,24 @@ from it.
 | `src/ontology_to_md.py` | writes a domain's `ontology.md` from its `ontology.ttl`, so the two can't drift |
 | `src/web/` | the web pages (see below) |
 | `docs/` | the web pages' text, in Markdown |
-| `domains/credit/` | credit ratings: `data/` (three CSV files and `facts.ttl`), `ontology/` (`ontology.ttl`, the `ontology.md` generated from it, `axioms.ttl`, checked by `check_axioms.py`, and the decoy glossary `padding.md`), `questions.json` (48 questions with typed keys, written by `build_questions.py`, which stops if a key disagrees with the data), `domain.py`, `execute.py`, `csv_to_rdf.py`, and `concepts.md`, the credit terms explained for people. `scale.py` and `paths.py` build the larger copies |
+| `domains/credit/` | credit ratings: `data/` (three CSV files and `facts.ttl`), `ontology/` (`ontology.ttl`, the `ontology.md` generated from it, `axioms.ttl`, checked by `check_axioms.py`, and the decoy glossary `padding.md`), `questions.json` (48 questions with typed keys, written by `build_questions.py`, which stops if a key disagrees with the data), `domain.py`, `execute.py`, `csv_to_rdf.py`, `scale.py` and `paths.py` build the larger copies |
 | `domains/credit_300/` | the credit domain at 300 issuers |
 | `domains/credit_paths/` | 300 issuers plus six deep ownership groups, with 61 questions, 13 of which follow links |
-| `domains/research/` | research analytics: works, authors, institutions and citations, with 48 questions; `ontology/` as for credit, with `axioms.ttl` checked by `check_axioms.py`; `NOTES.md` describes how it was built |
+| `domains/research/` | research analytics: works, authors, institutions and citations, with 48 questions; `ontology/` as for credit, with `axioms.ttl` checked by `check_axioms.py`; `NOTES.md` records the design choices |
 | `results/<domain>/<timestamp>-<model>/` | per run: `meta.json` (with the commit), `questions.json`, the prompts, the answers, `grades.json`, `report.md` |
 
 ## Running it
 
 Needs Python 3.13 with the packages in `requirements.txt`, and, for Claude, the `claude`
-command line. Run everything from the repo root.
+command line. Run everything from the repo root:
 
 ```bash
-python src/run.py                          # credit, Sonnet, all conditions, 5 repeats
-python src/run.py --runs 1 --only csv      # a quick check
-python src/run.py --domain research        # another domain
-python src/run.py --resume results/credit/<run>    # finish a stopped run
-python src/run.py --regrade results/credit/<run>   # redo the code grading, with the run's own questions
-python src/report.py results/credit/<run>          # rebuild a report
-python src/query.py --domain credit_300            # the model writes SQL or SPARQL instead of reading the data
-python src/query.py --domain credit_paths --only sparql sparql+ontology sparql+axioms --store graphdb
-                                                   # the SPARQL conditions on GraphDB (needs GraphDB running at GRAPHDB_URL, default localhost:7200)
-python src/reasons.py results/credit/<run>         # check the reasoning behind correct answers
-
-python domains/credit/csv_to_rdf.py        # after editing a CSV
-python domains/credit/build_questions.py   # after editing a CSV or a question: checks every key against the data
-python domains/credit/execute.py           # then: the tables for the executed condition
-python domains/credit/scale.py 300         # a scaled copy: domains/credit_300
-python domains/credit/paths.py             # 300 issuers plus deep groups and path questions: domains/credit_paths
-python src/ontology_to_md.py credit        # after editing ontology/ontology.ttl
+python src/run.py --domain research        # reading: a dataset, every condition, 5 repeats
+python src/query.py --domain credit_300    # querying: the model writes SQL or SPARQL
+tools/rebuild --check                      # rebuild every table and check it against the repo
 ```
+
+[`BUILDING.md`](BUILDING.md) has the rest: every option, how each dataset is built, and how to check the numbers.
 
 ## The web pages
 
@@ -95,17 +83,6 @@ tools/site-dump      # the same pages as a static site in site/, for GitHub Page
 It runs its own server on port 8031, mirrors every page with wget, and syncs the result into
 `site/`. It doesn't commit: check `site/` and commit it. On a push to `main`, `.github/workflows/pages.yml`
 publishes `site/` to GitHub Pages. `docs/` holds the pages' text, in Markdown.
-
-## Rebuilding and checking
-
-```
-tools/rebuild --check   # rebuild every table in a scratch copy and list anything that differs
-tools/rebuild           # rebuild in place
-```
-
-It regenerates each domain's data, RDF, Markdown ontology, questions, keys and executed tables, then every
-run's grades and report from its saved answers. No model is called. What the runs cost and how long they
-took is on the Method page (`docs/method.md`).
 
 ## Licence
 

@@ -150,10 +150,8 @@ def domain_info(name):
         with open(folder / "data" / f, newline="") as fh:
             rows = list(csv.reader(fh))
         tables.append({"name": f, "header": rows[0], "rows": rows[1:], "n": len(rows) - 1})
-    notes = next((folder / n for n in ("NOTES.md", "concepts.md") if (folder / n).exists()), None)
     return {"name": name, "folder": folder, "tables": tables,
             "questions": json.loads((folder / "questions.json").read_text()),
-            "notes": md(notes.read_text()) if notes else "", "notes_name": notes.name if notes else "",
             "has": {f: (folder / "ontology" / f).exists() for f in ("ontology.ttl", "ontology.md", "axioms.ttl", "padding.md")}}
 
 

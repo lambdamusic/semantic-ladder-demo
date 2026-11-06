@@ -1,17 +1,20 @@
-How the experiment is run, and the conditions it compares. The [domains](/domains/credit/) describe the data and the questions, the [scores](/scores/) give the numbers, and the [conclusions](/conclusions/) say what they mean for each goal.
+How the experiment is run, and the conditions it compares (the "ladder").
 
 ## The runs
 
-A run asks one model every question of one dataset under several conditions, each a few times over.
+A run asks one model every question of one dataset under several conditions, each a few times over. [`src/run.py`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/src/run.py) runs the reading conditions and [`src/query.py`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/src/query.py) the querying ones; [`BUILDING.md`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/BUILDING.md) says how to run them.
 
-- **The models:** Claude Haiku and Sonnet, through the `claude` command line in print mode, from an empty directory with no tools, so they see only the prompt.
+- **The models:** Claude Haiku and Sonnet, through the `claude` command line in print mode, from an empty directory with no tools, so they see only the prompt ([`src/providers.py`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/src/providers.py)).
 - **Repeats:** each condition is asked five times.
 - **The prompt:** the data in the condition's form, then the questions, each to be answered in a sentence or two that cites the records used, and a closing JSON block that gives each answer in set fields. A run keeps its own prompts, so each one can be read on the run's page.
+- **What a run keeps:** each run is a folder under [`results/`](https://github.com/lambdamusic/semantic-ladder-demo/tree/main/results). [This one](https://github.com/lambdamusic/semantic-ladder-demo/tree/main/results/credit/2026-11-05-1227-sonnet), for instance, holds the run's settings and commit ([`meta.json`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/results/credit/2026-11-05-1227-sonnet/meta.json)), the questions with their keys as asked ([`questions.json`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/results/credit/2026-11-05-1227-sonnet/questions.json)), every prompt ([`prompts/`](https://github.com/lambdamusic/semantic-ladder-demo/tree/main/results/credit/2026-11-05-1227-sonnet/prompts)), every answer (such as [`answers-csv-run1.md`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/results/credit/2026-11-05-1227-sonnet/answers-csv-run1.md)), the grades ([`grades.json`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/results/credit/2026-11-05-1227-sonnet/grades.json)) and the report ([`report.md`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/results/credit/2026-11-05-1227-sonnet/report.md)). A querying run also keeps each session's queries and results, as in [this transcript](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/results/credit/2026-11-06-0935-sonnet-query/transcript-sql+markdown-run1.json).
 
 ## Grading
 
-- **By code, against keys computed from the data.** Each dataset's build script computes the key to every question from the data and its rules, and in the base datasets each key is also checked against one written by hand.
-- **A checklist, for the questions that ask why.** One credit question (Q6) and two research questions (Q47, Q48) ask for a reason, which code can't grade. Claude Sonnet grades them against a checklist of points, twice, so that its agreement with itself can be measured.
+The grading is in [`src/grade.py`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/src/grade.py), and the reports are written by [`src/report.py`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/src/report.py).
+
+- **By code, against keys computed from the data.** Each dataset's build script computes the key to every question from the data and its rules ([`build_questions.py`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/domains/credit/build_questions.py) for credit), and in the base datasets each key is also checked against one written by hand.
+- **A checklist, for the questions that ask why.** One credit question ([Q6](/domains/credit/questions/#Q6)) and two research questions ([Q47](/domains/research/questions/#Q47), [Q48](/domains/research/questions/#Q48)) ask for a reason, which code can't grade. Claude Sonnet grades them against a checklist of points, twice, so that its agreement with itself can be measured.
 - **Correct, partial or wrong.** An answer's JSON fields are compared with the key after normalising (ratings, yes and no, entity identifiers, counts). All fields right is correct, some right is partial, none is wrong. List answers are also scored by F1, reported beside the strict grade.
 - **Accuracy** is the mean over questions, with correct = 1 and partial = ½, of each question's mean over the repeats.
 - **Intervals** are 95% bootstrap intervals over questions. Differences between two conditions are paired, question by question, so they compare like with like.
@@ -79,4 +82,4 @@ These are estimates from the saved prompts, answers and query transcripts, at ab
 
 The 36 runs on these pages ran between 4 and 6 November 2026: 883 sessions in all. Added up, the runs took about 41 hours. Since two or three ran at once, something was running for about 24 hours of those three days. A reading run on the base data takes 10 to 40 minutes, a querying run with six conditions about an hour, and the runs on the larger datasets two to four hours each.
 
-`tools/rebuild` regenerates every dataset, question, key and executed table from the scripts, and every grade and report from the saved answers, in about a minute and with no model calls. `tools/rebuild --check` does it in a scratch copy and lists anything that differs from the repo.
+Every dataset, question, key and executed table can be rebuilt from the scripts, and every grade and report from the saved answers, in about a minute and with no model calls. [`BUILDING.md`](https://github.com/lambdamusic/semantic-ladder-demo/blob/main/BUILDING.md) says how, and how to run the experiment yourself.
