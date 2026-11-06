@@ -45,16 +45,16 @@ Goals 1, 2, 4 and 5 rest on one run per model and domain, each asking every read
 
 **Partly answered: at the sizes tried so far, querying doesn't beat reading, and a graph store doesn't beat SQL.**
 
-At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL (rdflib) without seeing the rows ([reading](/runs/credit_300/2026-11-04-1738-sonnet/), [querying](/runs/credit_300/2026-11-04-1738-sonnet-query/), Sonnet):
+At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL (rdflib) without seeing the rows ([reading](/runs/credit_300/2026-11-05-2135-sonnet/), [querying](/runs/credit_300/2026-11-06-0041-sonnet-query/), Sonnet):
 
 | | No definitions | With the definitions |
 |---|---|---|
-| Reading (`csv`, `csv+markdown`) | 80% | 95% |
-| SQL (`sql`, `sql+markdown`) | 86% | 96% |
-| SPARQL (`sparql`, `sparql+ontology`) | 79% | 95% |
+| Reading (`csv`, `csv+markdown`) | 81% | 93% |
+| SQL (`sql`, `sql+markdown`) | 80% | 97% |
+| SPARQL (`sparql`, `sparql+ontology`) | 76% | 95% |
 
-- **The definitions matter as much when querying as when reading:** +10 to +16 points in each mode.
-- **Querying helps a little with long lists,** where reading misses an item or two.
+- **The definitions matter as much when querying as when reading:** +12 to +19 points in each mode.
+- **With the definitions, querying helps a little with long lists,** where reading misses an item or two. Without them, it doesn't help at all.
 - **On ownership paths of unknown depth** ([reading](/runs/credit_paths/2026-11-04-2022-sonnet/), [querying](/runs/credit_paths/2026-11-05-1515-sonnet-query/)), a graph store doesn't help, with or without the definitions. Without them, SPARQL gets 32% of the path questions and SQL 60%. With them, SQL gets every path right in all five sessions, and SPARQL swings from 4% to 77%, with queries that time out in rdflib. On GraphDB, a fast graph database, nothing times out, but SPARQL with the ontology still gets 60% of the paths, swinging from 0% to 100%: the model uses up its rounds or gives up early. A precomputed `ancestors` table gives SQL every path right, and reading the 100 KB of CSV with the definitions also gets every path right.
 - **So the graph's advantage, following links of any depth, disappears once the rules have computed the chains.**
 

@@ -299,3 +299,20 @@ Haiku's run is `results/credit/2026-11-04-2028-haiku/`.
 - **The ceiling drops:** 92–95% for Sonnet and 83–91% for Haiku with the definitions, against 96–100% for both on the base data. So the two models no longer end level. Most of the loss is on long lists of 28 to 31 issuers (Q7, Q18, Q19), graded strictly.
 - **RDF alone costs more here:** −4 for Sonnet and −10 for Haiku. The decoy costs Haiku 4 points (−8 to −1).
 - **Q18's key is too narrow.** `build_questions.py` reads the Watch from the foreign-currency issuer rating only. E1019 and E1059 are on Watch Negative on their local-currency rating, and every session lists them, so Q18 is wrong in every condition for both models. Counting both bases would make the key 32 issuers here and in `credit_paths`, and leave the base data's unchanged. Q19, the Negative outlooks, is the same either way.
+
+## 6 November 2026: credit at 300 issuers, version 2, querying, Sonnet
+
+`results/credit_300/2026-11-06-0041-sonnet-query/`: the six querying conditions, five repeats, rdflib as the store. One `sparql+axioms` session was refused by the API ("safeguards flagged this message") and asked again on resume.
+
+| | No definitions | With the definitions | Rules executed |
+|---|---|---|---|
+| Reading (same data, Sonnet) | `csv` 81% | `csv+markdown` 93% | `executed` 94% |
+| SQL | `sql` 80% | `sql+markdown` 97% (+16, +6 to +28) | `sql+executed` 97% (+16) |
+| SPARQL | `sparql` 76% (−4, −10 to +2) | `sparql+ontology` 95% (+15) | `sparql+axioms` 87% (+6, −2 to +16) |
+
+- **The version 1 picture holds.** There it was 86% and 96% for SQL, 79% and 95% for SPARQL.
+- **With the definitions, querying edges out reading:** 95–97% against 93%, on the long lists: 83% of them are entirely right with `sql+markdown`, against 60% with `csv+markdown` (mean F1 99% and 98%).
+- **SPARQL is no better than SQL on joins,** with or without the definitions.
+- **`sparql+axioms` trails the ontology by 8 points.** It answers Q7 with an empty list in every session.
+- **Q18 stays wrong** in every condition but `sql` (3 of 5) and `sparql` (1 of 5): the narrow key (backlog #22). The conditions with definitions list the two local-currency Watches.
+- 17 of 578 queries failed and 3 timed out, all three in `sparql+ontology`.
