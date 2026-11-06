@@ -118,7 +118,25 @@ def headline(domain):
         covered = any(k[:2] == key[:2] and key[2] <= k[2] for k in found)
         if s["finished"] and not covered:
             found[key] = s
-    return sorted(found.values(), key=lambda s: (s["mode"] != "read", s["meta"]["model"], s["id"]))
+    return merged(sorted(found.values(), key=lambda s: (s["mode"] != "read", s["meta"]["model"], s["id"])))
+
+
+def merged(runs):
+    """One column per model, mode and store: runs that asked different conditions (a later run adding the
+    axioms, say) share a column, each condition taken from the newest run that asked it. The column keeps
+    the main run (the one that asked the most) and lists the others in "also"."""
+    cols = {}
+    for s in runs:
+        cols.setdefault((s["mode"], s["meta"]["model"], s["meta"].get("store", "")), []).append(s)
+    out = []
+    for group in cols.values():
+        main = max(group, key=lambda s: (sum(1 for r in s["rows"] if r["repeats"]), s["id"]))
+        rows = {}
+        for s in sorted(group, key=lambda s: s["id"]):  # oldest first, so the newest run wins a condition
+            rows.update({r["condition"]: r for r in s["rows"] if r["repeats"]})
+        out.append(dict(main, rows=sorted(rows.values(), key=lambda r: by_label(r["condition"])),
+                        also=[s for s in group if s is not main]))
+    return out
 
 
 def score_table(runs, dataset=""):
