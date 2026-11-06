@@ -7,7 +7,7 @@ from . import files
 
 def nav(request):
     """The sidebar on every page: the documents, each domain, and the runs."""
-    return {"APP_NAME": settings.APP_NAME, "AUTHOR_URL": settings.AUTHOR_URL, "BLOG_URL": settings.BLOG_URL, "NAV": files.nav(), "path": request.path}
+    return {"APP_NAME": settings.APP_NAME, "BLOG_URL": settings.BLOG_URL, "NAV": files.nav(), "path": request.path}
 
 
 def scores_of(request, domain):
