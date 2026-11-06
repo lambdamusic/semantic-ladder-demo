@@ -6,7 +6,6 @@ The table shows every reading condition in one run per model ([Sonnet](/runs/cre
 - **One sentence can slant an answer.** The ontology calls the foreign-currency rating "the headline rating". With it, Haiku gets Q10 ("is Valdoria Telecom investment grade?") right in 2 of 5 repeats with the Turtle and 1 of 5 with the Markdown. Made neutral, it's right in 5 of 5, and so it is with the axioms, which carry no prose.
 - **Executed rules help as much as definitions** on this data: +15 points for Sonnet and +19 for Haiku. What they don't give is the reason: the one "why" question (Q6) is answered only partly in most repeats.
 
-The list below also has older runs, made before the rule for an entity's country changed. They're scored with the answers that were right at the time.
 
 Querying ([Sonnet](/runs/credit/2026-11-06-0935-sonnet-query/)), five repeats, against reading with the same model:
 
