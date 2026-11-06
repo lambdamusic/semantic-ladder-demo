@@ -1,0 +1,2 @@
+SELECT (GROUP_CONCAT(?r; separator=" ; ") AS ?x) WHERE { ?w a res:Work . OPTIONAL{?w res:workType ?t} OPTIONAL{?w res:year ?y} OPTIONAL{?w res:source ?s} OPTIONAL{?w res:retracted ?rt} OPTIONAL{?w res:recordSource ?rs} OPTIONAL{?w res:versionOf ?v} BIND(CONCAT(STRAFTER(STR(?w),"research/"),"|",STRAFTER(STR(?t),"wtype-"),"|",STR(?y),"|",STRAFTER(STR(?s),"research/"),"|",STR(?rt),"|",STRAFTER(STR(?rs),"origin-"),"|",STRAFTER(STR(?v),"research/")) AS ?r) }
+```

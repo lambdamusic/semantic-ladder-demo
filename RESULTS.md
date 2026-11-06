@@ -376,3 +376,20 @@ The corrected key was written into the `questions.json` of the nine runs on thos
 - **The conclusions don't change.** At 300 issuers, Sonnet with the definitions now reaches 94–97% reading and 97–99% querying, close to the base data's 96–100%. Haiku stays lower, at 84–93%.
 - Earlier entries above quote the scores before this correction.
 
+
+## 6 November 2026: research, querying, Sonnet
+
+`results/research/2026-11-06-0808-sonnet-query/`: `sql`, `sql+markdown`, `sql+executed`, `sparql` and `sparql+ontology`, five repeats, rdflib as the store. The first querying run on the base research data; the domain had no axioms yet.
+
+| | No definitions | With the definitions | Rules executed |
+|---|---|---|---|
+| Reading (same data, Sonnet) | `csv` 57% | `csv+markdown` 98% | `executed` 90% |
+| SQL | `sql` 52% | `sql+markdown` 96% (+45) | `sql+executed` 93% (+41) |
+| SPARQL | `sparql` 40% (−12, −16 to −7) | `sparql+ontology` 81% (+30) | |
+
+Score in each session: `sql` 49–55, `sql+markdown` 96–97, `sql+executed` 88–96, `sparql` 49, 0, 46, 51, 55, `sparql+ontology` 98, 98, 17, 98, 97.
+
+- **On data small enough to read, querying with the definitions matches reading with them.** And it beats SQL over the executed tables, 96% against 93%.
+- **At 850 works the order reverses:** `sql+markdown` 80%, `sql+executed` 92%. The definitions carry the meaning at any size, but at scale the model gets the counts wrong writing them itself, and gets them right when the rules have already done the merging and the roll-ups.
+- **Two SPARQL sessions broke down in the loop.** In `sparql` run 2, the model started writing tool-call markup (`<invoke name="sparql">`) instead of fenced queries, was nudged once, and ended its last round with a bare query and no answers: 0%. In `sparql+ontology` run 3, it stopped after one round, saying the store returned "repeated, contradictory rows"; no query had failed: 17%. No SQL session failed this way. The same pattern as on ownership paths: SPARQL sessions are less steady because of how the model works in the loop.
+- 7 of 279 queries failed, all SPARQL; none timed out.
