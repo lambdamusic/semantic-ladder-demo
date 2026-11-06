@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Rebuild every table from the scripts: each domain's data, RDF, Markdown ontology, questions and
+# keys, executed tables and scaled copies, then every run's grades and report from its saved answers.
+# No model is called: the answers are the ones committed in results/, regraded by code.
+#
+#   tools/rebuild           # rebuild in place; git diff shows anything that changed
+#   tools/rebuild --check   # rebuild in a scratch copy of the last commit, and list what differs from it
+#
+# Uses the semantics-ladder env if it exists, or PYTHON=... to name another interpreter.
+set -euo pipefail
+SELF=$(cd "$(dirname "$0")" && pwd)/rebuild
+cd "${REBUILD_ROOT:-$(dirname "$0")/..}"
+PY=${PYTHON:-~/Envs/semantics-ladder/bin/python}
+[ -x "$PY" ] || PY=python3
+
+if [ "${1:-}" = "--check" ]; then
+  WORK=$(mktemp -d)/repo
+  git worktree add -q --detach "$WORK" HEAD
+  trap 'git worktree remove --force "$WORK"' EXIT
+  PYTHON="$PY" REBUILD_ROOT="$WORK" "$SELF"
+  cd "$WORK"
+  CHANGED=$(git status --porcelain --untracked-files=no)
+  if [ -z "$CHANGED" ]; then
+    echo "check: the rebuild matches the last commit, file for file"
+  else
+    echo "check: the rebuild differs from the last commit in:"; echo "$CHANGED"
+    git diff --stat | tail -1
+    exit 1
+  fi
+  exit 0
+fi
+
+step() { echo "== $*"; }
+
+step "credit: RDF, Markdown ontology, questions and keys, executed tables, axioms"
+"$PY" domains/credit/csv_to_rdf.py >/dev/null
+"$PY" src/ontology_to_md.py credit
+"$PY" domains/credit/build_questions.py
+"$PY" domains/credit/execute.py
+"$PY" domains/credit/check_axioms.py domains/credit | sed -n 1p
+
+step "credit at 300 issuers, and the ownership paths"
+"$PY" domains/credit/scale.py 300
+"$PY" domains/credit/paths.py
+
+step "research: data, RDF, Markdown ontology, questions and keys, executed tables, axioms"
+"$PY" domains/research/generate_data.py
+"$PY" domains/research/csv_to_rdf.py >/dev/null
+"$PY" src/ontology_to_md.py research
+"$PY" domains/research/build_questions.py
+"$PY" domains/research/execute.py
+"$PY" domains/research/check_axioms.py domains/research | tail -1
+
+step "research at 850 works"
+"$PY" domains/research/scale.py 850
+
+step "every run: grades by code and the report, from its saved answers and its own questions"
+for run in results/*/*/; do
+  [ -f "$run/grades.json" ] || continue
+  domain=$(basename "$(dirname "$run")")
+  "$PY" src/run.py --domain "$domain" --regrade "${run%/}" >/dev/null
+done
+echo "$(ls -d results/*/*/ | wc -l | tr -d ' ') runs regraded"

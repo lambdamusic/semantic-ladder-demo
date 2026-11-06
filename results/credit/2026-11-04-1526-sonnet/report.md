@@ -34,6 +34,17 @@
 | Q9 | code | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ |
 | Q10 | code | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ✅ ✅ ✅ | ✅ ✅ ❌ ✅ ❌ |
 
+## Lists, with partial credit
+
+The 2 questions answered with a list of entities: strict accuracy (the whole list right) against the mean F1 of the lists given, which credits a list that is nearly right.
+
+| Condition | Strict | Mean F1 |
+|---|---|---|
+| `csv` | 100% | 100% |
+| `rdf` | 100% | 100% |
+| `rdf+ontology` | 100% | 100% |
+| `csv+ontology` | 100% | 100% |
+
 **The checklist grader agreed with itself** on 19 of 20 answers graded twice.
 
 ## Code grading against the old LLM grader
