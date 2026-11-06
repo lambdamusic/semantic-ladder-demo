@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>D3 sql+executed, run 5: the query session · Semantics ladder</title>
+  <link rel="stylesheet" href="../../../../../../static/css/site.css">
+  <script src="../../../../../../static/js/site.js" defer></script>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <a class="brand" href="../../../../../../index.html">Semantics ladder</a>
+    <p class="brand-sub">How much does an LLM gain from being told what data means?</p>
+    <div class="nav-group">The experiment</div>
+    <ul>
+      <li><a class="" href="../../../../../../index.html">Goals</a></li>
+      <li><a class="" href="../../../../../../method/index.html">Method</a></li>
+    </ul>
+    
+    <div class="nav-group">Credit ratings</div>
+    <ul>
+      <li><a class="" href="../../../../../../domains/credit_paths/index.html">Introduction</a></li><li><a class="" href="../../../../../../domains/credit/data/index.html">Data</a></li><li><a class="" href="../../../../../../domains/credit/questions/index.html">Questions and traps</a></li><li><a class="" href="../../../../../../domains/credit/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">Research analytics</div>
+    <ul>
+      <li><a class="" href="../../../../../../domains/research_850/index.html">Introduction</a></li><li><a class="" href="../../../../../../domains/research/data/index.html">Data</a></li><li><a class="" href="../../../../../../domains/research/questions/index.html">Questions and traps</a></li><li><a class="" href="../../../../../../domains/research/ontology/index.html">Ontology</a></li>
+    </ul>
+    
+    <div class="nav-group">The results</div>
+    <ul>
+      <li><a class="" href="../../../../../../scores/index.html">Scores</a></li>
+      <li><a class="" href="../../../../../../conclusions/index.html">Conclusions</a></li>
+      <li><a class="" href="../../../../../index.html">Run archive</a></li>
+    </ul>
+    <p class="nav-foot nav-credit">Made by <a href="https://www.michelepasin.org/" target="_blank" rel="noopener">Michele Pasin</a>. For more, see the blog post (coming soon).</p>
+    <p class="nav-foot">All data is invented: the companies, LEIs, ratings, works, people and institutions. Nothing here is any rating agency's or bibliographic database's data or definitions.</p>
+  </nav>
+  <main class="content">
+    <h1>D3 sql+executed, run 5: the query session</h1>
+    
+<p><a href="../../../index.html">← back to the run</a></p>
+<div class="status"><span class="pill ok">5 queries</span><span class="pill ok">0 failed</span><span class="pill ok">1 rounds</span></div>
+
+<details class="source" ><summary>The opening prompt</summary>
+  <div class="code"><pre><code>## The data
+
+You can&#x27;t see the data, but you can query it. It is in DuckDB, in the tables below. Write DuckDB SQL.
+
+To run queries, reply with one or more fenced blocks (```sql), and nothing else is needed:
+each is run and its results sent back to you. You have up to 8 rounds of queries.
+When you have what you need, reply with the final answers and no queries.
+
+All columns are text (VARCHAR); dates are ISO strings.
+
+- `entities` (16 rows): entity_id, name, lei, country, entity_type, parent_id, ultimate_parent_id, record_ids
+- `instruments` (8 rows): instrument_id, description, issuer_id, guarantor_id, credit_risk_of, seniority, currency, local_currency, maturity
+- `ratings` (41 rows): rated_id, rating_type, ccy_basis, rating, outlook, watch, action, valid_from, valid_to, action_id
+- `ceilings` (2 rows): country, ceiling, valid_from
+- `ancestors` (4 rows): entity_id, ancestor_id, levels_up
+
+These tables are the data after its rules have been applied: duplicate records merged into one entity (record_ids lists the records each entity merges), and each rating with the period it held. An empty valid_to means the rating was still in force on 1 October 2026. ancestors lists every entity above each entity in its chain of parents, with how many levels up.
+
+## Questions
+
+Answer each question below from the data above. Start each answer on a new line with its
+number in bold, like **Q1.**, give the direct answer first, then at most two sentences of
+reasoning that cite the records (IDs) you relied on.
+
+Then end with one JSON block (```json) holding the structured answer to each question listed
+here, with exactly these fields, shaped like {&quot;Q1&quot;: {&quot;field&quot;: value}, ...}. Name entities by their record ID: the entity_id in the CSV files, or the part of the IRI after lad: in the RDF (E01, not Kestrel Energy plc).
+
+- Q1: rating (a rating, or &quot;none&quot;)
+- Q2: downgraded (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q3: investment_grade (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;), rating (a rating, or &quot;none&quot;)
+- Q4: outlook (an outlook)
+- Q5: risk_of (a record ID), rating (a rating, or &quot;none&quot;)
+- Q7: issuers (a list of record IDs)
+- Q8: entities (a list of record IDs)
+- Q9: count (a number)
+- Q10: investment_grade (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q11: rating (a rating, or &quot;none&quot;)
+- Q12: rating (a rating, or &quot;none&quot;)
+- Q13: count (a number)
+- Q14: rating (a rating, or &quot;none&quot;)
+- Q15: rating (a rating, or &quot;none&quot;)
+- Q16: changed (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q17: downgraded (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q18: issuers (a list of record IDs)
+- Q19: issuers (a list of record IDs)
+- Q20: in_default (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q21: entities (a list of record IDs)
+- Q22: entities (a list of record IDs)
+- Q23: rating (a rating, or &quot;none&quot;)
+- Q24: investment_grade (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q25: count (a number)
+- Q26: rating (a rating, or &quot;none&quot;)
+- Q27: rating (a rating, or &quot;none&quot;)
+- Q28: rating (a rating, or &quot;none&quot;)
+- Q29: rating (a rating, or &quot;none&quot;)
+- Q30: entities (a list of record IDs)
+- Q31: any (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q32: parent (a record ID)
+- Q33: risk_of (a record ID), rating (a rating, or &quot;none&quot;)
+- Q34: same_group (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q35: count (a number)
+- Q36: count (a number)
+- Q37: count (a number)
+- Q38: same (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q39: rating (a rating, or &quot;none&quot;)
+- Q40: count (a number)
+- Q41: rating (a rating, or &quot;none&quot;)
+- Q42: country (a country code)
+- Q43: count (a number)
+- Q44: local_currency (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q45: above_ceiling (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q46: issuer_rating (&quot;yes&quot;, &quot;no&quot; or &quot;depends&quot;)
+- Q47: rating (a rating, or &quot;none&quot;)
+- Q48: count (a number)
+
+Q1. What was Kestrel Energy&#x27;s rating on 1 January 2025?
+Q2. Has Kestrel Energy been downgraded in 2026?
+Q3. Is Kestrel Energy&#x27;s 2031 note investment grade?
+Q4. What is Northwind Holdings&#x27; current outlook?
+Q5. Whose credit risk does a holder of the Northwind Finance 2030 notes take, and how is it rated?
+Q6. Why is Valdoria Telecom&#x27;s foreign-currency rating lower than its local-currency rating?
+Q7. Which issuers were downgraded in 2026?
+Q8. Which entities were in default on 1 October 2026?
+Q9. As of 1 October 2026, how many distinct issuers hold an issuer rating?
+Q10. Is Valdoria Telecom investment grade?
+Q11. What was Marlow Utilities&#x27; rating on 1 June 2025?
+Q12. What was Marlow Utilities&#x27; rating on 1 January 2024?
+Q13. How many times has Marlow Utilities been downgraded?
+Q14. What was Halden Foods&#x27; rating on 1 January 2024?
+Q15. What was Halden Bank&#x27;s rating on 1 January 2026?
+Q16. Has Marlow Utilities&#x27; rating changed since 1 January 2025?
+Q17. Was Orrin Bank downgraded in 2026?
+Q18. Which issuers were on Rating Watch Negative on 1 October 2026?
+Q19. Which issuers had a Negative outlook on 1 October 2026?
+Q20. Is Pellam Retail in default?
+Q21. Which entities had an issuer rating at some point but no longer had one on 1 October 2026?
+Q22. Which entities have ever been in default?
+Q23. What is Kestrel Energy&#x27;s short-term rating?
+Q24. Is Kestrel Energy&#x27;s issuer rating investment grade?
+Q25. How many instruments held an investment-grade rating on 1 October 2026?
+Q26. What is Corvenia Power&#x27;s local-currency rating?
+Q27. How is Corvenia Power&#x27;s 2032 note rated?
+Q28. What is the Republic of Corvenia&#x27;s foreign-currency issuer rating?
+Q29. What is the Republic of Valdoria&#x27;s issuer rating?
+Q30. Which entities had a foreign-currency issuer rating exactly at their country&#x27;s ceiling on 1 October 2026?
+Q31. Did any company have a foreign-currency issuer rating above its country&#x27;s ceiling on 1 October 2026?
+Q32. Who is Halden Leasing&#x27;s ultimate parent?
+Q33. Whose credit risk does a holder of the Halden Leasing 2028 notes take, and how is it rated?
+Q34. Is Halden Foods part of the same group as Halden Bank?
+Q35. How many entities are in the Halden group, the parent included?
+Q36. How many entities are in the Northwind group, the parent included?
+Q37. How many distinct legal entities does the data describe?
+Q38. Are Orrin Bank AG and Orrin Bancorp Inc the same entity?
+Q39. What is Northwind Holdings&#x27; current rating?
+Q40. How many distinct issuers domiciled in GB held an issuer rating on 1 October 2026?
+Q41. What is Brindle Capital&#x27;s current rating?
+Q42. In which country is Halden Bank domiciled?
+Q43. How many distinct entities are domiciled in Luxembourg (LU)?
+Q44. Is Valdoria Telecom&#x27;s 2027 note a local-currency obligation?
+Q45. Is Valdoria Telecom&#x27;s 2027 note rated above what Valdoria&#x27;s Country Ceiling allows?
+Q46. Does Halden Leasing have an issuer rating?
+Q47. How is Corvenia Power&#x27;s 2034 note rated?
+Q48. How many instruments held a rating on 1 October 2026?</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>Let me start by looking at the data.
+
+```sql
+SELECT * FROM entities;
+```
+```sql
+SELECT * FROM instruments;
+```
+```sql
+SELECT * FROM ratings ORDER BY rated_id, rating_type, ccy_basis, valid_from;
+```
+```sql
+SELECT * FROM ceilings;
+```
+```sql
+SELECT * FROM ancestors;
+```</code></pre></div></details>
+
+<details class="source" open><summary>Query results</summary>
+  <div class="code"><pre><code>Query 1:
+
+| entity_id | name | lei | country | entity_type | parent_id | ultimate_parent_id | record_ids |
+|---|---|---|---|---|---|---|---|
+| CV | Republic of Corvenia |  | CV | SOV |  |  | CV |
+| VD | Republic of Valdoria |  | VD | SOV |  |  | VD |
+| E01 | Kestrel Energy plc | 7245002OOPBG04092E43 | GB | CORP |  |  | E01 |
+| E02 | Northwind Holdings plc | 213800PHEIYNJMHTDV74 | GB | CORP |  |  | E02 E03 |
+| E04 | Northwind Finance BV | 213800LA5RYJLGXV2T85 | NL | FINSUB | E02 | E02 | E04 |
+| E05 | Valdoria Telecom SA | 391200LESH03LMOY2U61 | VD | CORP |  |  | E05 |
+| E06 | Orrin Bank AG | 549300AMVE3VRVG7HK43 | DE | BANK |  |  | E06 |
+| E07 | Pellam Retail Ltd | 969500B6IUACELPI2291 | GB | CORP |  |  | E07 |
+| E08 | Saxby Shipping SA | 969500KOTZ1JFIZSG796 | GR | CORP |  |  | E08 |
+| E09 | Halden Group plc | 815600ASM9EHDG931T89 | GB | CORP |  |  | E09 |
+| E10 | Halden Bank AG | 391200QYPVFF2O9K2039 | LU | BANK | E09 | E09 | E10 E17 |
+| E11 | Halden Leasing SA | 549300XBZH4ULO9MQV55 | FR | FINSUB | E10 | E09 | E11 |
+| E12 | Halden Foods Ltd | 213800IJDL4OJ4DG5T19 | GB | CORP |  |  | E12 |
+| E13 | Orrin Bancorp Inc | 815600O8X8K2F154N214 | US | BANK |  |  | E13 |
+| E14 | Marlow Utilities plc | 3912005AH2C1I9YF8106 | GB | CORP |  |  | E14 |
+| E15 | Corvenia Power SA | 213800PBQVHVBBH6GV02 | CV | CORP |  |  | E15 |
+
+Query 2:
+
+| instrument_id | description | issuer_id | guarantor_id | credit_risk_of | seniority | currency | local_currency | maturity |
+|---|---|---|---|---|---|---|---|---|
+| I01 | Kestrel Energy 4.50% notes due 2030 | E01 |  | E01 | SU | GBP | no | 2030-03-15 |
+| I02 | Kestrel Energy 6.25% notes due 2031 | E01 |  | E01 | SUB | GBP | no | 2031-09-30 |
+| I03 | Northwind Finance 3.75% notes due 2030 | E04 | E02 | E02 | SU | EUR | no | 2030-05-01 |
+| I04 | Valdoria Telecom 5.00% notes due 2029 | E05 |  | E05 | SU | USD | no | 2029-11-20 |
+| I05 | Halden Leasing 2.90% notes due 2028 | E11 | E10 | E10 | SU | EUR | no | 2028-06-30 |
+| I06 | Corvenia Power 7.10% notes due 2032 | E15 |  | E15 | SUB | USD | no | 2032-02-15 |
+| I07 | Valdoria Telecom 4.25% notes due 2027 | E05 |  | E05 | SU | XVD | yes | 2027-08-31 |
+| I08 | Corvenia Power 6.00% notes due 2034 | E15 |  | E15 | SU | USD | no | 2034-09-01 |
+
+Query 3:
+
+| rated_id | rating_type | ccy_basis | rating | outlook | watch | action | valid_from | valid_to | action_id |
+|---|---|---|---|---|---|---|---|---|---|
+| CV | LTIDR | FC | BBB+ | STA |  | AS | 2024-01-01 |  | A38 |
+| CV | LTIDR | LC | A- | STA |  | AS | 2024-01-01 |  | A39 |
+| E01 | LTIDR | FC | A- | STA |  | AS | 2024-03-12 | 2025-06-20 | A01 |
+| E01 | LTIDR | FC | BBB | STA |  | DG | 2025-06-20 | 2026-02-10 | A02 |
+| E01 | LTIDR | FC | BBB | NEG |  | AF | 2026-02-10 |  | A03 |
+| E01 | STIDR | FC | F2 |  |  | AF | 2026-02-10 |  | A04 |
+| E02 | LTIDR | FC | A | STA |  | AS | 2023-11-01 | 2025-09-15 | A08 |
+| E02 | LTIDR | FC | A | POS |  | AF | 2025-09-15 |  | A09 |
+| E05 | LTIDR | FC | BB | STA |  | AS | 2025-04-01 |  | A14 |
+| E05 | LTIDR | LC | BBB- | STA |  | AS | 2025-04-01 |  | A13 |
+| E06 | LTIDR | FC | A- | STA |  | AS | 2024-05-01 | 2026-09-03 | A16 |
+| E06 | LTIDR | FC | A- |  | RWN | RW | 2026-09-03 |  | A17 |
+| E07 | LTIDR | FC | BB | STA |  | AS | 2024-01-10 | 2026-05-12 | A18 |
+| E07 | LTIDR | FC | WD |  |  | WD | 2026-05-12 |  | A19 |
+| E08 | LTIDR | FC | B | STA |  | AS | 2024-06-01 | 2026-01-20 | A20 |
+| E08 | LTIDR | FC | CCC |  |  | DG | 2026-01-20 | 2026-07-08 | A21 |
+| E08 | LTIDR | FC | RD |  |  | DG | 2026-07-08 |  | A22 |
+| E09 | LTIDR | FC | A | STA |  | AS | 2023-05-01 | 2026-03-01 | A24 |
+| E09 | LTIDR | FC | A | NEG |  | AF | 2026-03-01 |  | A25 |
+| E10 | LTIDR | FC | A- | STA |  | AS | 2023-05-01 | 2026-04-15 | A26 |
+| E10 | LTIDR | FC | BBB+ | STA |  | DG | 2026-04-15 |  | A27 |
+| E12 | LTIDR | FC | BB- | STA |  | AS | 2024-02-01 | 2025-08-01 | A30 |
+| E12 | LTIDR | FC | BB | STA |  | UG | 2025-08-01 |  | A31 |
+| E13 | LTIDR | FC | BBB | STA |  | AS | 2024-07-01 |  | A32 |
+| E14 | LTIDR | FC | A- | STA |  | AS | 2023-01-15 | 2024-09-30 | A34 |
+| E14 | LTIDR | FC | BBB+ | STA |  | DG | 2024-09-30 | 2025-11-20 | A36 |
+| E14 | LTIDR | FC | BBB+ |  | RWN | RW | 2025-11-20 | 2026-05-01 | A35 |
+| E14 | LTIDR | FC | BBB+ | STA |  | AF | 2026-05-01 |  | A33 |
+| E15 | LTIDR | FC | A | STA |  | AS | 2024-03-01 |  | A41 |
+| E15 | LTIDR | LC | A+ | STA |  | AS | 2024-03-01 |  | A40 |
+| I01 | INST |  | A- |  |  | AS | 2024-03-12 | 2025-06-20 | A05 |
+| I01 | INST |  | BBB |  |  | DG | 2025-06-20 |  | A06 |
+| I02 | INST |  | BBB |  |  | AS | 2024-03-12 | 2025-06-20 | A23 |
+| I02 | INST |  | BB+ |  |  | DG | 2025-06-20 |  | A07 |
+| I03 | INST |  | A |  |  | AS | 2023-11-01 | 2025-09-15 | A10 |
+| I03 | INST |  | A |  |  | AF | 2025-09-15 |  | A11 |
+| I04 | INST |  | BB |  |  | AS | 2025-04-01 |  | A15 |
+| I05 | INST |  | A- |  |  | AS | 2023-06-01 | 2026-04-15 | A28 |
+| I05 | INST |  | BBB+ |  |  | DG | 2026-04-15 |  | A29 |
+| I06 | INST |  | A- |  |  | AS | 2024-03-01 |  | A42 |
+| I07 | INST |  | BBB- |  |  | AS | 2025-04-01 |  | A45 |
+
+Query 4:
+
+| country | ceiling | valid_from |
+|---|---|---|
+| CV | A | 2024-01-01 |
+| VD | BB | 2025-04-01 |
+
+Query 5:
+
+| entity_id | ancestor_id | levels_up |
+|---|---|---|
+| E04 | E02 | 1 |
+| E10 | E09 | 1 |
+| E11 | E10 | 1 |
+| E11 | E09 | 2 |
+
+Run more queries, or give the final answers.</code></pre></div></details>
+
+<details class="source" open><summary>The model</summary>
+  <div class="code"><pre><code>**Q1.** A-. E01&#x27;s foreign-currency issuer rating on 2025-01-01 was A- (A01, valid 2024-03-12 to 2025-06-20).
+
+**Q2.** No. E01&#x27;s only 2026 action was an affirmation with the outlook moved to Negative (A03, 2026-02-10); the downgrade to BBB was in 2025 (A02).
+
+**Q3.** No. The 2031 note I02 is rated BB+ since 2025-06-20 (A07), which is below investment grade.
+
+**Q4.** Positive. E02&#x27;s current rating action is A09, with outlook POS.
+
+**Q5.** E02 (Northwind Holdings), the guarantor of I03. I03 is rated A (A11).
+
+**Q6.** Valdoria&#x27;s Country Ceiling is BB (VD, from 2025-04-01), and E05&#x27;s foreign-currency rating is BB (A14). Its local-currency rating is BBB- (A13). That ceiling is the likely cause, but the data doesn&#x27;t state the reason explicitly.
+
+**Q7.** E08 and E10. E08 was downgraded in 2026 (A21, A22) and E10 on 2026-04-15 (A27). E06&#x27;s Rating Watch Negative (RWN) is not a downgrade.
+
+**Q8.** E08. Its rating is RD from 2026-07-08 (A22), still in force.
+
+**Q9.** 12. Current non-withdrawn issuer ratings are held by CV, E01, E02, E05, E06, E08, E09, E10, E12, E13, E14 and E15. E07&#x27;s was withdrawn (A19).
+
+**Q10.** Depends. E05 is BB in foreign currency (A14, sub-investment grade) but BBB- in local currency (A13, investment grade).
+
+**Q11.** BBB+. E14 on 2025-06-01 was BBB+ (A36, from 2024-09-30).
+
+**Q12.** A-. E14 on 2024-01-01 was A- (A34).
+
+**Q13.** 1. The only downgrade is A36 (2024-09-30).
+
+**Q14.** None. E12&#x27;s first rating (A30) starts on 2024-02-01.
+
+**Q15.** A-. E10 (which merges E17) was A- on 2026-01-01 (A26).
+
+**Q16.** No. E14 was BBB+ on 2025-01-01 and is BBB+ now (A33), though it passed through a watch period (A35).
+
+**Q17.** No. E06 stayed at A- and was placed on Rating Watch Negative (A17), which is not a downgrade.
+
+**Q18.** E06 (A17).
+
+**Q19.** E01 and E09 (A03, A25).
+
+**Q20.** No. E07&#x27;s rating was withdrawn (A19), not moved to a default grade, so there is no default record.
+
+**Q21.** E07. Its rating was withdrawn on 2026-05-12 (A19).
+
+**Q22.** E08, which reached RD (A22).
+
+**Q23.** F2 (A04).
+
+**Q24.** Yes. E01&#x27;s issuer rating is BBB (A03).
+
+**Q25.** 5. The investment-grade instruments are I01 (BBB), I03 (A), I05 (BBB+), I06 (A-) and I07 (BBB-).
+
+**Q26.** A+ (A40).
+
+**Q27.** A- (I06, A42).
+
+**Q28.** BBB+ (CV, A38).
+
+**Q29.** None. VD has no rating rows.
+
+**Q30.** E05 and E15. E05 is BB against VD&#x27;s BB ceiling, and E15 is A against CV&#x27;s A ceiling.
+
+**Q31.** No. E05 and E15 are exactly at their ceilings, not above.
+
+**Q32.** E09.
+
+**Q33.** E10, the guarantor of I05. I05 is rated BBB+ (A29).
+
+**Q34.** No. E12 has no parent, while E10&#x27;s ultimate parent is E09.
+
+**Q35.** 3: E09, E10 and E11.
+
+**Q36.** 2: E02 and E04.
+
+**Q37.** 16. The entities table has 16 rows after duplicates were merged.
+
+**Q38.** No. E06 and E13 are separate entities with different LEIs and countries (DE and US).
+
+**Q39.** A (A09).
+
+**Q40.** 5. The GB issuers with a current issuer rating are E01, E02, E09, E12 and E14. E07 is excluded because its rating was withdrawn.
+
+**Q41.** None. Brindle Capital is not in the data.
+
+**Q42.** LU.
+
+**Q43.** 1: E10.
+
+**Q44.** Yes. I07 has local_currency = yes and is denominated in XVD.
+
+**Q45.** No. The ceiling caps foreign-currency ratings, and I07 is a local-currency obligation rated BBB- (A45). I&#x27;m assuming the ceiling applies only to foreign currency, which the data doesn&#x27;t state.
+
+**Q46.** No. Only its instrument I05 is rated; E11 has no issuer rating rows.
+
+**Q47.** None. I08 has no rating.
+
+**Q48.** 7. I01 to I07 are rated, and I08 is not.
+
+```json
+{
+&quot;Q1&quot;: {&quot;rating&quot;: &quot;A-&quot;},
+&quot;Q2&quot;: {&quot;downgraded&quot;: &quot;no&quot;},
+&quot;Q3&quot;: {&quot;investment_grade&quot;: &quot;no&quot;, &quot;rating&quot;: &quot;BB+&quot;},
+&quot;Q4&quot;: {&quot;outlook&quot;: &quot;POS&quot;},
+&quot;Q5&quot;: {&quot;risk_of&quot;: &quot;E02&quot;, &quot;rating&quot;: &quot;A&quot;},
+&quot;Q7&quot;: {&quot;issuers&quot;: [&quot;E08&quot;, &quot;E10&quot;]},
+&quot;Q8&quot;: {&quot;entities&quot;: [&quot;E08&quot;]},
+&quot;Q9&quot;: {&quot;count&quot;: 12},
+&quot;Q10&quot;: {&quot;investment_grade&quot;: &quot;depends&quot;},
+&quot;Q11&quot;: {&quot;rating&quot;: &quot;BBB+&quot;},
+&quot;Q12&quot;: {&quot;rating&quot;: &quot;A-&quot;},
+&quot;Q13&quot;: {&quot;count&quot;: 1},
+&quot;Q14&quot;: {&quot;rating&quot;: &quot;none&quot;},
+&quot;Q15&quot;: {&quot;rating&quot;: &quot;A-&quot;},
+&quot;Q16&quot;: {&quot;changed&quot;: &quot;no&quot;},
+&quot;Q17&quot;: {&quot;downgraded&quot;: &quot;no&quot;},
+&quot;Q18&quot;: {&quot;issuers&quot;: [&quot;E06&quot;]},
+&quot;Q19&quot;: {&quot;issuers&quot;: [&quot;E01&quot;, &quot;E09&quot;]},
+&quot;Q20&quot;: {&quot;in_default&quot;: &quot;no&quot;},
+&quot;Q21&quot;: {&quot;entities&quot;: [&quot;E07&quot;]},
+&quot;Q22&quot;: {&quot;entities&quot;: [&quot;E08&quot;]},
+&quot;Q23&quot;: {&quot;rating&quot;: &quot;F2&quot;},
+&quot;Q24&quot;: {&quot;investment_grade&quot;: &quot;yes&quot;},
+&quot;Q25&quot;: {&quot;count&quot;: 5},
+&quot;Q26&quot;: {&quot;rating&quot;: &quot;A+&quot;},
+&quot;Q27&quot;: {&quot;rating&quot;: &quot;A-&quot;},
+&quot;Q28&quot;: {&quot;rating&quot;: &quot;BBB+&quot;},
+&quot;Q29&quot;: {&quot;rating&quot;: &quot;none&quot;},
+&quot;Q30&quot;: {&quot;entities&quot;: [&quot;E05&quot;, &quot;E15&quot;]},
+&quot;Q31&quot;: {&quot;any&quot;: &quot;no&quot;},
+&quot;Q32&quot;: {&quot;parent&quot;: &quot;E09&quot;},
+&quot;Q33&quot;: {&quot;risk_of&quot;: &quot;E10&quot;, &quot;rating&quot;: &quot;BBB+&quot;},
+&quot;Q34&quot;: {&quot;same_group&quot;: &quot;no&quot;},
+&quot;Q35&quot;: {&quot;count&quot;: 3},
+&quot;Q36&quot;: {&quot;count&quot;: 2},
+&quot;Q37&quot;: {&quot;count&quot;: 16},
+&quot;Q38&quot;: {&quot;same&quot;: &quot;no&quot;},
+&quot;Q39&quot;: {&quot;rating&quot;: &quot;A&quot;},
+&quot;Q40&quot;: {&quot;count&quot;: 5},
+&quot;Q41&quot;: {&quot;rating&quot;: &quot;none&quot;},
+&quot;Q42&quot;: {&quot;country&quot;: &quot;LU&quot;},
+&quot;Q43&quot;: {&quot;count&quot;: 1},
+&quot;Q44&quot;: {&quot;local_currency&quot;: &quot;yes&quot;},
+&quot;Q45&quot;: {&quot;above_ceiling&quot;: &quot;no&quot;},
+&quot;Q46&quot;: {&quot;issuer_rating&quot;: &quot;no&quot;},
+&quot;Q47&quot;: {&quot;rating&quot;: &quot;none&quot;},
+&quot;Q48&quot;: {&quot;count&quot;: 7}
+}
+```</code></pre></div></details>
+
+
+  </main>
+</div>
+</body>
+</html>
