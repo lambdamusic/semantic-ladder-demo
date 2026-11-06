@@ -2,7 +2,7 @@
 
 An experiment on how much an LLM gains from being told what data means. It asks the same questions over the same invented data in different forms (CSV, RDF, ontology as Turtle or Markdown, OWL and SHACL axioms, rules already executed), reading the rows or writing SQL and SPARQL over them, and grades the answers by code. It's meant to become a public repo and a blog post. Built by Michele Pasin. It started as a clean copy of the semantics-ladder folder in `~/dev2/credit-graph-lab_2026`, which is a separate project.
 
-Read `README.md` for the layout and commands, `RESULTS.md` (the lab notebook) for every run's findings in order, and the newest note in `backlog/log/` for where the last session stopped. Open work is in `backlog/TODO.md`, managed with the `backlog` skill, and the plan the experiment was built from is archived in `backlog/plans/000-original-plan.md`. The backlog is gitignored, so it stays local.
+Read `README.md` for the layout and commands, `notes/lab-notebook.md` (the lab notebook) for every run's findings in order, and the newest note in `backlog/log/` for where the last session stopped. Open work is in `backlog/TODO.md`, managed with the `backlog` skill, and the plan the experiment was built from is archived in `backlog/plans/000-original-plan.md`. The backlog is gitignored, so it stays local.
 
 ## Working here
 

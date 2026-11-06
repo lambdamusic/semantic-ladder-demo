@@ -1,5 +1,7 @@
 # Lab notebook
 
+*A working log, kept while the experiment ran: some figures here were later corrected (such as the Q18 key, regraded on 6 November). The current results are on the website: https://semantic-ladder.michelepasin.org*
+
 What each run showed, in the order they ran, newest last. The reports in `results/` hold the numbers; this file
 holds what they mean, and what changed because of them.
 

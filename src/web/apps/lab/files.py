@@ -40,7 +40,7 @@ def md(text):
     """Markdown to HTML, with links to the repo's own Markdown files pointed at GitHub, links
     off the site opening in a new tab, and every condition written as `name` given its label."""
     html = markdown.markdown(text, extensions=["tables", "fenced_code", "toc"])
-    for name in ("README.md", "RESULTS.md"):
+    for name in ("README.md", "BUILDING.md"):
         html = html.replace(f'href="{name}"', f'href="{settings.REPO_URL}/blob/main/{name}"')
     html = re.sub(r'<a href="(https?://[^"]+)"', r'<a href="\1" target="_blank" rel="noopener"', html)
     html = re.sub(r"<code>([a-z+]+)</code>", lambda m: cond(m[1]) if m[1] in LABELS else m[0], html)
