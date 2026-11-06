@@ -21,7 +21,7 @@ The idea follows Andrea Splendiani's ["Ontologies for AI in practice / part I"](
 - **[Method](/method/):** how the runs are made and graded, and the ladder of conditions they compare.
 - **The domains:** [credit ratings](/domains/credit/) and [research analytics](/domains/research/), each with its data, questions and ontology.
 - **[Scores](/scores/):** each dataset's latest runs side by side, with notes on what each run shows.
-- **[Conclusions](/conclusions/):** each goal in turn, and how far the runs have answered it.
+- **[Conclusions](/conclusions/):** each goal in turn, how far the runs have answered it, and the [future work](/conclusions/#future-work) still open.
 - **[Run archive](/runs/):** every run, older ones included, with its prompts, answers and grades.
 
 ## The code and data

@@ -12,6 +12,8 @@ Goals 1, 2, 4 and 5 rest on one run per model and domain, each asking every read
 | [4. Does it hold across models?](#4-does-it-hold-across-models) | **Yes, for Haiku and Sonnet.** The weaker model gains more, and with the definitions the two end up level on the base data. On larger data, Haiku falls well behind. |
 | [5. Does the domain matter?](#5-does-the-domain-matter) | **The pattern holds; the size of the gain doesn't.** It's +15 to +21 points on credit and +41 to +53 on research, where more of the questions rest on local rules. |
 
+What's still open is listed under [Future work](#future-work).
+
 ## 1. Does written-down meaning help?
 
 **Answered: yes, and by a lot where the data has rules of its own.**
@@ -90,3 +92,34 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 *A caveat:* some of the research questions use the dataset's own terms, which only the ontology defines, so some answers marked wrong without it are defensible readings of the question. A review found they're mostly the questions that depend on the local rules anyway.
 
 *Still open:* two domains can show that the domain matters, but not what it is about a domain that matters. A third domain, with a different balance of general and local meaning, would test the explanation above.
+
+## Future work
+
+What the runs so far leave open, and what would make the experiment stronger.
+
+**Questions and grading**
+
+- **Reword Q1 in the research domain.** It asks how many people the author records named "Mara Ellison", "M. Ellison" and "Ellison, Mara J." stand for. Most conditions tell the people apart correctly, then answer 1, reading the question as the three name forms rather than every record that carries them. The key is right (2, or 3 at 850 works), but the wording invites the other reading. A clearer question means asking it again, not regrading.
+- **A second grader from another model family,** to check whether a model grades its own family's answers more kindly. Code grades most questions, so this only touches the few "why" questions.
+- **Check the reasoning, not only the answers,** on the research and ownership-path data, as was done once for credit.
+
+**Size and querying**
+
+- **Data far too large to read,** say 3,000 issuers, where only querying is possible. At 850 works, querying pays off once the rules have run in the store. A larger dataset would show whether that holds as the gap grows.
+- **Querying at more sizes, with five repeats,** so every querying result has the same footing.
+- **Why SPARQL sessions break down more often than SQL ones.** With the same definitions and rounds, the model sometimes gives up early, reports errors that didn't happen, or pages through the graph instead of asking for what it needs. More rounds, larger result limits, or a different prompt might close the gap.
+
+**The meaning**
+
+- **A large ontology.** The ontologies here have about 50 terms. A real domain has hundreds or thousands, enough to fill a context window. Embed one in a much larger set of plausible but irrelevant concepts and see where accuracy drops, then compare giving the whole ontology with giving only the part a question needs, selected from the graph.
+- **Executed tables that keep what they merged:** the merged records, an ultimate-parent column and a note of the rules applied, so they can answer the questions the research tables now miss.
+
+**Models and domains**
+
+- **More models:** Opus and Gemini, set aside for now.
+- **A third domain,** with a different balance of general and local meaning, to test what it is about a domain that sets the size of the gain.
+- **Two research traps not yet covered:** citations normalised by field, which needs fields in the data and decimal answers, and communities of institutions that mostly cite each other, which needs a graph algorithm.
+
+**Reproducibility**
+
+- **One command that rebuilds every table** from the data and the committed results, so a reader can check each number.
