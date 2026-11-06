@@ -107,9 +107,10 @@ What the runs so far leave open, and what would make the experiment stronger.
 **Size and querying**
 
 - **Data far too large to read,** say 3,000 issuers, where only querying is possible. At 850 works, querying pays off once the rules have run in the store. A larger dataset would show whether that holds as the gap grows.
-- **Querying at more sizes, with five repeats,** so every querying result has the same footing.
+- **Querying with Haiku.** Every querying run so far is Sonnet's. The weaker model gains most from the definitions when reading; whether it can write the queries as well is untested.
+- **GraphDB on the research data.** The one run on a faster graph database was on the credit ownership paths. At 850 works, five research queries timed out on rdflib, so the larger research data is where a faster engine might matter.
 - **Mark test records in the credit graph.** Over the graph after the axioms' rules (`sparql+axioms`), the model counts a test record as real, because the rules leave it unmarked and the note on the store doesn't mention it. That accounts for every miss in that condition on the base credit data (90%, against 99–100% for the other conditions with the meaning). A rule that marks test records, and a rerun, would show how well a graph after its rules really does on credit.
-- **Why SPARQL sessions break down more often than SQL ones.** With the same definitions and rounds, the model sometimes gives up early, reports errors that didn't happen, or pages through the graph instead of asking for what it needs. More rounds, larger result limits, or a different prompt might close the gap.
+- **Why SPARQL sessions break down more often than SQL ones.** With the same definitions and rounds, the model sometimes gives up early, reports errors that didn't happen, or pages through the graph instead of asking for what it needs. Three research sessions scored 0% because the model wrote its query as tool-call markup instead of a query block, and the runner, after one reminder, graded an empty answer. The runner could accept that markup; more rounds, larger result limits, or a different prompt might close the rest of the gap.
 
 **The meaning**
 
@@ -118,10 +119,7 @@ What the runs so far leave open, and what would make the experiment stronger.
 
 **Models and domains**
 
+- **Complete the ownership-paths runs:** the reading conditions not yet asked there, and Haiku, so its table matches the other datasets'.
 - **More models:** Opus and Gemini, set aside for now.
 - **A third domain,** with a different balance of general and local meaning, to test what it is about a domain that sets the size of the gain.
 - **Two research traps not yet covered:** citations normalised by field, which needs fields in the data and decimal answers, and communities of institutions that mostly cite each other, which needs a graph algorithm.
-
-**Reproducibility**
-
-- **One command that rebuilds every table** from the data and the committed results, so a reader can check each number.
