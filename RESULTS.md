@@ -298,7 +298,7 @@ Haiku's run is `results/credit/2026-11-04-2028-haiku/`.
 - **The gain from the definitions holds at scale:** +11 to +14 for Sonnet and +10 to +17 for Haiku, about what it is on the base data.
 - **The ceiling drops:** 92–95% for Sonnet and 83–91% for Haiku with the definitions, against 96–100% for both on the base data. So the two models no longer end level. Most of the loss is on long lists of 28 to 31 issuers (Q7, Q18, Q19), graded strictly.
 - **RDF alone costs more here:** −4 for Sonnet and −10 for Haiku. The decoy costs Haiku 4 points (−8 to −1).
-- **Q18's key is too narrow.** `build_questions.py` reads the Watch from the foreign-currency issuer rating only. E1019 and E1059 are on Watch Negative on their local-currency rating, and every session lists them, so Q18 is wrong in every condition for both models. Counting both bases would make the key 32 issuers here and in `credit_paths`, and leave the base data's unchanged. Q19, the Negative outlooks, is the same either way.
+- **Q18's key is too narrow.** `build_questions.py` reads the Watch from the foreign-currency issuer rating only. E1019 and E1059 are on Watch Negative on their local-currency rating, and many sessions list them, so Q18 is wrong in every condition for both models. Fixed and regraded below. Counting both bases would make the key 32 issuers here and in `credit_paths`, and leave the base data's unchanged. Q19, the Negative outlooks, is the same either way.
 
 ## 6 November 2026: credit at 300 issuers, version 2, querying, Sonnet
 
@@ -353,3 +353,26 @@ Score in each session: `sql` 33–42, `sql+markdown` 97, 84, 41, 80, 97, `sql+ex
 - **Without definitions, querying is no better than reading:** 38% and 30%, against 42%.
 - 34 of 643 queries failed and 5 timed out, all on rdflib.
 - **So the case for querying, at this size, rests on the rules having been run.**
+
+## 6 November 2026: Q18's key corrected, nine runs regraded
+
+Q18 asks which issuers were on Rating Watch Negative on 1 October 2026. `build_questions.py` read the Watch from the foreign-currency issuer rating only. Nothing in the ontology limits a Watch to one currency, and in `credit_300` and `credit_paths` two issuers, E1019 and E1059, are on Watch Negative on their local-currency rating alone. The key now counts a Watch on either currency: 32 issuers instead of 30 in both datasets. The base data's key is unchanged, since it has no such case, and so is every other question.
+
+The corrected key was written into the `questions.json` of the nine runs on those two datasets, and each was regraded by code (`src/run.py --regrade`). Only Q18's grades changed. Accuracy moved by 0 to 3 points per condition:
+
+| Run | Before → after |
+|---|---|
+| `credit_300/2026-11-05-2135-sonnet` | `csv` 81 → 83, `rdf` 77 → 79, `csv+markdown` 93 → 95, `csv+ontology` 92 → 95, `rdf+ontology` 94 → 96, `csv+padding` 81 → 83, `csv+neutral` 95 → 97, `csv+axioms` 92 → 94, `csv+axioms+markdown` 94 → 95, `executed` 94 → 95 |
+| `credit_300/2026-11-05-2135-haiku` | `rdf` 63 → 64, `rdf+ontology` 83 → 84, `csv+markdown` 87 → 88, `csv+axioms` 88 → 89, `executed` 91 → 93 |
+| `credit_300/2026-11-06-0041-sonnet-query` | `sql+markdown` 97 → 99, `sparql` 76 → 77, `sparql+ontology` 95 → 97, `sql+executed` 97 → 99, `sparql+axioms` 87 → 88 |
+| `credit_300/2026-11-04-1738-sonnet` (version 1) | `csv` 80 → 82, `csv+markdown` 95 → 97, `executed` 95 → 96 |
+| `credit_300/2026-11-04-1738-sonnet-query` (version 1) | `sql` 86 → 87, `sql+markdown` 96 → 98, `sparql` 79 → 80, `sparql+ontology` 95 → 97 |
+| `credit_paths/2026-11-04-2022-sonnet` | `csv` 81 → 83, `csv+markdown` 95 → 96, `executed` 94 → 95, `csv+axioms` 93 → 94 |
+| `credit_paths/2026-11-04-2024-sonnet-query` | `sql` 73 → 74, `sql+markdown` 85 → 86, `sparql` 65 → 66, `sparql+ontology` 94 → 96, `sql+executed` 93 → 95, `sparql+axioms` 81 → 82 |
+| `credit_paths/2026-11-05-1515-sonnet-query` | `sql+markdown` 98 → 99, `sql+executed` 96 → 97, `sparql+axioms` 84 → 85 |
+| `credit_paths/2026-11-05-1819-sonnet-query-graphdb` | `sparql` 68 → 69, `sparql+ontology` 82 → 83, `sparql+axioms` 79 → 80; against rdflib now +10 (+6 to +14), +6 (+2 to +10) and −5 (−9 to −2) |
+
+- **The old key rewarded ignoring the local-currency rating.** Before, only `sql` (3 of 5) and `sparql` (1 of 5) ever got Q18 right on `credit_300`. Now the conditions with the definitions or the executed tables get it right most often, as on the other questions.
+- **The conclusions don't change.** At 300 issuers, Sonnet with the definitions now reaches 94–97% reading and 97–99% querying, close to the base data's 96–100%. Haiku stays lower, at 84–93%.
+- Earlier entries above quote the scores before this correction.
+

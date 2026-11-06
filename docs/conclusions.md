@@ -49,11 +49,11 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 
 | | No definitions | With the definitions |
 |---|---|---|
-| Reading (`csv`, `csv+markdown`) | 81% | 93% |
-| SQL (`sql`, `sql+markdown`) | 80% | 97% |
-| SPARQL (`sparql`, `sparql+ontology`) | 76% | 95% |
+| Reading (`csv`, `csv+markdown`) | 83% | 95% |
+| SQL (`sql`, `sql+markdown`) | 80% | 99% |
+| SPARQL (`sparql`, `sparql+ontology`) | 77% | 97% |
 
-- **The definitions matter as much when querying as when reading:** +12 to +19 points in each mode.
+- **The definitions matter as much when querying as when reading:** +12 to +20 points in each mode.
 - **With the definitions, querying helps a little with long lists,** where reading misses an item or two. Without them, it doesn't help at all.
 - **On ownership paths of unknown depth** ([reading](/runs/credit_paths/2026-11-04-2022-sonnet/), [querying](/runs/credit_paths/2026-11-05-1515-sonnet-query/)), a graph store doesn't help, with or without the definitions. Without them, SPARQL gets 32% of the path questions and SQL 60%. With them, SQL gets every path right in all five sessions, and SPARQL swings from 4% to 77%, with queries that time out in rdflib. On GraphDB, a fast graph database, nothing times out, but SPARQL with the ontology still gets 60% of the paths, swinging from 0% to 100%: the model uses up its rounds or gives up early. A precomputed `ancestors` table gives SQL every path right, and reading the 100 KB of CSV with the definitions also gets every path right.
 - **So the graph's advantage, following links of any depth, disappears once the rules have computed the chains.**
@@ -66,7 +66,7 @@ At 300 issuers, the model either reads the CSV or writes SQL (DuckDB) or SPARQL 
 **Partly answered: for Claude Haiku and Sonnet, yes.**
 
 - **The weaker the model, the more the definitions are worth.** Haiku gains +20 to +21 points on credit and +51 to +53 on research, against Sonnet's +15 to +16 and +41.
-- **With the definitions, the two models end up level on the base data.** Both reach 96–100% in both domains. At 300 issuers they don't: Sonnet reaches 92–95% and Haiku 83–91%, though each gains about as much as on the base data ([Sonnet](/runs/credit_300/2026-11-05-2135-sonnet/), [Haiku](/runs/credit_300/2026-11-05-2135-haiku/)). On the research data at 850 works the gap is wide: with the definitions, Sonnet reaches 87–89% and Haiku 43–49%. In 5 of its 25 sessions Haiku answers only part of the questions, and its best condition there is the rules already executed, at 69%.
+- **With the definitions, the two models end up level on the base data.** Both reach 96–100% in both domains. At 300 issuers they don't: Sonnet reaches 94–97% and Haiku 84–93%, though each gains about as much as on the base data ([Sonnet](/runs/credit_300/2026-11-05-2135-sonnet/), [Haiku](/runs/credit_300/2026-11-05-2135-haiku/)). On the research data at 850 works the gap is wide: with the definitions, Sonnet reaches 87–89% and Haiku 43–49%. In 5 of its 25 sessions Haiku answers only part of the questions, and its best condition there is the rules already executed, at 69%.
 - **Text that doesn't carry the meaning helps neither model.** The decoy glossary stays within 2 points of `csv` for both. An earlier credit run had Haiku lose 5 points with it, which this run doesn't repeat (−2, −6 to +1).
 
 *Still open:* Opus and Gemini, set aside for now.

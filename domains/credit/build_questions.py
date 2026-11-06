@@ -196,7 +196,8 @@ Q = [
      {"downgraded": "no"}, lambda: {"downgraded": "yes" if downgrades("E06", "2026") else "no"},
      "Watch versus rating: Rating Watch Negative is not a downgrade."),
     ("Q18", "Which issuers were on Rating Watch Negative on 1 October 2026?", {"issuers": "entities"},
-     {"issuers": ["E06"]}, lambda: {"issuers": [i for i in issuers_rated() if latest(i)["watch"] == "RWN"]},
+     {"issuers": ["E06"]}, lambda: {"issuers": [i for i in issuers_rated()
+                                     if any((latest(i, "LTIDR", b) or {}).get("watch") == "RWN" for b in ("FC", "LC"))]},
      "Watch over time: Marlow's Watch ended with its 2026 affirmation."),
     ("Q19", "Which issuers had a Negative outlook on 1 October 2026?", {"issuers": "entities"},
      {"issuers": ["E01", "E09"]}, lambda: {"issuers": [i for i in issuers_rated() if latest(i)["outlook"] == "NEG"]},
