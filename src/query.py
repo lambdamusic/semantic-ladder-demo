@@ -106,7 +106,9 @@ class SPARQLStore:
             self.g = inferred(domain)
             terms = set(Graph().parse(domain.ONTOLOGY).subjects()) | set(Graph().parse(domain.ONTO / "axioms.ttl").subjects())
             self.facts = Graph()
-            self.facts.bind("lad", "https://example.org/ladder/")
+            for prefix, ns in self.g.namespaces():  # the domain's own prefix, lad: or res:
+                if prefix in ("lad", "res"):
+                    self.facts.bind(prefix, ns)
             for s, p, o in self.g:
                 if s not in terms and not isinstance(s, BNode):
                     self.facts.add((s, p, o))

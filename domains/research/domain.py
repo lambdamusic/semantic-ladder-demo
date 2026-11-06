@@ -8,7 +8,8 @@ ONTO = HERE / "ontology"  # ontology.ttl, ontology.md, axioms.ttl, padding.md
 ONTOLOGY = ONTO / "ontology.ttl"
 QUESTIONS = HERE / "questions.json"
 CSV_FILES = ["institutions.csv", "authors.csv", "sources.csv", "works.csv", "authorships.csv", "citations.csv"]
-CONDITIONS = ["csv", "rdf", "rdf+ontology", "csv+ontology", "csv+markdown", "csv+padding", "executed"]
+CONDITIONS = ["csv", "rdf", "rdf+ontology", "csv+ontology", "csv+markdown", "csv+padding", "executed",
+              "csv+axioms", "csv+axioms+markdown"]
 
 # The executed condition: the tables execute.py writes, the rules applied and no definitions.
 EXECUTED_TABLES = ["works.csv", "people.csv", "credits.csv", "institutions.csv", "institution_units.csv",
@@ -21,6 +22,16 @@ EXECUTED_NOTE = (
     "institution's works count towards, itself included, with how many levels up. citations links merged works, "
     "and only from citing works that count. tier_rank ranks journal tiers, 1 the highest; a delisted source's works "
     "are not research output.")
+
+# The sparql+axioms condition: the store after axioms.ttl's SHACL rules have run.
+AXIOMS_NOTE = ("The store holds the data after the rules of its axioms have run, with no definitions alongside. "
+               "Besides the data's own properties, it holds what the rules derived: res:samePersonAs links the "
+               "author records of one person; res:countsAs gives the work a record counts as (a preprint's published "
+               "version, or itself), and the class res:ResearchWork holds the works that count as research output; "
+               "res:hasPerson gives each work's distinct people, one author record each; res:creditedInstitution "
+               "and res:creditedCountry give the institutions and countries credited on a work, every level up; "
+               "res:unitOf, res:countsTowards and res:ultimateParent give the hierarchy; res:cites links the works "
+               "of the citations that count; res:tierRank ranks the journal tiers, 1 the highest.")
 
 SYSTEM = (
     "You answer questions about a research-analytics dataset of works, authors, institutions, "
@@ -38,8 +49,18 @@ def read(path):
     return path.read_text().strip()
 
 
+def bare_ontology():
+    """ontology.ttl with every definition and comment taken out: names, codes and structure only."""
+    from rdflib import RDFS, Graph, Namespace
+    skos = Namespace("http://www.w3.org/2004/02/skos/core#")
+    g = Graph().parse(ONTOLOGY)
+    for p in (skos.definition, skos.scopeNote, RDFS.comment):
+        g.remove((None, p, None))
+    return g.serialize(format="turtle").strip()
+
+
 def context(condition):
-    if condition not in CONDITIONS:  # the credit domain's csv+neutral and axioms conditions don't exist here
+    if condition not in CONDITIONS:  # the credit domain's csv+neutral condition doesn't exist here
         raise ValueError(f"the research domain has no condition {condition!r}; it has {', '.join(CONDITIONS)}")
     if condition == "executed":
         return EXECUTED_NOTE + "\n\n" + "\n\n".join(
@@ -56,6 +77,13 @@ def context(condition):
                 if condition.startswith("csv") else "")
         parts.append(f"### ontology.ttl (the vocabulary the data uses){chr(10) + note if note else ''}\n"
                      f"```turtle\n{read(ONTOLOGY)}\n```")
+    elif extra.startswith("axioms"):  # the meaning as logic: no prose, the ontology's names and codes plus OWL and SHACL
+        parts.append("### ontology.ttl, without its definitions (the vocabulary the data uses)\n"
+                     "The codes in the CSV files are the skos:notation values of the concepts below.\n"
+                     f"```turtle\n{bare_ontology()}\n```")
+        parts.append(f"### axioms.ttl (OWL axioms and SHACL rules over the vocabulary)\n```turtle\n{read(ONTO / 'axioms.ttl')}\n```")
+        if extra == "axioms+markdown":
+            parts.append(f"### ontology.md (the vocabulary the data uses)\n\n{read(ONTO / 'ontology.md')}")
     elif extra == "markdown":  # the same definitions, generated from ontology.ttl by ontology_to_md.py
         parts.append(f"### ontology.md (the vocabulary the data uses)\n\n{read(ONTO / 'ontology.md')}")
     elif extra == "padding":  # the length control: text on scholarly publishing of the same length, about none of this

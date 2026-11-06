@@ -39,7 +39,7 @@ Goals 1, 2, 4 and 5 rest on one run per model and domain, each asking every read
 - **Logic and executed rules say what, not why.** The one question that asks for a cause (Q6, why a rating sits where it does) is answered only partly in most repeats with the axioms alone or the executed data, and in full with the prose.
 - **Rules already run over the data match the definitions on credit, but not on research.** The `executed` data, with records merged and rules applied and no definitions, gains +15 to +19 points on credit, reaching 97–99%, and +34 to +46 on research, reaching 90–92%: 6 to 9 points short of the definitions. The research misses come from how the tables were built: merging a preprint into its published version hides it (Q2, Q20), the counting questions lose the per-author shares (Q12, Q13), there's no ultimate-parent column (Q46), and the reasons behind the rules are lost (Q47, Q48).
 
-*Still open:* axioms for the research domain, and executed tables that keep what they merged.
+*Still open:* the research domain's axioms are written but not yet run, and executed tables that keep what they merged.
 
 ## 3. Should the model read the data or query it?
 

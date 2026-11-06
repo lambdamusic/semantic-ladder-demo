@@ -13,7 +13,7 @@ Reading, at ten times the base data ([Sonnet](/runs/research_850/2026-11-06-0206
 - **Executed rules matter more as the data grows,** most of all for the weaker model. For Haiku, `executed` is now the best condition: the merging and rolling up are done, and its prompt is the smallest. For Sonnet it is 8 to 10 points short of the definitions, as on the base data.
 - **The decoy glossary helps Haiku** by 9 points (+4 to +15). That's the first time it has helped either model, and it may be noise in a run where Haiku answers so unevenly.
 
-Querying, at the same size ([Sonnet](/runs/research_850/2026-11-06-0519-sonnet-query/)), five repeats, against reading with the same model. The domain has no axioms yet, so no `sparql+axioms`.
+Querying, at the same size ([Sonnet](/runs/research_850/2026-11-06-0519-sonnet-query/)), five repeats, against reading with the same model. The domain had no axioms when this ran, so no `sparql+axioms`.
 
 | | No definitions | With the definitions | Rules executed |
 |---|---|---|---|

@@ -43,7 +43,7 @@ Within each group, the conditions differ in how much of the data's meaning the m
 | `csv+ontology` | the CSV plus `ontology.ttl`: the same definitions in RDF (SKOS, in Turtle) | whether writing the definitions in RDF adds anything to the same definitions as Markdown |
 | `rdf+ontology` | the RDF data plus `ontology.ttl` | the full knowledge-graph form: whether data and definitions in one format do better than the CSV with the definitions |
 | `csv+neutral` | as `csv+ontology`, with one slanted sentence made neutral (credit only) | whether the wording of a single definition can change an answer |
-| `csv+axioms` | the data plus OWL axioms and SHACL rules, with the prose taken out (credit only, so far) | whether the model can use logic it has to read |
+| `csv+axioms` | the data plus OWL axioms and SHACL rules, with the prose taken out | whether the model can use logic it has to read |
 | `csv+axioms+markdown` | the axioms and the Markdown definitions together | whether logic and prose add up |
 | `executed` | the data after the definitions' rules have been applied in code, with no definitions: test records dropped, duplicate records merged into one entity, each rating with the period it held, ownership chains spelt out | whether applying the meaning upstream, as a curated knowledge graph would, can replace telling the model what the data means |
 
@@ -60,6 +60,6 @@ The SPARQL conditions can also run on [GraphDB](https://graphdb.ontotext.com/) (
 | `sql+executed` | the tables of `executed` in DuckDB, after the rules have run: test records dropped, records merged, rating periods and ownership chains computed | whether rules applied upstream make SQL reliable, with no definitions |
 | `sparql` | the raw RDF data in a graph store, described by its prefixes, classes and properties; it queries it with SPARQL | whether a graph store helps on its own, against `sql` |
 | `sparql+ontology` | the same, plus the definitions in Markdown, as `sql+markdown` gets them; the ontology's triples are also loaded into the store, where queries can use them | a graph with its ontology, against `sql+markdown`: whether the store needs to be a graph |
-| `sparql+axioms` | the graph after the SHACL rules have run, holding what they derive (one entity per LEI, ancestors, the ultimate parent), with no definitions (credit only) | rules run in the graph, against `sql+executed` |
+| `sparql+axioms` | the graph after the SHACL rules have run, holding what they derive (on credit, one entity per LEI, ancestors and the ultimate parent; on research, one person per ORCID, credited institutions and the citations that count), with no definitions | rules run in the graph, against `sql+executed` |
 
 Read across, D1 against D4, D2 against D5 and D3 against D6 compare SQL with SPARQL given the same meaning.
