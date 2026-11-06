@@ -1,6 +1,6 @@
 Where each of the [five goals](/#goals) stands, from the runs so far. The [scores](/scores/) put each dataset's latest runs side by side, and each run's own page has the numbers behind them. Accuracy, repeats and intervals are as the [method](/method/#grading) defines them.
 
-Goals 1, 2, 4 and 5 rest on one run per model and domain, each asking every reading condition its domain has: credit ([Sonnet](/runs/credit/2026-11-05-1227-sonnet/), [Haiku](/runs/credit/2026-11-05-1233-haiku/)), and research ([Sonnet](/runs/research/2026-11-05-1234-sonnet/), [Haiku](/runs/research/2026-11-05-1235-haiku/)). Earlier runs, some made before the domains' rules were final, are in the [run archive](/runs/).
+The base data, read by each model, gives most of the numbers below: credit ([Sonnet](/runs/credit/2026-11-05-1227-sonnet/), [Haiku](/runs/credit/2026-11-05-1233-haiku/)) and research ([Sonnet](/runs/research/2026-11-05-1234-sonnet/), [Haiku](/runs/research/2026-11-05-1235-haiku/)), with the research axioms in runs of their own ([Sonnet](/runs/research/2026-11-06-0855-sonnet/), [Haiku](/runs/research/2026-11-06-0855-haiku/)). Goal 3 adds the querying runs and the larger datasets, and goal 4 the larger datasets too; each goal links the runs it uses. Every run, earlier ones included, is in the [run archive](/runs/).
 
 ## In short
 
