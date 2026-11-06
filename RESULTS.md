@@ -334,3 +334,22 @@ Haiku's run is `results/credit/2026-11-04-2028-haiku/`.
 - **Haiku answers only part of the questions in 5 of 25 sessions** (`csv` run 4, `csv+markdown` runs 1, 2 and 4, `csv+ontology` run 1), three of them saying so ("Q9–Q48: not yet answered… I'll continue"). The answers are complete as sent, so they're graded as they are. On the sessions that answered everything: `csv` 23%, `csv+ontology` 58%, `csv+markdown` 74% (two sessions).
 - **`executed` is Haiku's best condition here,** at 69%: the merging and roll-ups are already done, and its prompt is the smallest.
 - **So at this size, reading starts to fail on work, not meaning.** The definitions still carry the local rules, but the model has to tally too much by hand. That's where querying should help: the querying run on this data is next.
+
+## 6 November 2026: research at 850 works, querying, Sonnet
+
+`results/research_850/2026-11-06-0519-sonnet-query/`: `sql`, `sql+markdown`, `sql+executed`, `sparql` and `sparql+ontology`, five repeats, rdflib as the store. The research domain has no axioms, so no `sparql+axioms`. The first querying run on research.
+
+| | No definitions | With the definitions | Rules executed |
+|---|---|---|---|
+| Reading (same data, Sonnet) | `csv` 42% | `csv+markdown` 87% | `executed` 79% |
+| SQL | `sql` 38% | `sql+markdown` 80% (+42) | `sql+executed` 92% (+54) |
+| SPARQL | `sparql` 30% (−7, −13 to −2) | `sparql+ontology` 85% (+48) | |
+
+Score in each session: `sql` 33–42, `sql+markdown` 97, 84, 41, 80, 97, `sql+executed` 90–94, `sparql` 15–38, `sparql+ontology` 74, 73, 95, 93, 91.
+
+- **Querying doesn't recover what reading lost at this size.** On the general questions (Q1 to Q32, Q47), `sql+markdown` gets 75% and `sparql+ontology` 80%, against 82–85% reading. The local rules stay right (91% and 96%). Q1 is still read as the three name forms.
+- **Querying over executed tables is the best condition:** 92% and steady, against 79% reading the same tables. The rules have merged the records and rolled up the hierarchy, so each count is a simple query.
+- **The definitions alone make querying unsteady.** `sql+markdown` run 3 stopped after four rounds and answered many counts from a partial view: 41%.
+- **Without definitions, querying is no better than reading:** 38% and 30%, against 42%.
+- 34 of 643 queries failed and 5 timed out, all on rdflib.
+- **So the case for querying, at this size, rests on the rules having been run.**
