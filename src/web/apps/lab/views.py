@@ -1,3 +1,6 @@
+import subprocess
+from datetime import date
+
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect, render
@@ -5,9 +8,16 @@ from django.shortcuts import redirect, render
 from . import files
 
 
+def updated():
+    """The date of the latest commit, for the sidebar's "Last updated"."""
+    out = subprocess.run(["git", "log", "-1", "--format=%cs"], cwd=settings.REPO_ROOT, capture_output=True, text=True)
+    d = date.fromisoformat(out.stdout.strip()) if out.returncode == 0 and out.stdout.strip() else date.today()
+    return f"{d.day} {d:%B %Y}"
+
+
 def nav(request):
     """The sidebar on every page: the documents, each domain, and the runs."""
-    return {"APP_NAME": settings.APP_NAME, "BLOG_URL": settings.BLOG_URL, "NAV": files.nav(), "path": request.path}
+    return {"APP_NAME": settings.APP_NAME, "NAV": files.nav(), "path": request.path, "UPDATED": updated()}
 
 
 def scores_of(request, domain):

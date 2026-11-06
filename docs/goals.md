@@ -14,8 +14,6 @@ The experiment sets out to answer five questions:
 
 Behind all five is a practical aim: to find out what an ontology is worth to an LLM, separating the meaning it writes down and the rules it runs from its file format.
 
-The idea follows Andrea Splendiani's ["Ontologies for AI in practice / part I"](https://www.linkedin.com/pulse/ontologies-ai-practice-part-i-andrea-splendiani-fpihe/) (October 2026), which ran a family-tree question up a similar ladder.
-
 ## How the pages are arranged
 
 - **[Method](/method/):** how the runs are made and graded, and the ladder of conditions they compare.
@@ -27,3 +25,9 @@ The idea follows Andrea Splendiani's ["Ontologies for AI in practice / part I"](
 ## The code and data
 
 Everything is in the [GitHub repository](https://github.com/lambdamusic/semantic-ladder-demo): the data and how it's built, the ontologies and axioms, the questions and their keys, the code that runs and grades the ladder, and every run's prompts, answers and grades. Its README says how to run it.
+
+## Credits
+
+- **Made by Michele Pasin.** [The blog post](https://www.michelepasin.org/blog/2026/11/06/semantics-ladder/) tells the story behind it, and what it found.
+- **The idea** follows Andrea Splendiani's ["Ontologies for AI in practice / part I"](https://www.linkedin.com/pulse/ontologies-ai-practice-part-i-andrea-splendiani-fpihe/) (October 2026), which ran a family-tree question up a similar ladder.
+- **Built with** [Claude Code](https://claude.com/claude-code), which wrote most of the code and ran the experiment. The answers come from Claude Sonnet and Haiku.
