@@ -26,3 +26,17 @@ Querying, at the same size ([Sonnet](/runs/research_850/2026-11-06-0519-sonnet-q
 - **The definitions are steady when reading, not when querying.** `sql+markdown` ranges from 41% to 97% across the five sessions, and `sparql+ontology` from 73% to 95%. In the weakest session, the model stopped after four rounds and answered from what it had seen.
 - **SPARQL alone is the weakest condition again,** at 30%, 7 points below SQL (−13 to −2). Plain `sparql` used all eight rounds in every session.
 - 34 of 643 queries failed, and 5 timed out on rdflib.
+
+Querying the graph after the axioms' rules have run ([Sonnet](/runs/research_850/2026-11-06-0855-sonnet-query/)), five repeats, added once the domain had axioms:
+
+| | Score | In each session |
+|---|---|---|
+| `sql+markdown` | 80% | 97, 84, 41, 80, 97 |
+| `sparql+ontology` | 85% | 74, 73, 95, 93, 91 |
+| `sql+executed` | 92% | 92, 92, 92, 94, 90 |
+| `sparql+axioms` | 91% | 82, 96, 93, 97, 89 |
+
+- **A graph whose rules have run does as well as executed tables:** 91% against 92%, and 6 to 11 points above querying with only the definitions. The rules have merged the people and the preprints, credited each person's institution and rolled it up the hierarchy, so each count is a short query over facts the store already holds.
+- **It's what makes querying pay off at this size.** Reading with the definitions scores 87–89% here; querying the graph after the rules, 91%. The general questions, the counts and roll-ups reading got wrong, are right 90% of the time, against 82–85% reading.
+- The misses are Q1 (the name forms again) and the "why" questions (Q47, Q48), which the derived facts don't explain. 11 of 174 queries failed; none timed out.
+

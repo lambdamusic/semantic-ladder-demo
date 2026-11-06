@@ -393,3 +393,30 @@ Score in each session: `sql` 49–55, `sql+markdown` 96–97, `sql+executed` 88�
 - **At 850 works the order reverses:** `sql+markdown` 80%, `sql+executed` 92%. The definitions carry the meaning at any size, but at scale the model gets the counts wrong writing them itself, and gets them right when the rules have already done the merging and the roll-ups.
 - **Two SPARQL sessions broke down in the loop.** In `sparql` run 2, the model started writing tool-call markup (`<invoke name="sparql">`) instead of fenced queries, was nudged once, and ended its last round with a bare query and no answers: 0%. In `sparql+ontology` run 3, it stopped after one round, saying the store returned "repeated, contradictory rows"; no query had failed: 17%. No SQL session failed this way. The same pattern as on ownership paths: SPARQL sessions are less steady because of how the model works in the loop.
 - 7 of 279 queries failed, all SPARQL; none timed out.
+
+## 6 November 2026: research axioms, reading and querying
+
+`domains/research/ontology/axioms.ttl` is new: OWL axioms for research works, people (keyed by ORCID), test records and affiliated institutes, and SHACL rules that derive the records of one person, the work a record counts as, the institution credited for each person on each work, the unit hierarchy, credited countries and the citations that count. `check_axioms.py` checks everything the rules derive against `build_questions.py`'s rules, on the base data and at 850 works: all eight agree.
+
+Reading, base data, five repeats (`results/research/2026-11-06-0855-sonnet/`, `2026-11-06-0855-haiku/`):
+
+| Condition | Sonnet | Haiku |
+|---|---|---|
+| `csv` (earlier run) | 57% | 45% |
+| `csv+markdown` (earlier run) | 98% | 99% |
+| `csv+axioms` | 97% | 97% |
+| `csv+axioms+markdown` | 98% | 98% |
+
+Querying at 850 works, `sparql+axioms`, Sonnet, five repeats (`results/research_850/2026-11-06-0855-sonnet-query/`), against the earlier querying run on that data:
+
+| Condition | Score | In each session |
+|---|---|---|
+| `sql+markdown` | 80% | 97, 84, 41, 80, 97 |
+| `sparql+ontology` | 85% | 74, 73, 95, 93, 91 |
+| `sql+executed` | 92% | 92, 92, 92, 94, 90 |
+| `sparql+axioms` | 91% | 82, 96, 93, 97, 89 |
+
+- **Logic alone does as well as prose on research too:** 97% for both models, as on credit (99%). The misses are Q1 and the "why" questions, partly answered (Q47, Q48).
+- **Q1 is misread across conditions.** It asks how many people the records named "Mara Ellison", "M. Ellison" and "Ellison, Mara J." stand for; A04 is also an "M. Ellison", with another ORCID, so the key is 2 (3 at 850 works). The models tell the people apart and still answer 1, reading the question as the three name forms. Only `executed` gets it right consistently. The wording is ambiguous; the key isn't wrong.
+- **At 850 works, a graph whose rules have run matches executed tables:** 91% against 92%, and 6 to 11 points above querying with only the definitions. The general questions (counts and roll-ups) are right 90% of the time, against 75–80% querying with the definitions and 82–85% reading them.
+- **So querying pays off at scale when the rules run in the store,** whether the result is a set of tables or a graph. The definitions alone, read or queried, leave the model to apply the rules itself, and at this size it slips.
