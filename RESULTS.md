@@ -435,3 +435,19 @@ Querying at 850 works, `sparql+axioms`, Sonnet, five repeats (`results/research_
 - **`sparql+ontology` is perfect in every session,** as `sql+markdown` is.
 - **`sparql+axioms` counts a test record.** All its misses (Q7, Q9, Q37, Q40, Q41, in nearly every session) come from E16, Brindle Capital, source system `QA`. The SHACL rules keep test records out of `lad:RatingInForce`, but don't mark them, and the axioms note tells the model what the rules derived without mentioning test records. So the model counts E16 as an issuer and its 2026 downgrade as real. Executed tables drop test records, so `sql+executed` doesn't have the problem. This also explains `sparql+axioms` answering Q7 wrongly at 300 issuers. It's a gap in how the condition was built, not in the graph: a rule asserting `lad:TestRecord` and a line in `AXIOMS_NOTE` would close it, and `sparql+axioms` would need rerunning on credit, `credit_300` and `credit_paths`.
 - 139 queries in all, 1 failed, none timed out.
+
+## 6 November 2026: research, `sparql+axioms`, Sonnet
+
+`results/research/2026-11-06-1127-sonnet-query/`: the graph after the research axioms' rules have run, on the base data, five repeats. It completes the querying conditions on research.
+
+| | Score | In each session |
+|---|---|---|
+| `sql+markdown` (earlier run) | 96% | 96–97 |
+| `sql+executed` (earlier run) | 93% | 88–96 |
+| `sparql+ontology` (earlier run) | 81% | 98, 98, 17, 98, 97 |
+| `sparql+axioms` | 72% | 94, 89, 98, 81, 0 |
+
+- **One session broke down again,** the third on research and all with SPARQL: the model wrote its query as tool-call markup (`<parameter name="sparql">`), was nudged once, and ended its last round with a bare query and no answers.
+- **The other four sessions average about 90%,** level with the executed tables. The misses are Q1 (the name forms) and the "why" questions (Q47, Q48), partly answered.
+- **The breakdowns are now a pattern worth fixing in the runner.** Accepting a query written as tool-call markup, rather than nudging once and then grading an empty answer, would separate the model's grasp of the data from its keeping to the protocol. Until then, the SPARQL averages on research include these failed sessions.
+- 70 queries, 5 failed, none timed out.

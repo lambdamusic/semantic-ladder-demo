@@ -13,13 +13,13 @@ Reading, at ten times the base data ([Sonnet](/runs/research_850/2026-11-06-0206
 - **Executed rules matter more as the data grows,** most of all for the weaker model. For Haiku, `executed` is now the best condition: the merging and rolling up are done, and its prompt is the smallest. For Sonnet it is 8 to 10 points short of the definitions, as on the base data.
 - **The decoy glossary helps Haiku** by 9 points (+4 to +15). That's the first time it has helped either model, and it may be noise in a run where Haiku answers so unevenly.
 
-Querying, at the same size ([Sonnet](/runs/research_850/2026-11-06-0519-sonnet-query/)), five repeats, against reading with the same model. The domain had no axioms when this ran, so no `sparql+axioms`.
+Querying, at the same size, with Sonnet and five repeats ([run](/runs/research_850/2026-11-06-0519-sonnet-query/); `sparql+axioms` in [its own run](/runs/research_850/2026-11-06-0855-sonnet-query/)), against reading with the same model.
 
 | | No definitions | With the definitions | Rules executed |
 |---|---|---|---|
 | Reading | `csv` 42% | `csv+markdown` 87% | `executed` 79% |
 | SQL | `sql` 38% | `sql+markdown` 80% | `sql+executed` 92% |
-| SPARQL | `sparql` 30% | `sparql+ontology` 85% | |
+| SPARQL | `sparql` 30% | `sparql+ontology` 85% | `sparql+axioms` 91% |
 
 - **Querying doesn't recover the counts by itself.** With the definitions, SQL and SPARQL score 80% and 85%, no better than reading. On the general questions they get 75% and 80%, against reading's 82–85%. The model writes the queries, but has to get every join and filter of each count right, and the definitions don't make that any easier.
 - **Querying over executed tables is the best condition at this size:** 92%, in every session between 90% and 94%, against 79% when reading those same tables. The merging and roll-ups are done, and the model only has to count what the tables already hold.
@@ -27,7 +27,7 @@ Querying, at the same size ([Sonnet](/runs/research_850/2026-11-06-0519-sonnet-q
 - **SPARQL alone is the weakest condition again,** at 30%, 7 points below SQL (−13 to −2). Plain `sparql` used all eight rounds in every session.
 - 34 of 643 queries failed, and 5 timed out on rdflib.
 
-Querying the graph after the axioms' rules have run ([Sonnet](/runs/research_850/2026-11-06-0855-sonnet-query/)), five repeats, added once the domain had axioms:
+Querying the graph after the axioms' rules have run, against the other querying conditions with the meaning, score in each session:
 
 | | Score | In each session |
 |---|---|---|

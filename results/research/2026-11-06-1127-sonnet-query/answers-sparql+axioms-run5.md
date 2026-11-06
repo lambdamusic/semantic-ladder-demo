@@ -1,0 +1,2 @@
+SELECT ?w (GROUP_CONCAT(DISTINCT REPLACE(STR(?i),"https://example.org/research/","");separator=" ") AS ?ci) (GROUP_CONCAT(DISTINCT REPLACE(STR(?p),"https://example.org/research/","");separator=" ") AS ?ppl) WHERE { ?w a res:ResearchWork . OPTIONAL{?w res:creditedInstitution ?i} OPTIONAL{?w res:hasPerson ?p} } GROUP BY ?w ORDER BY ?w
+```
